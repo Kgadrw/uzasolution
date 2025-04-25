@@ -1,9 +1,9 @@
 'use client'
-import Hero from "../components/Hero"
-import AboutUs from "../components/Aboutus"
-import TrustedCompanies from "../components/Trustedco"
-import Profiles from "../components/Profiles"
-import '../app/globals.css'
+import Hero from "../../components/Hero"
+import AboutUs from "../../components/Aboutus"
+import TrustedCompanies from "../../components/Trustedco"
+import Profiles from "../../components/Profiles"
+import '../globals.css'
 
 import React from 'react'
 
@@ -18,4 +18,4 @@ const page = () => {
   )
 }
 
-export default page;
+export default page
