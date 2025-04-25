@@ -1,8 +1,8 @@
 'use client'
-import Hero from "@/components/Hero"
-import AboutUs from "@/components/Aboutus"
-import TrustedCompanies from "@/components/Trustedco"
-import Profiles from "@/components/Profiles"
+import Hero from "../components/Hero"
+import AboutUs from "../components/Aboutus"
+import TrustedCompanies from "../components/Trustedco"
+import Profiles from "../components/Profiles"
 import '../app/globals.css'
 
 import React from 'react'

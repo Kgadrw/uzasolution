@@ -35,8 +35,8 @@ export default function TrustedCompanies() {
                 <Image
                   src={logo.src}
                   alt={logo.alt}
-                  width={120}
-                  height={70}
+                  width={160}
+                  height={100}
                   className="mx-auto h-auto w-auto max-h-16 object-contain"
                 />
               </div>
