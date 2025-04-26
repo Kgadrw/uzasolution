@@ -1,9 +1,9 @@
 'use client'
-import Hero from "../../components/Hero"
-import AboutUs from "../../components/Aboutus"
-import TrustedCompanies from "../../components/Trustedco"
-import Profiles from "../../components/Profiles"
-import '../globals.css'
+import Hero from "../components/Hero"
+import AboutUs from "../components/AboutUs" // Fixed case sensitivity
+import TrustedCompanies from "../components/Trustedco" // Updated filename
+import Profiles from "../components/Profiles" // Verified filename
+import "../app/globals.css" // Fixed relative path
 
 import React from 'react'
 
