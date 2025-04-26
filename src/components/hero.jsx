@@ -13,13 +13,7 @@ export default function Hero() {
       const heroHeight = window.innerHeight * 0.8
 
       setIsFixed(currentScrollY > heroHeight)
-
-      if (currentScrollY < lastScrollY) {
-        setShowNav(true)
-      } else {
-        setShowNav(false)
-      }
-
+      setShowNav(currentScrollY < lastScrollY)
       setLastScrollY(currentScrollY)
     }
 
@@ -35,7 +29,7 @@ export default function Hero() {
     : 'absolute bg-transparent'
 
   return (
-    <section className="relative min-h-[80vh] flex flex-col md:flex-row w-full">
+    <section className="relative flex flex-col md:flex-row w-full min-h-screen">
       {/* Navbar */}
       <nav className={`${navBaseClasses} ${navPositionClass}`}>
         <div className="text-xl font-bold">
@@ -60,36 +54,39 @@ export default function Hero() {
         </div>
       </nav>
 
-      {/* Left Side */}
-      <div
-        className="w-full md:w-1/2 flex items-center px-6 md:px-8 py-18 text-white bg-[#213348]"
-        style={{ minHeight: '100vh' }}
-      >
-        <div className="px-16 py-24 md:p-8 rounded-lg max-w-xl">
-          <h1 className="text-3xl md:text-5xl font-[Monospace] font-bold mb-10 md:mb-24">
-            Empower Your Business with Smart Tools
-          </h1>
-          <p className="text-base md:text-xl mb-10 md:mb-16 font-[Monospace]">
-            Discover how our platform helps you manage, grow, and optimize your digital workflow.
-          </p>
-          <Link href="/get-started">
-            <button className="bg-[#FBAF43] text-white px-5 md:px-6 py-2.5 md:py-3 font-[Monospace] rounded-md font-medium text-base md:text-lg">
-              Get Started
-            </button>
-          </Link>
+      {/* Hero Content */}
+      <div className="flex flex-col md:flex-row w-full">
+        {/* Left Side */}
+        <div
+          className="w-full md:w-1/2 flex items-center justify-center bg-[#213348] text-white px-6 py-20 sm:py-28"
+          style={{ minHeight: '100vh' }}
+        >
+          <div className="w-full max-w-lg text-center md:text-left space-y-8 md:space-y-12">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Monospace]">
+              Empower Your Business with Smart Tools
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl font-[Monospace]">
+              Discover how our platform helps you manage, grow, and optimize your digital workflow.
+            </p>
+            <Link href="/get-started">
+              <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-base md:text-lg font-[Monospace]">
+                Get Started
+              </button>
+            </Link>
+          </div>
         </div>
-      </div>
 
-      {/* Right Side */}
-      <div
-        className="hidden md:block w-full md:w-1/2"
-        style={{
-          backgroundImage: "url('/bg.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          minHeight: '100vh',
-        }}
-      ></div>
+        {/* Right Side */}
+        <div
+          className="w-full md:w-1/2 hidden md:block"
+          style={{
+            backgroundImage: "url('/bg.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            minHeight: '100vh',
+          }}
+        ></div>
+      </div>
     </section>
   )
 }
