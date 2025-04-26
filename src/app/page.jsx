@@ -1,7 +1,7 @@
 'use client'
 import Hero from "../components/Hero"
 import AboutUs from "../components/AboutUs" // Fixed case sensitivity
-import TrustedCompanies from "../components/Trustedco" // Updated filename
+import TrustedCompanies from "../components/TrustedCo" // Updated filename
 import Profiles from "../components/Profiles" // Verified filename
 import "../app/globals.css" // Fixed relative path
 
