@@ -54,7 +54,7 @@ const slides = [
   },
 ]
 
-export default function UzabulkSlider(): JSX.Element {
+export default function UzabulkSlider() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [animateContent, setAnimateContent] = useState(true)
 
