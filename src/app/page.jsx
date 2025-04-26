@@ -1,8 +1,8 @@
 'use client'
-import Hero from '../components/Hero';
-import AboutUs from '../components/AboutUs';
-import TrustedCo from '../components/TrustedCo';
-
+import Hero from '../components/hero';
+import AboutUs from '../components/aboutus';
+import TrustedCo from '../components/trustedCo';
+import Profiles from '../components/Profiles';
 import React from 'react';
 
 const page = () => {
