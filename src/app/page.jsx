@@ -1,7 +1,7 @@
 'use client'
 import Hero from '../components/hero';
-import AboutUs from '../components/aboutus';
-import TrustedCo from '../components/trustedCo';
+import AboutUs from '../components/about';
+import TrustedCo from '../components/trusted';
 import Profiles from '../components/Profiles';
 import React from 'react';
 
