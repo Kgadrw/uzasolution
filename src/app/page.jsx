@@ -1,11 +1,11 @@
 'use client'
-import Hero from "../components/Hero"
-import AboutUs from "../components/AboutUs" // Fixed case sensitivity
-import TrustedCompanies from "../components/TrustedCo" // Updated filename
-import Profiles from "../components/Profiles" // Verified filename
-import "../app/globals.css" // Fixed relative path
+import Hero from "@components/Hero";
+import AboutUs from "@components/AboutUs";
+import TrustedCompanies from "@components/TrustedCo";
+import Profiles from "@components/Profiles";
+import "@app/globals.css";
 
-import React from 'react'
+import React from 'react';
 
 const page = () => {
   return (
@@ -15,7 +15,7 @@ const page = () => {
       <Profiles />
       <TrustedCompanies />
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default page;
