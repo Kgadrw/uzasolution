@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion' // Import framer-motion
 
 export default function Hero() {
   const [isFixed, setIsFixed] = useState(false)
@@ -46,7 +47,7 @@ export default function Hero() {
         </div>
 
         <div>
-          <Link href="/signin">
+          <Link href="https://www.uzabulk.com/auth/login">
             <button className="bg-[#FBAF43] text-white px-4 py-2 rounded-md font-medium text-sm md:text-base">
               Sign In
             </button>
@@ -61,18 +62,41 @@ export default function Hero() {
           className="w-full md:w-1/2 flex items-center justify-center bg-[#213348] text-white px-6 py-20 sm:py-28"
           style={{ minHeight: '100vh' }}
         >
-          <div className="w-full max-w-lg text-center md:text-left space-y-8 md:space-y-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Monospace]">
-              Empower Your Business with Smart Tools
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl font-[Monospace]">
-              Discover how our platform helps you manage, grow, and optimize your digital workflow.
-            </p>
-            <Link href="/get-started">
-              <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-base md:text-lg font-[Monospace]">
-                Get Started
-              </button>
-            </Link>
+          <div className="w-full max-w-lg text-center md:text-left space-y-8 md:space-y-8">
+            {/* Fade-in effect for heading */}
+            <motion.h1
+              className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Monospace] text-[#FBAF43]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 2 }}
+            >
+              <span className='text-white'>Connecting </span>
+              African Manufacturers <span className='text-white'>to Global </span>
+              Markets
+            </motion.h1>
+
+            {/* Fade-in effect for description */}
+            <motion.p
+              className="text-base sm:text-lg md:text-xl font-[Monospace]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 2, delay: 0.5 }} // Delay the paragraph animation
+            >
+              Uza Solutions Ltd connects African manufacturers with global markets, simplifying cross-border trade. Our platform offers direct access to raw materials and products, cutting costs by eliminating middlemen and ensuring competitive prices and reliable logistics.
+            </motion.p>
+
+            {/* Fade-in effect for button */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 2, delay: 1 }} // Delay the button animation after the paragraph
+            >
+              <Link href="https://www.uzabulk.com/">
+                <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-base md:text-lg font-[Monospace]">
+                  Get Started
+                </button>
+              </Link>
+            </motion.div>
           </div>
         </div>
 
