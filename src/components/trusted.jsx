@@ -21,7 +21,7 @@ export default function TrustedCompanies() {
   return (
     <section className="py-16 px-4 bg-gray-50">
       <div className="max-w-6xl mx-auto text-center">
-        <h3 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-8 font-[Monospace]">
+        <h3 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-8 font-[Montserrat]">
           Our Trusted Partners
         </h3>
 

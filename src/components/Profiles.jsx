@@ -154,23 +154,23 @@ export default function UzabulkSlider() {
                 }`}
               >
                 <h1
-                  className="text-2xl sm:text-3xl font-extrabold font-[Monospace] mb-2"
+                  className="text-2xl sm:text-3xl font-extrabold font-[Montserrat] mb-2"
                   style={{ color: slide.themeColor }}
                 >
                   {slide.title}
                 </h1>
                 <p
-                  className="text-md sm:text-lg font-semibold font-[Monospace] mb-3"
+                  className="text-md sm:text-lg font-semibold font-[Montserrat] mb-3"
                   style={{ color: slide.themeColor }}
                 >
                   {slide.subtitle}
                 </p>
-                <p className="text-sm sm:text-base font-[Monospace]">{slide.description}</p>
+                <p className="text-sm sm:text-base font-[Montserrat]">{slide.description}</p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 text-left justify-center">
                 {slide.offerings.map((item, index) => (
-                  <div key={index} className="flex items-start gap-3 text-sm sm:text-base font-[Monospace]">
+                  <div key={index} className="flex items-start gap-3 text-sm sm:text-base font-[Montserrat]">
                     {item.icon}
                     <div>
                       <h3 className="font-bold mb-1">{item.title}</h3>
@@ -189,7 +189,7 @@ export default function UzabulkSlider() {
                 </p>
                 <Link href={slide.buttonLink} target="_blank">
                   <button
-                    className="px-5 py-2 text-sm sm:text-base rounded-full font-[Monospace] shadow-lg text-white hover:scale-105 transition-transform duration-300"
+                    className="px-5 py-2 text-sm sm:text-base rounded-full font-[Montserrat] shadow-lg text-white hover:scale-105 transition-transform duration-300"
                     style={{ backgroundColor: slide.themeColor }}
                   >
                     {slide.buttonText}

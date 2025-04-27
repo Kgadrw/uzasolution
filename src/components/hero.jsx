@@ -39,7 +39,7 @@ export default function Hero() {
           </Link>
         </div>
 
-        <div className="hidden md:flex space-x-24 items-center text-lg font-semibold">
+        <div className="hidden md:flex space-x-32 items-center text-lg font-semibold">
           <Link className="hover:text-[#FBAF43]" href="/marketplace">Marketplace</Link>
           <Link className="hover:text-[#FBAF43]" href="/how-it-works">How It Works</Link>
           <Link className="hover:text-[#FBAF43]" href="/solutions">Solutions</Link>
@@ -65,7 +65,7 @@ export default function Hero() {
           <div className="w-full max-w-lg text-center md:text-left space-y-8 md:space-y-8">
             {/* Fade-in effect for heading */}
             <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Monospace] text-[#FBAF43]"
+              className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Montserrat] text-[#FBAF43]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
@@ -77,7 +77,7 @@ export default function Hero() {
 
             {/* Fade-in effect for description */}
             <motion.p
-              className="text-base sm:text-lg md:text-xl font-[Monospace]"
+              className="text-base sm:text-lg md:text-xl font-[Montserrat]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2, delay: 0.5 }} // Delay the paragraph animation
