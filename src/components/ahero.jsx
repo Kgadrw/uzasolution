@@ -32,7 +32,7 @@ export default function Hero() {
     : 'absolute bg-transparent'
 
   return (
-    <section className="relative flex flex-col md:flex-row w-full min-h-screen">
+    <section className="relative flex flex-col w-full min-h-screen">
       {/* Navbar */}
       <nav className={`${navBaseClasses} ${navPositionClass}`}>
         <div className="text-xl font-bold">
@@ -43,13 +43,13 @@ export default function Hero() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex space-x-32 items-center text-lg font-semibold">
-          <Link className="hover:text-[#FBAF43]" href="/about">About us</Link>
+          <Link className="hover:text-[#FBAF43]" href="/marketplace">About us</Link>
           <Link className="hover:text-[#FBAF43]" href="/how">How It Works</Link>
           <Link className="hover:text-[#FBAF43]" href="/team">Our Team</Link>
           <Link className="hover:text-[#FBAF43]" href="/tools">Tools</Link>
         </div>
 
-        {/* Mobile Menu Toggle + Sign In */}
+        {/* Mobile Toggle and Sign In */}
         <div className="flex items-center space-x-4 md:space-x-0">
           <button
             className="md:hidden"
@@ -67,10 +67,10 @@ export default function Hero() {
         </div>
       </nav>
 
-      {/* Mobile Navigation Items */}
+      {/* Mobile Menu */}
       {showMobileMenu && (
         <div className="md:hidden bg-[#213348] text-white flex flex-col items-start px-6 py-4 space-y-4 absolute top-[80px] left-0 w-full z-40">
-          <Link href="/about" onClick={() => setShowMobileMenu(false)}>About us</Link>
+          <Link href="/marketplace" onClick={() => setShowMobileMenu(false)}>About us</Link>
           <Link href="/how" onClick={() => setShowMobileMenu(false)}>How It Works</Link>
           <Link href="/team" onClick={() => setShowMobileMenu(false)}>Our Team</Link>
           <Link href="/tools" onClick={() => setShowMobileMenu(false)}>Tools</Link>
@@ -78,57 +78,47 @@ export default function Hero() {
       )}
 
       {/* Hero Content */}
-      <div className="flex flex-col md:flex-row w-full">
-        {/* Left Side */}
-        <div
-          className="w-full md:w-1/2 flex items-center justify-center bg-[#213348] text-white px-6 py-20 sm:py-28"
-          style={{ minHeight: '100vh' }}
-        >
-          <div className="w-full max-w-lg text-center md:text-left space-y-8 md:space-y-8">
-            <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Montserrat] text-[#FBAF43]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2 }}
-            >
-              <span className='text-white'>Connecting </span>
-              African Manufacturers <span className='text-white'>to Global </span>
-              Markets
-            </motion.h1>
+      <div className="relative w-full min-h-screen flex items-center justify-center text-white overflow-hidden">
+        {/* Background Image with opacity */}
+        <img
+          src="/bg.jpg"
+          alt="Hero Background"
+          className="absolute inset-0 w-full h-full object-cover opacity-70 z-0"
+        />
 
-            <motion.p
-              className="text-base sm:text-lg md:text-xl font-[Roboto]"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2, delay: 0.5 }}
-            >
-              Uza Solutions Ltd connects African manufacturers with global markets, simplifying cross-border trade. Our platform offers direct access to raw materials and products, cutting costs by eliminating middlemen and ensuring competitive prices and reliable logistics.
-            </motion.p>
+        {/* Text Overlay */}
+        <div className="relative z-10 max-w-3xl px-6 text-center space-y-8">
+          <motion.h1
+            className="text-4xl sm:text-5xl md:text-6xl font-bold font-[Montserrat] text-[#FBAF43]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
+          >
+            Empowering Africa’s Industries for a Global Future
+          </motion.h1>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 2, delay: 1 }}
-            >
-              <Link href="https://www.uzabulk.com/">
-                <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-base md:text-lg font-[Monospace]">
-                  Get Started
-                </button>
-              </Link>
-            </motion.div>
-          </div>
+          <motion.p
+            className="text-lg sm:text-xl md:text-2xl font-[Roboto] text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+          >
+            We bridge African manufacturing with international trade—offering direct market access,
+            competitive pricing, and a seamless supply chain with zero middlemen.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 1 }}
+          >
+            <Link href="https://www.uzabulk.com/">
+              <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-lg font-[Monospace]">
+                Explore the Platform
+              </button>
+            </Link>
+          </motion.div>
         </div>
-
-        {/* Right Side */}
-        <div
-          className="w-full md:w-1/2 hidden md:block"
-          style={{
-            backgroundImage: "url('/bg.jpg')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            minHeight: '100vh',
-          }}
-        ></div>
       </div>
     </section>
   )

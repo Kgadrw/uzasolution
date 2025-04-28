@@ -11,7 +11,7 @@ export default function AboutUs() {
         {/* About */}
         <div>
           <h3 className="text-2xl font-semibold text-gray-900 font-[Montserrat] mb-4 text-center">
-          About <span className='text-[#FBAF43]'>UZA Solutions</span>
+            About <span className='text-[#FBAF43]'>UZA Solutions</span>
           </h3>
           <p className="text-[1.075rem] text-gray-700 font-[Montserrat] leading-relaxed text-center">
             At Uza Solutions Ltd, we empower African manufacturers and wholesalers by connecting them to global markets.
@@ -67,7 +67,7 @@ export default function AboutUs() {
 
       {/* ---------- DESKTOP TABLE LAYOUT ---------- */}
       <div className="max-w-7xl mx-auto overflow-x-auto hidden lg:table">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg  text-left">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-left">
           <thead className="bg-gray-100">
             <tr>
               <th className="px-6 py-4 text-xl font-semibold text-gray-800 font-[Montserrat] text-left">

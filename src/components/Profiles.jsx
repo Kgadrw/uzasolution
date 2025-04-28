@@ -21,7 +21,6 @@ const slides = [
         title: 'Intra-Africa Trade',
         desc: 'Enables African manufacturers to trade seamlessly across the continent, boosting local economies.',
       },
-      
     ],
     quote:
       '“UZA Bulk slashes sourcing costs by 40% and cuts lead times by partnering with Maersk for streamlined shipping. Rwandan coffee exporters, Ugandan textile makers, and Nigerian retailers all benefit from one unified platform.”',
