@@ -11,6 +11,7 @@ export default function Hero() {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const mobileMenuRef = useRef(null) // Reference for mobile menu
   const mobileMenuToggleRef = useRef(null) // Reference for the mobile menu toggle button
+  const touchStartX = useRef(0) // For detecting swipe gesture start
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +46,22 @@ export default function Hero() {
       window.removeEventListener('click', handleClickOutside)
     }
   }, [showMobileMenu])
+
+  // Handle swipe gesture for opening/closing the mobile menu
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = (e) => {
+    const touchEndX = e.changedTouches[0].clientX
+    const swipeThreshold = 100 // Minimum swipe distance to trigger menu open/close
+    if (touchStartX.current - touchEndX > swipeThreshold) {
+      setShowMobileMenu(true) // Swipe from right to left to open menu
+    }
+    if (touchEndX - touchStartX.current > swipeThreshold) {
+      setShowMobileMenu(false) // Swipe from left to right to close menu
+    }
+  }
 
   const navBaseClasses =
     'top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-between items-center font-[Roboto] text-white transition-all duration-300'
@@ -100,24 +117,28 @@ export default function Hero() {
             onClick={() => setShowMobileMenu(false)} // Close menu when clicking outside
           />
 
-          <motion.div
+          {/* Mobile menu */}
+          <div
             ref={mobileMenuRef}
             className="flex flex-col items-start px-6 py-4 space-y-4 absolute top-[80px] left-0 w-full z-50 bg-[#213348] text-white"
-            initial={{ opacity: 0, x: -200 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -200 }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             <Link href="/#about" onClick={() => setShowMobileMenu(false)}>About Us</Link>
             <Link href="/#projects" onClick={() => setShowMobileMenu(false)}>Our Projects</Link>
             <Link href="/#why" onClick={() => setShowMobileMenu(false)}>Why Uza?</Link>
             <Link href="/news" onClick={() => setShowMobileMenu(false)}>News</Link>
-          </motion.div>
+          </div>
+
+          {/* Blur effect on the background */}
+          <div className="fixed inset-0 bg-[#213348] bg-opacity-40 backdrop-blur-md z-30"></div>
         </>
       )}
 
       {/* Hero Content */}
-      <div className="flex flex-col md:flex-row w-full">
+      <div
+        className="flex flex-col md:flex-row w-full"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
         {/* Left Side */}
         <div
           className="w-full md:w-1/2 flex items-center justify-center bg-[#213348] text-white px-6 py-20 sm:py-28"
