@@ -1,15 +1,16 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
-
 
 export default function Hero() {
   const [isFixed, setIsFixed] = useState(false)
   const [showNav, setShowNav] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const mobileMenuRef = useRef(null) // Reference for mobile menu
+  const mobileMenuToggleRef = useRef(null) // Reference for the mobile menu toggle button
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +26,26 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [lastScrollY])
 
+  // Close the mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) &&
+        mobileMenuToggleRef.current && !mobileMenuToggleRef.current.contains(event.target)
+      ) {
+        setShowMobileMenu(false)
+      }
+    }
+
+    if (showMobileMenu) {
+      window.addEventListener('click', handleClickOutside)
+    }
+
+    return () => {
+      window.removeEventListener('click', handleClickOutside)
+    }
+  }, [showMobileMenu])
+
   const navBaseClasses =
     'top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-between items-center font-[Roboto] text-white transition-all duration-300'
 
@@ -35,7 +56,7 @@ export default function Hero() {
   return (
     <section className="relative flex flex-col md:flex-row w-full min-h-screen">
       {/* Navbar */}
-      <nav className={`${navBaseClasses} ${navPositionClass}`}>
+      <nav className={`${navBaseClasses} ${navPositionClass}`} role="navigation">
         <div className="text-xl font-bold">
           <Link href="/">
             <img src="/logo.png" alt="Logo" className="h-10 w-20 md:h-12 md:w-24" />
@@ -43,19 +64,21 @@ export default function Hero() {
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-32 items-center text-lg font-semibold">
-          <Link className="hover:text-[#FBAF43]" href="/about">About us</Link>
-          <Link className="hover:text-[#FBAF43]" href="/how">How It Works</Link>
-          <Link className="hover:text-[#FBAF43]" href="/team">Our Team</Link>
-          <Link className="hover:text-[#FBAF43]" href="/tools">Tools</Link>
+        <div className="hidden md:flex space-x-20 items-center text-lg font-semibold">
+          <Link className="hover:text-[#FBAF43]" href="/#about">About Us</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#projects">Our Projects</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#why">Why Uza?</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#news">News</Link>
         </div>
 
         {/* Mobile Menu Toggle + Sign In */}
         <div className="flex items-center space-x-4 md:space-x-0">
           <button
+            ref={mobileMenuToggleRef} // Attach the ref here
             className="md:hidden"
             onClick={() => setShowMobileMenu(!showMobileMenu)}
             aria-label="Toggle menu"
+            aria-expanded={showMobileMenu ? 'true' : 'false'}
           >
             {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -70,12 +93,27 @@ export default function Hero() {
 
       {/* Mobile Navigation Items */}
       {showMobileMenu && (
-        <div className="md:hidden bg-[#213348] text-white flex flex-col items-start px-6 py-4 space-y-4 absolute top-[80px] left-0 w-full z-40">
-          <Link href="/about" onClick={() => setShowMobileMenu(false)}>About us</Link>
-          <Link href="/how" onClick={() => setShowMobileMenu(false)}>How It Works</Link>
-          <Link href="/team" onClick={() => setShowMobileMenu(false)}>Our Team</Link>
-          <Link href="/tools" onClick={() => setShowMobileMenu(false)}>Tools</Link>
-        </div>
+        <>
+          {/* Overlay for outside clicks */}
+          <div
+            className="md:hidden fixed inset-0 bg-[#213348] bg-opacity-75 z-40"
+            onClick={() => setShowMobileMenu(false)} // Close menu when clicking outside
+          />
+
+          <motion.div
+            ref={mobileMenuRef}
+            className="flex flex-col items-start px-6 py-4 space-y-4 absolute top-[80px] left-0 w-full z-50 bg-[#213348] text-white"
+            initial={{ opacity: 0, x: -200 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -200 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+          >
+            <Link href="/#about" onClick={() => setShowMobileMenu(false)}>About Us</Link>
+            <Link href="/#projects" onClick={() => setShowMobileMenu(false)}>Our Projects</Link>
+            <Link href="/#why" onClick={() => setShowMobileMenu(false)}>Why Uza?</Link>
+            <Link href="/news" onClick={() => setShowMobileMenu(false)}>News</Link>
+          </motion.div>
+        </>
       )}
 
       {/* Hero Content */}

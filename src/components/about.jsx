@@ -4,8 +4,7 @@ import { Globe, Target } from 'lucide-react'
 
 export default function AboutUs() {
   return (
-    <section className="py-20 px-6 bg-gray-50">
-
+    <section id="about" className="py-20 px-6 bg-gray-50">
       {/* ---------- MOBILE STACKED LAYOUT ---------- */}
       <div className="max-w-7xl mx-auto block lg:hidden space-y-12">
         {/* About */}

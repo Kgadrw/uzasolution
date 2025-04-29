@@ -21,7 +21,7 @@ export default function ImageWithTextSection() {
   ];
 
   return (
-    <section className="py-20 bg-[#f4f4f4]">
+    <section id="news" className="py-20 bg-[#f4f4f4]">
       <div className="container mx-auto text-center px-4 sm:px-8"> {/* Added padding for mobile */}
         <h2 className="text-3xl font-bold text-[#213348] mb-8 font-[Poppins]">Latest News</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-center">

@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 export default function AboutUs() {
   return (
-    <section className="py-16 px-6 bg-gray-50">
+    <section id="why" className="py-16 px-6 bg-gray-50">
       {/* Why Choose Us */}
       <div className="max-w-7xl mx-auto text-center mb-12">
         <h3 className="text-2xl font-semibold font-[Montserrat] text-gray-900 mb-6">Why Choose Us?</h3>

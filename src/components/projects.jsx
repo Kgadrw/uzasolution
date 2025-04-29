@@ -134,7 +134,7 @@ export default function UzabulkSlider() {
   }, [])
 
   return (
-    <div className="overflow-hidden relative h-screen w-full">
+    <div id="projects" className="overflow-hidden relative h-screen w-full">
       <div
         className="flex transition-transform duration-700 ease-in-out h-full"
         style={{ transform: `translateX(-${activeIndex * 100}%)` }}
