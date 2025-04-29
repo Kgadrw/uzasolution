@@ -6,7 +6,6 @@ import Profiles from '../components/Profiles'
 import Footer from '../components/footer'
 import Info from '../components/info'
 import News from '../components/news'
-import '../app/globals.css'
 
 import React from 'react'
 
