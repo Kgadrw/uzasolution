@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 
+
 export default function Hero() {
   const [isFixed, setIsFixed] = useState(false)
   const [showNav, setShowNav] = useState(true)
