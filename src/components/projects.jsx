@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { Globe, Repeat, TrendingUp, ShieldCheck } from 'lucide-react'
 
@@ -120,7 +120,10 @@ const slides = [
 export default function UzabulkSlider() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [animateContent, setAnimateContent] = useState(true)
+  const [startTouch, setStartTouch] = useState(0)  // Track touch start position
+  const sliderRef = useRef(null)
 
+  // Automatically change slide every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       setAnimateContent(false)
@@ -133,11 +136,36 @@ export default function UzabulkSlider() {
     return () => clearInterval(interval)
   }, [])
 
+  // Handle touch start to track position for swiping
+  const handleTouchStart = (e) => {
+    const touchStart = e.touches[0].clientX
+    setStartTouch(touchStart)
+  }
+
+  // Handle touch end to detect swipe direction
+  const handleTouchEnd = (e) => {
+    const touchEnd = e.changedTouches[0].clientX
+    const diff = startTouch - touchEnd
+    if (Math.abs(diff) > 50) {
+      // Swipe right to left (next slide)
+      if (diff > 0) {
+        setActiveIndex((prev) => (prev + 1) % slides.length)
+      }
+      // Swipe left to right (previous slide)
+      else if (diff < 0) {
+        setActiveIndex((prev) => (prev - 1 + slides.length) % slides.length)
+      }
+    }
+  }
+
   return (
     <div id="projects" className="overflow-hidden relative h-screen w-full">
       <div
+        ref={sliderRef}
         className="flex transition-transform duration-700 ease-in-out h-full"
         style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+        onTouchStart={handleTouchStart}  // Add touchstart event
+        onTouchEnd={handleTouchEnd}      // Add touchend event
       >
         {slides.map((slide, idx) => (
           <section
