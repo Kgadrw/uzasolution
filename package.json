@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sanity/client": "^7.0.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.86.1",
     "framer-motion": "^12.9.2",
@@ -28,5 +29,11 @@
     "eslint-config-next": "15.3.1",
     "nodemon": "^3.1.10",
     "tailwindcss": "^4"
-  }
+  },
+  
+    "compilerOptions": {
+      "baseUrl": "src"
+    }
+  
+  
 }

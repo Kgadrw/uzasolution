@@ -3,13 +3,25 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
+import client from '../sanityClient'
 
 export default function Hero() {
+  const [heroData, setHeroData] = useState({})
   const [isFixed, setIsFixed] = useState(false)
   const [showNav, setShowNav] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const mobileMenuRef = useRef(null)
+
+  // Fetch Hero data from Sanity
+  useEffect(() => {
+    const fetchHero = async () => {
+      const query = `*[_type == "hero"][0]`
+      const data = await client.fetch(query)
+      setHeroData(data)
+    }
+    fetchHero()
+  }, [])
 
   // Scroll behavior
   useEffect(() => {
@@ -50,7 +62,6 @@ export default function Hero() {
 
   const navBaseClasses =
     'top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-between items-center font-[Roboto] text-white transition-all duration-300'
-
   const navPositionClass = isFixed
     ? `fixed ${showNav || showMobileMenu ? 'translate-y-0' : '-translate-y-full'} bg-[#213348]`
     : 'absolute bg-transparent'
@@ -61,7 +72,11 @@ export default function Hero() {
       <nav className={`${navBaseClasses} ${navPositionClass}`}>
         <div className="text-xl font-bold">
           <Link href="/">
-            <img src="/logo.png" alt="Logo" className="h-10 w-20 md:h-12 md:w-24" />
+            <img
+              src={heroData.logo?.asset?.url || '/logo.png'}
+              alt="Logo"
+              className="h-10 w-20 md:h-12 md:w-24"
+            />
           </Link>
         </div>
 
@@ -82,8 +97,7 @@ export default function Hero() {
           >
             {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
-
-          <Link href="https://www.uzabulk.com/auth/login">
+          <Link href={heroData.signInLink || 'https://www.uzabulk.com/auth/login'}>
             <button className="bg-[#FBAF43] text-white px-4 py-2 rounded-md font-medium text-sm md:text-base">
               Sign In
             </button>
@@ -118,9 +132,13 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
             >
-              <span className='text-white'>Connecting </span>
-              African Manufacturers <span className='text-white'>to Global </span>
-              Markets
+              {heroData.heroTitle || (
+                <>
+                  <span className='text-white'>Connecting </span>
+                  African Manufacturers <span className='text-white'>to Global </span>
+                  Markets
+                </>
+              )}
             </motion.h1>
 
             <motion.p
@@ -129,7 +147,7 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 2, delay: 0.5 }}
             >
-              Uza Solutions Ltd connects African manufacturers with global markets, simplifying cross-border trade. Our platform offers direct access to raw materials and products, cutting costs by eliminating middlemen and ensuring competitive prices and reliable logistics.
+              {heroData.heroDescription || `Uza Solutions Ltd connects African manufacturers with global markets, simplifying cross-border trade. Our platform offers direct access to raw materials and products, cutting costs by eliminating middlemen and ensuring competitive prices and reliable logistics.`}
             </motion.p>
 
             <motion.div
@@ -137,9 +155,9 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 2, delay: 1 }}
             >
-              <Link href="https://www.uzabulk.com/">
+              <Link href={heroData.primaryCtaLink || 'https://www.uzabulk.com/'}>
                 <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-base md:text-lg font-[Monospace]">
-                  Get Started
+                  {heroData.primaryCtaText || 'Get Started'}
                 </button>
               </Link>
             </motion.div>
@@ -150,7 +168,7 @@ export default function Hero() {
         <div
           className="w-full md:w-1/2 hidden md:block"
           style={{
-            backgroundImage: "url('/bg.jpg')",
+            backgroundImage: `url(${heroData.backgroundImage?.asset?.url || '/bg.jpg'})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             minHeight: '100vh',
