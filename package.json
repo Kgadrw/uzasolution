@@ -9,11 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@sanity/client": "^7.0.0",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.86.1",
     "framer-motion": "^12.9.2",
     "lucide-react": "^0.503.0",
-    "next": "15.3.1",
+    "next": "^15.3.1",
     "next-sanity": "^9.10.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -28,5 +29,11 @@
     "eslint-config-next": "15.3.1",
     "nodemon": "^3.1.10",
     "tailwindcss": "^4"
-  }
+  },
+  
+    "compilerOptions": {
+      "baseUrl": "src"
+    }
+  
+  
 }

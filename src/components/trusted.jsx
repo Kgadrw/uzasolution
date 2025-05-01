@@ -1,28 +1,42 @@
 'use client';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import client, { urlFor } from '../sanityClient';
+
 
 export default function TrustedCompanies() {
-  const logos = [
-    { src: '/alibaba.png', alt: 'Alibaba' },
-    { src: '/ebay.png', alt: 'eBay' },
-    { src: '/amazon.png', alt: 'Amazon' },
-  
-  ];
-
+  const [data, setData] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (logos.length > 6) {
-      setIsVisible(true);
+    async function fetchData() {
+      try {
+        const res = await client.fetch(`*[_type == "trustedCompanies"][0]{
+          sectionTitle,
+          isVisible,
+          companies[]{
+            altText,
+            logo
+          }
+        }`);
+        setData(res);
+        if (res?.companies?.length > 6) {
+          setIsVisible(true);
+        }
+      } catch (error) {
+        console.error('Error fetching trusted companies:', error);
+      }
     }
-  }, [logos]);
+
+    fetchData();
+  }, []);
+
+  if (!data || !Array.isArray(data.companies)) return null;
 
   return (
     <section className="py-16 px-4 bg-gray-50">
       <div className="max-w-6xl mx-auto text-center">
         <h3 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-8 font-[Montserrat]">
-          Our Trusted Partners
+          {data.sectionTitle || 'Our Trusted Partners'}
         </h3>
 
         <div
@@ -30,11 +44,11 @@ export default function TrustedCompanies() {
           style={{ whiteSpace: 'nowrap' }}
         >
           <div className={`flex ${isVisible ? 'w-max' : 'flex-wrap justify-center'} items-center gap-12`}>
-            {logos.map((logo, index) => (
+            {data.companies.map((company, index) => (
               <div key={index} className="flex-shrink-0">
-                <Image
-                  src={logo.src}
-                  alt={logo.alt}
+                <img
+                  src={urlFor(company.logo).url()}
+                  alt={company.altText}
                   width={160}
                   height={100}
                   className="mx-auto h-auto w-auto max-h-16 object-contain"

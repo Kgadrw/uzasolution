@@ -1,81 +1,77 @@
-'use client'
-import { Globe, ShieldCheck, Handshake } from 'lucide-react'; // Updated icons
-import Link from 'next/link'
+'use client';
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import client, { urlFor  } from '../sanityClient'; // Adjust path if needed
 
-export default function AboutUs() {
+export default function ImageWithTextSection() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const res = await client.fetch(`*[_type == "newsSection"][0]{
+          sectionTitle,
+          newsArticles[]{
+            title,
+            description,
+            image,
+            link
+          }
+        }`);
+        setData(res);
+      } catch (error) {
+        console.error("Failed to fetch news section:", error);
+      }
+    }
+
+    fetchNews();
+  }, []);
+
+  if (!data || !Array.isArray(data.newsArticles)) return null;
+
   return (
-    <section id="why" className="py-16 px-6 bg-gray-50">
-      {/* Why Choose Us */}
-      <div className="max-w-7xl mx-auto text-center mb-12">
-        <h3 className="text-2xl font-semibold font-[Montserrat] text-gray-900 mb-6">Why Choose Us?</h3>
-        <p className="text-base text-gray-600 mb-8 font-[Monospace]">
-          We’re reshaping African trade with tech-powered transparency, global partnerships, and Pan-African presence.
-        </p>
+    <section id="news" className="py-20 bg-[#f4f4f4]">
+      <div className="container mx-auto text-center px-4 sm:px-8">
+        <h2 className="text-3xl font-bold text-[#213348] mb-8 font-[Poppins]">
+          {data.sectionTitle || 'Latest News'}
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-center">
+          {data.newsArticles.map((item, index) => (
+            <motion.div
+              key={index}
+              className="relative bg-white shadow-lg overflow-hidden group"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: index * 0.2 }}
+            >
+              <Link href={item.link} passHref className="relative block">
+                <div className="absolute top-4 left-4 bg-[#FBAF43] text-white text-xs font-bold px-3 py-1 rounded-md z-10">
+                  News
+                </div>
 
-        {/* Cards Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Card 1 */}
-          <div className="bg-white p-6 rounded-lg">
-            <div className="mb-4 text-[#FBAF43]">
-              <Globe size={30} />
-            </div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-3 font-[Montserrat]">Pan-African & Global Reach</h4>
-            <p className="text-sm text-gray-600 font-[Montserrat]">
-              Offices in Rwanda, Uganda, and Hong Kong ensure a strong presence from Africa to Asia.
-            </p>
-          </div>
+                <div className="w-full h-64 sm:h-80 relative">
+                  <img
+                    src={urlFor(item.image).url()}
+                    alt={item.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
-          {/* Card 2 */}
-          <div className="bg-white p-6 rounded-lg">
-            <div className="mb-4 text-[#FBAF43]">
-              <ShieldCheck size={30} />
-            </div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-3 font-[Montserrat]">Tech-Driven Trust</h4>
-            <p className="text-sm text-gray-600 font-[Montserrat]">
-              We use blockchain to bring unmatched transparency to the supply chain.
-            </p>
-          </div>
+                <div className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-50"></div>
 
-          {/* Card 3 */}
-          <div className="bg-white p-6 rounded-lg">
-            <div className="mb-4 text-[#FBAF43]">
-              <Handshake size={30} />
-            </div>
-            <h4 className="text-lg font-semibold text-gray-800 mb-3 font-[Montserrat]">Partnerships That Matter</h4>
-            <p className="text-sm text-gray-600 font-[Montserrat]">
-              Collaborating with Alibaba, Maersk, and key African trade alliances to open global doors.
-            </p>
-          </div>
-        </div>
-      </div>
+                <div className="absolute bottom-4 left-4 text-white font-[Poppins] group-hover:opacity-0 transition-opacity duration-300 z-20">
+                  <h3 className="text-sm font-semibold">{item.title}</h3>
+                </div>
 
-      {/* Make Money with UZA */}
-      <div className="max-w-7xl mx-auto mt-16 bg-white border border-gray-200 p-6 rounded-lg">
-        <h3 className="text-2xl font-semibold font-[Montserrat] text-gray-900 text-center mb-6">
-          Make Money with UZA
-        </h3>
-        <p className="text-base text-gray-600 font-[Montserrat] mb-4 text-center">
-          Our Affiliate Program offers a straightforward way to earn commission from your referrals.
-          Use the calculator below to estimate your potential earnings. Affiliates receive a commission on every sale generated through their unique link.
-        </p>
-
-        {/* Calculator Placeholder */}
-        <div className="text-center mb-6">
-          <p className="text-lg text-gray-500 font-[Montserrat]">
-            Coming Soon!
-          </p>
-        </div>
-
-        {/* Call to Action Button */}
-        <div className="text-center">
-          <Link
-            href="/affiliate"
-            className="inline-block bg-[#FBAF43] hover:bg-[#e59e3b] text-white text-base font-medium font-[Montserrat] py-2 px-5 rounded-md transition"
-          >
-            Join the Affiliate Program
-          </Link>
+                <div className="absolute bottom-4 left-4 text-white font-[Poppins] opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 transition-all duration-300 z-20">
+                  <p className="text-xs">{item.description}</p>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
