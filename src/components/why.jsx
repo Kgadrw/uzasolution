@@ -1,77 +1,74 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
-import client, { urlFor  } from '../sanityClient'; // Adjust path if needed
+'use client'
 
-export default function ImageWithTextSection() {
-  const [data, setData] = useState(null);
+import { useEffect, useState } from 'react'
+import { Globe, ShieldCheck, Handshake } from 'lucide-react'
+import Link from 'next/link'
+import Client from '../sanityClient' // Adjust path if needed
+
+const iconMap = {
+  Globe: <Globe size={30} />,
+  ShieldCheck: <ShieldCheck size={30} />,
+  Handshake: <Handshake size={30} />,
+}
+
+export default function AboutUs() {
+  const [data, setData] = useState(null)
 
   useEffect(() => {
-    async function fetchNews() {
-      try {
-        const res = await client.fetch(`*[_type == "newsSection"][0]{
-          sectionTitle,
-          newsArticles[]{
-            title,
-            description,
-            image,
-            link
-          }
-        }`);
-        setData(res);
-      } catch (error) {
-        console.error("Failed to fetch news section:", error);
-      }
+    const fetchData = async () => {
+      const result = await Client.fetch(`*[_type == "aboutUs"][0]`)
+      setData(result)
     }
+    fetchData()
+  }, [])
 
-    fetchNews();
-  }, []);
-
-  if (!data || !Array.isArray(data.newsArticles)) return null;
+  if (!data) return <p className="text-center my-10">Loading...</p>
 
   return (
-    <section id="news" className="py-20 bg-[#f4f4f4]">
-      <div className="container mx-auto text-center px-4 sm:px-8">
-        <h2 className="text-3xl font-bold text-[#213348] mb-8 font-[Poppins]">
-          {data.sectionTitle || 'Latest News'}
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 justify-center">
-          {data.newsArticles.map((item, index) => (
-            <motion.div
-              key={index}
-              className="relative bg-white shadow-lg overflow-hidden group"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: index * 0.2 }}
-            >
-              <Link href={item.link} passHref className="relative block">
-                <div className="absolute top-4 left-4 bg-[#FBAF43] text-white text-xs font-bold px-3 py-1 rounded-md z-10">
-                  News
-                </div>
+    <section id="why" className="py-16 px-6 bg-gray-50">
+      {/* Why Choose Us */}
+      <div className="max-w-7xl mx-auto text-center mb-12">
+        <h3 className="text-2xl font-semibold font-[Montserrat] text-gray-900 mb-6">{data.sectionTitle}</h3>
+        <p className="text-base text-gray-600 mb-8 font-[Monospace]">{data.sectionDescription}</p>
 
-                <div className="w-full h-64 sm:h-80 relative">
-                  <img
-                    src={urlFor(item.image).url()}
-                    alt={item.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                <div className="absolute top-0 left-0 right-0 bottom-0 bg-black opacity-50"></div>
-
-                <div className="absolute bottom-4 left-4 text-white font-[Poppins] group-hover:opacity-0 transition-opacity duration-300 z-20">
-                  <h3 className="text-sm font-semibold">{item.title}</h3>
-                </div>
-
-                <div className="absolute bottom-4 left-4 text-white font-[Poppins] opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 transition-all duration-300 z-20">
-                  <p className="text-xs">{item.description}</p>
-                </div>
-              </Link>
-            </motion.div>
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {data.cards?.map((card, index) => (
+            <div key={index} className="bg-white p-6 rounded-lg">
+              <div className="mb-4 text-[#FBAF43]">
+                {iconMap[card.cardIcon] || <Globe size={30} />}
+              </div>
+              <h4 className="text-lg font-semibold text-gray-800 mb-3 font-[Montserrat]">{card.cardTitle}</h4>
+              <p className="text-sm text-gray-600 font-[Montserrat]">{card.cardDescription}</p>
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Affiliate Program */}
+      <div className="max-w-7xl mx-auto mt-16 bg-white border border-gray-200 p-6 rounded-lg">
+        <h3 className="text-2xl font-semibold font-[Montserrat] text-gray-900 text-center mb-6">
+          {data.affiliateSectionTitle}
+        </h3>
+        <p className="text-base text-gray-600 font-[Montserrat] mb-4 text-center">
+          {data.affiliateSectionDescription}
+        </p>
+
+        {/* Placeholder for Calculator */}
+        <div className="text-center mb-6">
+          <p className="text-lg text-gray-500 font-[Montserrat]">Coming Soon!</p>
+        </div>
+
+        {/* CTA Button */}
+        <div className="text-center">
+          <Link
+            href={data.affiliateCtaLink}
+            className="inline-block bg-[#FBAF43] hover:bg-[#e59e3b] text-white text-base font-medium font-[Montserrat] py-2 px-5 rounded-md transition"
+          >
+            {data.affiliateCtaText}
+          </Link>
+        </div>
+      </div>
     </section>
-  );
+  )
 }
