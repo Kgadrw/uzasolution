@@ -56,7 +56,7 @@ export default function AboutUs() {
             <Globe size={20} className="text-[#FBAF43]" />
             {data.overviewTitle}
           </h4>
-          <p className="text-base text-gray-600 font-[Monospace] text-center">
+          <p className="text-base text-gray-600 font-[Montserrat] text-center">
             {data.overviewText}
           </p>
         </div>
@@ -66,7 +66,7 @@ export default function AboutUs() {
             <Target size={20} className="text-[#FBAF43]" />
             {data.missionTitle}
           </h4>
-          <p className="text-base text-gray-600 font-[Monospace] text-center">
+          <p className="text-base text-gray-600 font-[Montserrat] text-center">
             {data.missionText}
           </p>
         </div>
