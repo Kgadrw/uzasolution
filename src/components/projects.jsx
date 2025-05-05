@@ -23,7 +23,7 @@ export default function UzabulkSlider() {
     const fetchData = async () => {
       try {
         const data = await Client.fetch(
-          `*[_type == "uzabulkSlider"][0].slides[]{
+          `*[_type == "uzabulkSlider"][0].slides[] {
             title,
             subtitle,
             description,
@@ -42,7 +42,7 @@ export default function UzabulkSlider() {
         setSlides(data || [])
       } catch (err) {
         console.error('Sanity fetch error:', err)
-        setSlides([]) // fallback
+        setSlides([])
       }
     }
 
@@ -77,7 +77,8 @@ export default function UzabulkSlider() {
     }
   }
 
-  if (slides.length === 0) return <p className="text-center mt-10">Loading...</p>
+  if (slides.length === 0)
+    return <p className="text-center mt-10">Loading...</p>
 
   return (
     <div id="projects" className="overflow-hidden relative h-screen w-full">
@@ -100,7 +101,9 @@ export default function UzabulkSlider() {
             <div className="relative z-10 max-w-2xl mx-auto text-center space-y-6">
               <div
                 className={`transition-opacity duration-500 ${
-                  idx === activeIndex && animateContent ? 'animate-fade-slide' : 'opacity-0'
+                  idx === activeIndex && animateContent
+                    ? 'animate-fade-slide'
+                    : 'opacity-0'
                 }`}
               >
                 <h1
@@ -115,7 +118,9 @@ export default function UzabulkSlider() {
                 >
                   {slide.subtitle}
                 </p>
-                <p className="text-sm sm:text-base font-[Montserrat]">{slide.description}</p>
+                <p className="text-sm sm:text-base font-[Montserrat]">
+                  {slide.description}
+                </p>
               </div>
 
               <div className="grid gap-6 sm:grid-cols-2 text-left justify-center">
@@ -140,14 +145,17 @@ export default function UzabulkSlider() {
                 >
                   {slide.quote}
                 </p>
-                <Link href={slide.buttonLink} target="_blank">
-                  <button
-                    className="px-5 py-2 text-sm sm:text-base rounded-full font-[Montserrat] shadow-lg text-white hover:scale-105 transition-transform duration-300"
-                    style={{ backgroundColor: slide.themeColor }}
-                  >
-                    {slide.buttonText}
-                  </button>
-                </Link>
+
+                {slide.buttonLink && (
+                  <Link href={slide.buttonLink} target="_blank">
+                    <button
+                      className="px-5 py-2 text-sm sm:text-base rounded-full font-[Montserrat] shadow-lg text-white hover:scale-105 transition-transform duration-300"
+                      style={{ backgroundColor: slide.themeColor }}
+                    >
+                      {slide.buttonText}
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           </section>
