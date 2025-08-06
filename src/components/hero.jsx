@@ -61,7 +61,7 @@ export default function Hero() {
   }, [showMobileMenu])
 
   const navBaseClasses =
-    'top-0 left-0 right-0 z-50 px-8 md:px-16 lg:px-24 py-6 flex justify-between items-center font-[Roboto] text-white transition-all duration-300'
+    'top-0 left-0 right-0 z-50 px-8 md:px-16 lg:px-24 py-6 flex justify-between items-center font-sans text-white transition-all duration-300'
   const navPositionClass = isFixed
     ? `fixed ${showNav || showMobileMenu ? 'translate-y-0' : '-translate-y-full'} bg-[#213348]`
     : 'absolute bg-transparent'
@@ -81,7 +81,7 @@ export default function Hero() {
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-12 items-center text-lg font-semibold">
+        <div className="hidden md:flex space-x-12 items-center text-lg font-semibold font-sans">
           <Link className="hover:text-[#FBAF43]" href="/">Home</Link>
           <Link className="hover:text-[#FBAF43]" href="/#about">About</Link>
           <Link className="hover:text-[#FBAF43]" href="/#solutions">Solutions</Link>
@@ -144,18 +144,12 @@ export default function Hero() {
           
           <div className="w-full max-w-lg text-left space-y-8 font-sans">
             <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#FBAF43] font-sans"
+              className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white font-sans"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
             >
-              {heroData.heroTitle || (
-                <>
-                  <span className='text-white'>Connecting </span>
-                  African Manufacturers <span className='text-white'>to Global </span>
-                  Markets
-                </>
-              )}
+              Africa’s Gateway to <span className="text-[#FBAF43]">Global Trade</span>
             </motion.h1>
 
             <motion.p
@@ -164,7 +158,7 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 2, delay: 0.5 }}
             >
-              {heroData.heroDescription || `Uza Solutions Ltd connects African manufacturers with global markets, simplifying cross-border trade. Our platform offers direct access to raw materials and products, cutting costs by eliminating middlemen and ensuring competitive prices and reliable logistics.`}
+              We empower African businesses with tech-driven solutions that simplify sourcing, logistics, and scaling globally.
             </motion.p>
 
             <motion.div
@@ -174,7 +168,7 @@ export default function Hero() {
             >
               <Link href={heroData.primaryCtaLink || 'https://www.uzabulk.com/'}>
                 <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-semibold text-base md:text-lg font-sans">
-                  {heroData.primaryCtaText || 'Get Started'}
+                  Learn More
                 </button>
               </Link>
             </motion.div>
