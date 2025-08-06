@@ -6,7 +6,7 @@ import Projects from '../components/projects'
 import Footer from '../components/footer'
 import Why from '../components/why'
 import News from '../components/news'
-import Make from '../components/Make'
+import Make from '../components/make'
 
 import React from 'react'
 
