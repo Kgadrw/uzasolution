@@ -6,6 +6,7 @@ import Projects from '../components/projects'
 import Footer from '../components/footer'
 import Why from '../components/why'
 import News from '../components/news'
+import Make from '../components/Make'
 
 import React from 'react'
 
@@ -17,6 +18,7 @@ const Page = () => {
       <Projects />
       <Why />
       <TrustedCo />
+      <Make />
       <News />
       <Footer />
     </div>
