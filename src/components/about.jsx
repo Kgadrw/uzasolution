@@ -1,155 +1,112 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import client, { urlFor } from '../sanityClient'
 import Link from 'next/link'
-import { Globe, Target } from 'lucide-react'
-
-// GROQ Query
-const aboutUsQuery = `
-  *[_type == "about"][0] {
-    title,
-    aboutText,
-    overviewTitle,
-    overviewText,
-    missionTitle,
-    missionText,
-    ctaTitle,
-    ctaText,
-    ctaLink,
-    image
-  }
-`
+import { ArrowRight, Package, Truck, ShoppingCart, Cloud } from 'lucide-react'
 
 export default function AboutUs() {
-  const [data, setData] = useState(null)
-
-  useEffect(() => {
-    client.fetch(aboutUsQuery).then(setData)
-  }, [])
-
-  if (!data) return null
+  const platforms = [
+    {
+      id: 1,
+      title: 'UZA Bulk',
+      description: 'Bulk sourcing platform for raw materials and commodities',
+      icon: Package,
+      image: '/1.jpg',
+      link: '#'
+    },
+    {
+      id: 2,
+      title: 'UZA Logistics',
+      description: 'End-to-end logistics and supply chain solutions',
+      icon: Truck,
+      image: '/2.jpg',
+      link: '#'
+    },
+    {
+      id: 3,
+      title: 'UZA Mall',
+      description: 'Digital marketplace for African businesses',
+      icon: ShoppingCart,
+      image: '/3.jpg',
+      link: '#'
+    },
+    {
+      id: 4,
+      title: 'UZA Cloud',
+      description: 'Cloud infrastructure and digital services',
+      icon: Cloud,
+      image: '/4.jpg',
+      link: '#'
+    }
+  ]
 
   return (
-    <section id="about" className="py-20 px-6 bg-gray-50">
-      {/* Mobile View */}
-      <div className="max-w-7xl mx-auto block lg:hidden space-y-12">
+    <section id="about" className="py-20 px-8 md:px-16 lg:px-24 bg-white">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+          {/* Left Side - Title */}
         <div>
-          <h3 className="text-2xl font-semibold text-gray-900 font-[Montserrat] mb-4 text-center">
-            {data.title?.split('UZA')[0]} <span className="text-[#FBAF43]">UZA Solutions</span>
-          </h3>
-          <p className="text-[1.075rem] text-gray-700 font-[Montserrat] leading-relaxed text-center">
-            {data.aboutText}
-          </p>
-
-          {data.image && (
-            <img
-              src={urlFor(data.image).url()}
-              alt="About Us"
-              className="mx-auto mt-6 w-60 h-auto rounded-md shadow"
-            />
-          )}
+            <div className="flex items-center mb-4">
+              <span className="w-1 h-5 bg-[#FBAF43] rounded mr-3"></span>
+              <p className="text-sm font-semibold text-[#FBAF43] uppercase tracking-wider">
+                Our Solutions
+              </p>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 font-[Montserrat] leading-tight">
+              Tech-Driven Platforms to Power Africa's Digital Trade Future
+            </h2>
         </div>
 
-        <div>
-          <h4 className="text-xl font-semibold text-gray-800 font-[Montserrat] mb-2 flex items-center justify-center gap-2 text-center">
-            <Globe size={20} className="text-[#FBAF43]" />
-            {data.overviewTitle}
-          </h4>
-          <p className="text-base text-gray-600 font-[Montserrat] text-center">
-            {data.overviewText}
-          </p>
-        </div>
-
-        <div>
-          <h4 className="text-xl font-semibold text-gray-800 font-[Monospace] mb-2 flex items-center justify-center gap-2 text-center">
-            <Target size={20} className="text-[#FBAF43]" />
-            {data.missionTitle}
-          </h4>
-          <p className="text-base text-gray-600 font-[Montserrat] text-center">
-            {data.missionText}
-          </p>
-        </div>
-
-        <div className="bg-white border border-gray-200 rounded-md p-6 shadow-sm text-center">
-          <h4 className="text-xl font-semibold text-gray-900 font-[Monospace] mb-1">
-            {data.ctaTitle}
-          </h4>
-          <p className="text-base text-gray-600 font-[Montserrat] mb-4">
-            {data.ctaText}
+          {/* Right Side - Description & Button */}
+          <div className="space-y-6">
+            <p className="text-lg text-gray-600 font-[Roboto] leading-relaxed">
+              UZA Solutions streamlines trade with platforms for sourcing, logistics, and cloud services, enabling business growth in the digital age.
           </p>
           <Link
-            href={data.ctaLink}
-            className="inline-block bg-[#FBAF43] hover:bg-[#e59e3b] text-white text-base font-medium font-[Montserrat] py-2.5 px-5 rounded-md transition"
+              href="#"
+              className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-white font-semibold px-6 py-3 rounded-md transition-colors duration-300 group"
           >
-            Partner with Us
+              Explore
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
         </div>
       </div>
 
-      {/* Desktop View */}
-      <div className="max-w-7xl mx-auto overflow-x-auto hidden lg:table">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-left">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="px-6 py-4 text-xl font-semibold text-gray-800 font-[Montserrat] text-left">
-                {data.title}
-              </th>
-              <th className="px-6 py-4 text-xl font-semibold text-gray-800 font-[Montserrat] text-center">
-                <div className="flex items-center justify-center gap-2">
-                  <Globe size={20} className="text-[#FBAF43]" />
-                  {data.overviewTitle}
-                </div>
-              </th>
-              <th className="px-6 py-4 text-xl font-semibold text-gray-800 font-[Montserrat] text-center">
-                <div className="flex items-center justify-center gap-2">
-                  <Target size={20} className="text-[#FBAF43]" />
-                  {data.missionTitle}
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="align-top">
-              <td className="px-6 py-6 text-gray-700 font-[Montserrat] text-[1.075rem] leading-relaxed">
-                {data.aboutText}
-                {data.image && (
-                  <img
-                    src={urlFor(data.image).url()}
-                    alt="About Us"
-                    className="mt-4 w-60 h-auto rounded-md shadow"
-                  />
-                )}
-              </td>
-              <td className="px-6 py-6 text-gray-600 font-[Montserrat] text-base">
-                {data.overviewText}
-              </td>
-              <td className="px-6 py-6 text-gray-600 font-[Montserrat] text-base">
-                {data.missionText}
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={3} className="px-6 py-6">
-                <div className="bg-white border border-gray-200 rounded-md p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div>
-                    <h4 className="text-xl font-semibold text-gray-900 font-[Montserrat] mb-1 text-left">
-                      {data.ctaTitle}
-                    </h4>
-                    <p className="text-base text-gray-600 font-[Montserrat] text-left">
-                      {data.ctaText}
-                    </p>
+                                   {/* Platform Cards Grid */}
+          <div className="grid grid-cols-4 gap-6">
+            {platforms.map((platform) => {
+              return (
+                <div
+                  key={platform.id}
+                  className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#FBAF43] transition-all duration-300 cursor-pointer relative"
+                >
+                                     {/* Platform Image */}
+                   <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={platform.image}
+                      alt={platform.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
-                  <Link
-                    href={data.ctaLink}
-                    className="inline-block bg-[#FBAF43] hover:bg-[#e59e3b] text-white text-base font-medium font-[Montserrat] py-2.5 px-5 rounded-md transition whitespace-nowrap"
-                  >
-                    Partner with Us
-                  </Link>
+
+                                     {/* Bottom Blurred Panel */}
+                   <div className="absolute bottom-0 left-0 w-full px-4 py-3 flex flex-col gap-2 backdrop-blur-[3px] bg-black/40 text-white z-10" style={{backdropFilter: 'blur(3px)'}}>
+                    <h3 className="text-lg font-bold font-[Montserrat] group-hover:text-[#FBAF43] transition-colors duration-300">
+                      {platform.title}
+                    </h3>
+                    <Link
+                      href={platform.link}
+                      className="inline-flex items-center gap-1 text-white font-semibold text-sm hover:text-[#FBAF43] transition-colors duration-300 group/link"
+                    >
+                      Learn More
+                      <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform duration-300" />
+                    </Link>
+                  </div>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              )
+            })}
+          </div>
       </div>
     </section>
   )

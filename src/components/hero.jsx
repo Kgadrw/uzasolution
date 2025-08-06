@@ -61,15 +61,15 @@ export default function Hero() {
   }, [showMobileMenu])
 
   const navBaseClasses =
-    'top-0 left-0 right-0 z-50 px-6 md:px-12 py-6 flex justify-between items-center font-[Roboto] text-white transition-all duration-300'
+    'top-0 left-0 right-0 z-50 px-8 md:px-16 lg:px-24 py-6 flex justify-between items-center font-[Roboto] text-white transition-all duration-300'
   const navPositionClass = isFixed
     ? `fixed ${showNav || showMobileMenu ? 'translate-y-0' : '-translate-y-full'} bg-[#213348]`
     : 'absolute bg-transparent'
 
   return (
-    <section className="relative flex flex-col md:flex-row w-full min-h-screen">
+    <section className="relative flex flex-col md:flex-row w-full min-h-screen font-sans">
       {/* Navbar */}
-      <nav className={`${navBaseClasses} ${navPositionClass}`}>
+      <nav className={`${navBaseClasses} ${navPositionClass} font-sans`}>
         <div className="text-xl font-bold">
           <Link href="/">
             <img
@@ -81,11 +81,12 @@ export default function Hero() {
         </div>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex space-x-20 items-center text-lg font-semibold">
-          <Link className="hover:text-[#FBAF43]" href="/#about">About Us</Link>
-          <Link className="hover:text-[#FBAF43]" href="/#projects">Our Projects</Link>
-          <Link className="hover:text-[#FBAF43]" href="/#why">Why Uza?</Link>
-          <Link className="hover:text-[#FBAF43]" href="/#news">News</Link>
+        <div className="hidden md:flex space-x-12 items-center text-lg font-semibold">
+          <Link className="hover:text-[#FBAF43]" href="/">Home</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#about">About</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#solutions">Solutions</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#news">News & Trends</Link>
+          <Link className="hover:text-[#FBAF43]" href="/#contact">Contact Us</Link>
         </div>
 
         {/* Mobile Menu Toggle + Sign In */}
@@ -119,15 +120,31 @@ export default function Hero() {
       )}
 
       {/* Hero Content */}
-      <div className="flex flex-col md:flex-row w-full">
-        {/* Left Side */}
+      <div className="relative w-full" style={{ minHeight: '100vh' }}>
+        {/* Background Image */}
         <div
-          className="w-full md:w-1/2 flex items-center justify-center bg-[#213348] text-white px-6 py-20 sm:py-28"
-          style={{ minHeight: '100vh' }}
-        >
-          <div className="w-full max-w-lg text-center md:text-left space-y-8 md:space-y-8">
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${heroData.backgroundImage?.asset?.url || '/hero.jpg'})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        ></div>
+        
+        {/* Gradient Overlay */}
+        <div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            background: 'linear-gradient(to right, #13212F 0%, #13212F00 100%)',
+          }}
+        ></div>
+        
+        {/* Content Overlay */}
+        <div className="relative z-10 flex items-center justify-start w-full h-full px-8 md:px-16 lg:px-24 py-20 sm:py-28">
+          
+          <div className="w-full max-w-lg text-left space-y-8 font-sans">
             <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl font-bold font-[Montserrat] text-[#FBAF43]"
+              className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#FBAF43] font-sans"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
@@ -142,7 +159,7 @@ export default function Hero() {
             </motion.h1>
 
             <motion.p
-              className="text-base sm:text-lg md:text-xl font-[Roboto]"
+              className="text-base sm:text-lg md:text-xl text-white font-sans"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2, delay: 0.5 }}
@@ -156,7 +173,7 @@ export default function Hero() {
               transition={{ duration: 2, delay: 1 }}
             >
               <Link href={heroData.primaryCtaLink || 'https://www.uzabulk.com/'}>
-                <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-medium text-base md:text-lg font-[Monospace]">
+                <button className="bg-[#FBAF43] text-white px-6 py-3 rounded-md font-semibold text-base md:text-lg font-sans">
                   {heroData.primaryCtaText || 'Get Started'}
                 </button>
               </Link>
@@ -164,16 +181,46 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right Side */}
-        <div
-          className="w-full md:w-1/2 hidden md:block"
-          style={{
-            backgroundImage: `url(${heroData.backgroundImage?.asset?.url || '/bg.jpg'})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            minHeight: '100vh',
-          }}
-        ></div>
+        {/* Bottom Navigation and Partner Logos */}
+        <div className="absolute bottom-8 left-8 z-20 text-white">
+          <div className="bg-black/20 backdrop-blur-sm p-4 flex items-center space-x-3">
+            <button className="text-white hover:text-[#FBAF43] transition-colors">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button className="text-white hover:text-[#FBAF43] transition-colors">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom Partner Logos */}
+        <div className="absolute bottom-8 right-8 z-20 text-white">
+          <div className="bg-black/20 backdrop-blur-sm p-6">
+            <div className="flex items-center space-x-4">
+              <div className="text-sm font-medium text-left max-w-xs">
+                Trusted by global giants and Entrepreneurs Across Africa
+              </div>
+              <div className="bg-white p-2 ">
+                <img 
+                  src="/alibaba.png" 
+                  alt="Alibaba" 
+                  className="h-10 md:h-12 opacity-80 hover:opacity-100 transition-opacity"
+                />
+              </div>
+              <div className="bg-white p-2 ">
+                <img 
+                  src="/maersk.png" 
+                  alt="Maersk" 
+                  className="h-10 md:h-12 opacity-80 hover:opacity-100 transition-opacity"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   )

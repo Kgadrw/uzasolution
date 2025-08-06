@@ -1,78 +1,29 @@
-'use client';
-import { useEffect, useState } from 'react';
-import client, { urlFor } from '../sanityClient';
+'use client'
 
+import React from 'react'
+import { ArrowRight } from 'lucide-react'
 
-export default function TrustedCompanies() {
-  const [data, setData] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await client.fetch(`*[_type == "trustedCompanies"][0]{
-          sectionTitle,
-          isVisible,
-          companies[]{
-            altText,
-            logo
-          }
-        }`);
-        setData(res);
-        if (res?.companies?.length > 6) {
-          setIsVisible(true);
-        }
-      } catch (error) {
-        console.error('Error fetching trusted companies:', error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  if (!data || !Array.isArray(data.companies)) return null;
-
+export default function WhySection() {
   return (
-    <section className="py-16 px-4 bg-gray-50">
-      <div className="max-w-6xl mx-auto text-center">
-        <h3 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-8 font-[Montserrat]">
-          {data.sectionTitle || 'Our Trusted Partners'}
-        </h3>
-
-        <div
-          className={`overflow-hidden relative ${isVisible ? 'animate-slide' : ''}`}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          <div className={`flex ${isVisible ? 'w-max' : 'flex-wrap justify-center'} items-center gap-12`}>
-            {data.companies.map((company, index) => (
-              <div key={index} className="flex-shrink-0">
-                <img
-                  src={urlFor(company.logo).url()}
-                  alt={company.altText}
-                  width={160}
-                  height={100}
-                  className="mx-auto h-auto w-auto max-h-16 object-contain"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+    <section
+      className="relative w-full h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden"
+      style={{ backgroundImage: 'url(/7.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-[#13212F]/80 z-0" />
+      {/* Centered Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center w-full px-4">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-4 drop-shadow-lg">
+          Let’s Build Africa’s Trade Future Together
+        </h1>
+        <p className="text-white text-sm md:text-base mb-8 max-w-xl">
+          Join us in revolutionizing trade for African businesses and creating global opportunities.
+        </p>
+        <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-[#13212F] font-semibold px-6 py-3 rounded-sm transition-all duration-300 group shadow-md hover:shadow-lg text-base">
+          Partner with us
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+        </button>
       </div>
-
-      <style jsx>{`
-        @keyframes slide {
-          0% {
-            transform: translateX(100%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-
-        .animate-slide > div {
-          animation: slide 60s linear infinite;
-        }
-      `}</style>
     </section>
-  );
+  )
 }
