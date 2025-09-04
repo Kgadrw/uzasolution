@@ -2,6 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'   // ✅ Import Next.js Image
 import { ArrowRight, Play } from 'lucide-react'
 
 export default function WhoAreWe() {
@@ -45,8 +46,8 @@ export default function WhoAreWe() {
               <span className="w-1 h-5 bg-[#FBAF43] rounded mr-3"></span>
               <p className="text-sm font-semibold text-[#FBAF43] uppercase tracking-wider">
                 Who Are We
-                </p>
-              </div>
+              </p>
+            </div>
 
             {/* Main Heading */}
             <h2 className="text-4xl md:text-5xl font-bold font-[Montserrat] leading-tight">
@@ -69,7 +70,7 @@ export default function WhoAreWe() {
               Learn More
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
-                    </div>
+          </div>
 
           {/* Right Side - Image Grid */}
           <div className="relative">
@@ -80,7 +81,7 @@ export default function WhoAreWe() {
                   <div key={i} className="w-2 h-2 bg-[#FBAF43] rounded-full"></div>
                 ))}
               </div>
-              </div>
+            </div>
 
             {/* Image Grid */}
             <div className="grid grid-cols-2 grid-rows-3 gap-4 h-96 md:h-[500px] relative z-10">
@@ -89,40 +90,42 @@ export default function WhoAreWe() {
                   key={image.id}
                   className={`group relative overflow-hidden rounded-lg hover:shadow-2xl transition-all duration-300 cursor-pointer ${image.className}`}
                 >
-                                     {image.hasVideo ? (
-                     <video
-                       src={image.videoSrc}
-                       alt={image.alt}
-                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                       autoPlay
-                       muted
-                       loop
-                       playsInline
-                     />
-                   ) : (
-                    <img
+                  {image.hasVideo ? (
+                    <video
+                      src={image.videoSrc}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata" // ✅ Prevents heavy load
+                    />
+                  ) : (
+                    <Image
                       src={image.src}
                       alt={image.alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      loading="lazy" // ✅ Lazy load
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
-                  
-                                     {/* Video Play Button Overlay */}
-                   {image.hasVideo && (
-                     <div className="absolute inset-0 flex items-center justify-center">
-                       <div className="bg-transparent rounded-full p-4 border-2 border-[#FBAF43] group-hover:scale-110 transition-transform duration-300">
-                         <Play className="w-6 h-6 text-[#FBAF43] ml-1" />
-                       </div>
-                     </div>
-                   )}
-                  
+
+                  {/* Video Play Button Overlay */}
+                  {image.hasVideo && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="bg-transparent rounded-full p-4 border-2 border-[#FBAF43] group-hover:scale-110 transition-transform duration-300">
+                        <Play className="w-6 h-6 text-[#FBAF43] ml-1" />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Hover Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
+                </div>
               ))}
             </div>
           </div>
-      </div>
+        </div>
       </div>
     </section>
   )

@@ -1,14 +1,13 @@
-'use client'
-import Hero from '../components/hero'
-import AboutUs from '../components/about'
-import TrustedCo from '../components/trusted'
-import Projects from '../components/projects'
-import Footer from '../components/footer'
-import Why from '../components/why'
-import News from '../components/news'
-import Make from '../components/make'
+import dynamic from 'next/dynamic'
 
-import React from 'react'
+const Hero = dynamic(() => import('../components/hero'))
+const AboutUs = dynamic(() => import('../components/about'))
+const Projects = dynamic(() => import('../components/projects'))
+const Why = dynamic(() => import('../components/why'))
+const TrustedCo = dynamic(() => import('../components/trusted'))
+const Make = dynamic(() => import('../components/make'))
+const News = dynamic(() => import('../components/news'))
+const Footer = dynamic(() => import('../components/footer'))
 
 const Page = () => {
   return (

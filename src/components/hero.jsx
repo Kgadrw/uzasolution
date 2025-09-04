@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'   // ✅ Import Next.js Image
 import { motion } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import client from '../sanityClient'
@@ -11,7 +12,7 @@ export default function Hero() {
   const [showNav, setShowNav] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const mobileMenuRef = useRef(null)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   // Fetch Hero data from Sanity
   useEffect(() => {
@@ -72,10 +73,12 @@ export default function Hero() {
       <nav className={`${navBaseClasses} ${navPositionClass} font-sans`}>
         <div className="text-xl font-bold">
           <Link href="/">
-            <img
+            <Image
               src={heroData.logo?.asset?.url || '/logo.png'}
               alt="Logo"
-              className="h-10 w-20 md:h-12 md:w-24"
+              width={96}
+              height={48}
+              priority={true} // ✅ Keep logo always loaded instantly
             />
           </Link>
         </div>
@@ -106,31 +109,17 @@ export default function Hero() {
         </div>
       </nav>
 
-      {/* Mobile Navigation Items */}
-      {showMobileMenu && (
-        <div
-          ref={mobileMenuRef}
-          className="md:hidden fixed top-[80px] left-0 w-full bg-[#213348] text-white z-40 px-6 py-4 flex flex-col items-start space-y-4"
-        >
-          <Link href="/#about" onClick={() => setShowMobileMenu(false)}>About Us</Link>
-          <Link href="/#projects" onClick={() => setShowMobileMenu(false)}>Our Projects</Link>
-          <Link href="/#why" onClick={() => setShowMobileMenu(false)}>Why Uza?</Link>
-          <Link href="/#news" onClick={() => setShowMobileMenu(false)}>News</Link>
-        </div>
-      )}
-
       {/* Hero Content */}
       <div className="relative w-full" style={{ minHeight: '100vh' }}>
         {/* Background Image */}
-        <div
-          className="absolute inset-0 w-full h-full"
-          style={{
-            backgroundImage: `url(${heroData.backgroundImage?.asset?.url || '/hero.jpg'})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        ></div>
-        
+        <Image
+          src={heroData.backgroundImage?.asset?.url || '/hero.jpg'}
+          alt="Hero Background"
+          fill
+          priority={false} // ✅ Lazy load background
+          className="object-cover"
+        />
+
         {/* Gradient Overlay */}
         <div
           className="absolute inset-0 w-full h-full"
@@ -138,10 +127,9 @@ export default function Hero() {
             background: 'linear-gradient(to right, #13212F 0%, #13212F00 100%)',
           }}
         ></div>
-        
+
         {/* Content Overlay */}
         <div className="relative z-10 flex items-center justify-start w-full h-full px-8 md:px-16 lg:px-24 py-20 sm:py-28">
-          
           <div className="w-full max-w-lg text-left space-y-8 font-sans">
             <motion.h1
               className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white font-sans"
@@ -175,23 +163,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Bottom Navigation and Partner Logos */}
-        <div className="absolute bottom-8 left-8 z-20 text-white">
-          <div className="bg-black/20 backdrop-blur-sm p-4 flex items-center space-x-3">
-            <button className="text-white hover:text-[#FBAF43] transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button className="text-white hover:text-[#FBAF43] transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Partner Logos */}
+        {/* Partner Logos */}
         <div className="absolute bottom-8 right-8 z-20 text-white">
           <div className="bg-black/20 backdrop-blur-sm p-6">
             <div className="flex items-center space-x-4">
@@ -199,16 +171,22 @@ export default function Hero() {
                 Trusted by global giants and Entrepreneurs Across Africa
               </div>
               <div className="bg-white p-2 ">
-                <img 
-                  src="/alibaba.png" 
-                  alt="Alibaba" 
+                <Image
+                  src="/alibaba.png"
+                  alt="Alibaba"
+                  width={100}
+                  height={40}
+                  loading="lazy" // ✅ Lazy load
                   className="h-10 md:h-12 opacity-80 hover:opacity-100 transition-opacity"
                 />
               </div>
               <div className="bg-white p-2 ">
-                <img 
-                  src="/maersk.png" 
-                  alt="Maersk" 
+                <Image
+                  src="/maersk.png"
+                  alt="Maersk"
+                  width={100}
+                  height={40}
+                  loading="lazy" // ✅ Lazy load
                   className="h-10 md:h-12 opacity-80 hover:opacity-100 transition-opacity"
                 />
               </div>
