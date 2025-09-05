@@ -1,52 +1,23 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'   // ✅ Import Next.js Image
-import { ArrowRight, Package, Truck, ShoppingCart, Cloud } from 'lucide-react'
+import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+
+const platforms = [
+  { id: 1, title: 'UZA Bulk', image: '/1.jpg', link: '#' },
+  { id: 2, title: 'UZA Logistics', image: '/2.jpg', link: '#' },
+  { id: 3, title: 'UZA Mall', image: '/3.jpg', link: '#' },
+  { id: 4, title: 'UZA Cloud', image: '/4.jpg', link: '#' },
+]
 
 export default function AboutUs() {
-  const platforms = [
-    {
-      id: 1,
-      title: 'UZA Bulk',
-      description: 'Bulk sourcing platform for raw materials and commodities',
-      icon: Package,
-      image: '/1.jpg',
-      link: '#'
-    },
-    {
-      id: 2,
-      title: 'UZA Logistics',
-      description: 'End-to-end logistics and supply chain solutions',
-      icon: Truck,
-      image: '/2.jpg',
-      link: '#'
-    },
-    {
-      id: 3,
-      title: 'UZA Mall',
-      description: 'Digital marketplace for African businesses',
-      icon: ShoppingCart,
-      image: '/3.jpg',
-      link: '#'
-    },
-    {
-      id: 4,
-      title: 'UZA Cloud',
-      description: 'Cloud infrastructure and digital services',
-      icon: Cloud,
-      image: '/4.jpg',
-      link: '#'
-    }
-  ]
-
   return (
-    <section id="about" className="py-20 px-8 md:px-16 lg:px-24 bg-white">
+    <section id="about" className="py-20 px-4 md:px-16 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white">
       <div className="max-w-7xl mx-auto">
-        {/* Header Section */}
+        {/* Header */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-          {/* Left Side - Title */}
           <div>
             <div className="flex items-center mb-4">
               <span className="w-1 h-5 bg-[#FBAF43] rounded mr-3"></span>
@@ -58,8 +29,6 @@ export default function AboutUs() {
               Tech-Driven Platforms to Power Africa's Digital Trade Future
             </h2>
           </div>
-
-          {/* Right Side - Description & Button */}
           <div className="space-y-6">
             <p className="text-lg text-gray-600 font-[Roboto] leading-relaxed">
               UZA Solutions streamlines trade with platforms for sourcing, logistics, and cloud services, enabling business growth in the digital age.
@@ -74,41 +43,56 @@ export default function AboutUs() {
           </div>
         </div>
 
-        {/* Platform Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {platforms.map((platform) => {
-            return (
-              <div
-                key={platform.id}
-                className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#FBAF43] transition-all duration-300 cursor-pointer relative"
-              >
-                {/* Platform Image */}
-                <div className="relative h-64 w-full overflow-hidden">
+        {/* Platform Images Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {platforms.map((platform) => (
+            <motion.div
+              key={platform.id}
+              className="relative group cursor-pointer"
+              whileHover="hover"
+              initial="rest"
+              animate="rest"
+              variants={{
+                rest: {},
+                hover: {},
+              }}
+            >
+              {/* Image */}
+              <div className="relative w-full h-64 overflow-hidden">
+                <motion.div
+                  className="w-full h-full"
+                  whileHover={{ filter: 'brightness(1.2)' }}
+                  transition={{ duration: 0.5 }}
+                >
                   <Image
                     src={platform.image}
                     alt={platform.title}
                     fill
-                    loading="lazy" // ✅ Lazy load
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover w-full h-full"
                   />
-                </div>
-
-                {/* Bottom Blurred Panel */}
-                <div className="absolute bottom-0 left-0 w-full px-4 py-3 flex flex-col gap-2 backdrop-blur-[3px] bg-black/40 text-white z-10">
-                  <h3 className="text-lg font-bold font-[Montserrat] group-hover:text-[#FBAF43] transition-colors duration-300">
-                    {platform.title}
-                  </h3>
-                  <Link
-                    href={platform.link}
-                    className="inline-flex items-center gap-1 text-white font-semibold text-sm hover:text-[#FBAF43] transition-colors duration-300 group/link"
-                  >
-                    Learn More
-                    <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform duration-300" />
-                  </Link>
-                </div>
+                </motion.div>
               </div>
-            )
-          })}
+
+              {/* Texts Below Image */}
+              <motion.div
+                className="mt-3 text-center flex flex-col gap-2"
+                variants={{
+                  rest: { opacity: 1, y: 0 },
+                  hover: { opacity: 1, y: -5 },
+                }}
+                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              >
+                <h3 className="text-lg font-bold font-[Montserrat]">{platform.title}</h3>
+                <Link
+                  href={platform.link}
+                  className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm hover:text-[#e59e3b] transition-colors duration-300"
+                >
+                  Learn More
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </motion.div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
