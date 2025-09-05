@@ -2,17 +2,41 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
+import { Menu, X } from 'lucide-react'
 import client from '../sanityClient'
 
 export default function Hero() {
   const [heroData, setHeroData] = useState({})
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [nextIndex, setNextIndex] = useState(null)
   const [isFixed, setIsFixed] = useState(false)
   const [showNav, setShowNav] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const mobileMenuRef = useRef(null)
+
+  // Hero slides data
+  const slides = [
+    {
+      image: '/hero.jpg',
+      title: 'Africa’s Gateway to Global Trade',
+      description: 'We empower African businesses with tech-driven solutions that simplify sourcing, logistics, and scaling globally.',
+      cta: 'Get Started'
+    },
+    {
+      image: '/hero2.jpg',
+      title: 'Empowering Women Entrepreneurs',
+      description: 'A woman trader ordering goods remotely via smartphone and receiving them directly in her stock, streamlining her business operations.',
+      cta: 'Start Selling'
+    },
+    {
+      image: '/hero3.jpg',
+      title: 'Supporting Men in Business',
+      description: 'A male entrepreneur managing his inventory efficiently with tech solutions, ensuring smooth supply and faster growth.',
+      cta: 'Grow Your Business'
+    }
+  ]
 
   // Fetch Hero data
   useEffect(() => {
@@ -23,6 +47,26 @@ export default function Hero() {
     }
     fetchHero()
   }, [])
+
+  // Background slider with text
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const nextIdx = (currentIndex + 1) % slides.length
+      setNextIndex(nextIdx)
+    }, 3000) // switch every 3 seconds
+    return () => clearInterval(interval)
+  }, [currentIndex])
+
+  // Update currentIndex after slide
+  useEffect(() => {
+    if (nextIndex !== null) {
+      const timeout = setTimeout(() => {
+        setCurrentIndex(nextIndex)
+        setNextIndex(null)
+      }, 1000) // duration of slide animation
+      return () => clearTimeout(timeout)
+    }
+  }, [nextIndex])
 
   // Scroll behavior
   useEffect(() => {
@@ -53,6 +97,9 @@ export default function Hero() {
   const navPositionClass = isFixed
     ? `fixed ${showNav || showMobileMenu ? 'translate-y-0' : '-translate-y-full'} bg-[#213348]`
     : 'absolute bg-transparent'
+
+  const currentSlide = slides[currentIndex]
+  const nextSlide = nextIndex !== null ? slides[nextIndex] : null
 
   return (
     <section className="relative flex flex-col w-full min-h-screen font-sans">
@@ -88,62 +135,48 @@ export default function Hero() {
       </nav>
 
       {/* Hero Section */}
-      <div
-        className="relative w-full min-h-screen flex items-center px-8 md:px-16 lg:px-24 bg-fixed bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroData.backgroundImage?.asset?.url || '/hero.jpg'})` }}
-      >
+      <div className="relative w-full min-h-screen flex items-center px-8 md:px-16 lg:px-24 overflow-hidden">
+        {/* Current background */}
+        <motion.div
+          key={currentSlide.image}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${currentSlide.image})` }}
+        />
+
+        {/* Sliding next background */}
+        {nextSlide && (
+          <motion.div
+            key={nextSlide.image}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${nextSlide.image})` }}
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            transition={{ duration: 1, ease: 'easeInOut' }}
+          />
+        )}
+
         <div className="absolute inset-0 bg-gradient-to-r from-[#13212F] to-transparent"></div>
 
-        {/* Left Hero Content */}
+        {/* Hero Content */}
         <div className="relative z-10 max-w-lg text-left space-y-8">
-          <motion.h1
-            className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2 }}
-          >
-            Africa’s Gateway to <span className="text-[#FBAF43]">Global Trade</span>
-          </motion.h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white">
+            {currentSlide.title.split(' ').map((word, i) =>
+              word === 'Global' || word === 'Women' || word === 'Men' ? (
+                <span key={i} className="text-[#FBAF43]">{word} </span>
+              ) : (
+                word + ' '
+              )
+            )}
+          </h1>
 
-          <motion.p
-            className="text-base sm:text-lg md:text-xl text-white"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2, delay: 0.5 }}
-          >
-            We empower African businesses with tech-driven solutions that simplify
-            sourcing, logistics, and scaling globally.
-          </motion.p>
+          <p className="text-base sm:text-lg md:text-xl text-white">{currentSlide.description}</p>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 2, delay: 1 }}
-          >
-            <Link href={heroData.primaryCtaLink || 'https://www.uzabulk.com/'}>
-              <motion.button
-                className="relative px-8 py-3 font-semibold text-base md:text-lg rounded-full overflow-hidden text-white bg-[#FBAF43] shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-[#e59e3b]"
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                <motion.span
-                  className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FBAF43] via-[#FDE68A] to-[#F59E0B] opacity-40 blur-2xl pointer-events-none"
-                  animate={{
-                    x: ['-10%', '10%', '-10%'],
-                    y: ['-10%', '10%', '-10%'],
-                    rotate: [0, 45, -45, 0],
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, repeatType: 'loop', ease: 'easeInOut' }}
-                />
-                <span className="relative z-10">Get Started</span>
-              </motion.button>
-            </Link>
-          </motion.div>
+          <Link href={heroData.primaryCtaLink || '#'}>
+            <button className="relative px-8 py-3 font-semibold text-base md:text-lg rounded-full overflow-hidden text-white bg-[#FBAF43] shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-[#e59e3b]">
+              {currentSlide.cta}
+            </button>
+          </Link>
         </div>
-
-        {/* Right Mockup Image */}
-        {/* Right Mockup Image */}
-   
       </div>
     </section>
   )
