@@ -16,27 +16,20 @@ export default function Hero() {
   const [showMobileMenu, setShowMobileMenu] = useState(false)
   const mobileMenuRef = useRef(null)
 
-  // Hero slides data
+  // Hero slides (backgrounds only now)
   const slides = [
-    {
-      image: '/hero.jpg',
-      title: 'Africa’s Gateway to Global Trade',
-      description: 'We empower African businesses with tech-driven solutions that simplify sourcing, logistics, and scaling globally.',
-      cta: 'Get Started'
-    },
-    {
-      image: '/hero2.jpg',
-      title: 'Empowering Women Entrepreneurs',
-      description: 'A woman trader ordering goods remotely via smartphone and receiving them directly in her stock, streamlining her business operations.',
-      cta: 'Start Selling'
-    },
-    {
-      image: '/hero3.jpg',
-      title: 'Supporting Men in Business',
-      description: 'A male entrepreneur managing his inventory efficiently with tech solutions, ensuring smooth supply and faster growth.',
-      cta: 'Grow Your Business'
-    }
+    { image: '/hero.jpg' },
+    { image: '/hero2.jpg' },
+    { image: '/hero3.jpg' },
   ]
+
+  // Static text (only from first slide)
+  const heroText = {
+    title: "Africa’s Gateway to Global Trade",
+    description:
+      "We empower African businesses with tech-driven solutions that simplify sourcing, logistics, and scaling globally.",
+    cta: "Get Started",
+  }
 
   // Fetch Hero data
   useEffect(() => {
@@ -48,12 +41,12 @@ export default function Hero() {
     fetchHero()
   }, [])
 
-  // Background slider with text
+  // Background slider
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIdx = (currentIndex + 1) % slides.length
       setNextIndex(nextIdx)
-    }, 3000) // switch every 3 seconds
+    }, 3000) // switch every 3s
     return () => clearInterval(interval)
   }, [currentIndex])
 
@@ -84,7 +77,11 @@ export default function Hero() {
   // Close mobile menu on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showMobileMenu && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+      if (
+        showMobileMenu &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target)
+      ) {
         setShowMobileMenu(false)
       }
     }
@@ -119,16 +116,29 @@ export default function Hero() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex ml-auto space-x-8 items-center text-base font-semibold antialiased">
-          <Link className="hover:text-[#FBAF43]" href="/">Home</Link>
-          <Link className="hover:text-[#FBAF43]" href="/#about">About</Link>
-          <Link className="hover:text-[#FBAF43]" href="/portfolio">Portfolio</Link>
-          <Link className="hover:text-[#FBAF43]" href="/#news">News</Link>
-          <Link className="hover:text-[#FBAF43]" href="/#contact">Contact</Link>
+          <Link className="hover:text-[#FBAF43]" href="/">
+            Home
+          </Link>
+          <Link className="hover:text-[#FBAF43]" href="/#about">
+            About
+          </Link>
+          <Link className="hover:text-[#FBAF43]" href="/portfolio">
+            Portfolio
+          </Link>
+          <Link className="hover:text-[#FBAF43]" href="/#news">
+            News
+          </Link>
+          <Link className="hover:text-[#FBAF43]" href="/#contact">
+            Contact
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
         <div className="flex items-center md:hidden">
-          <button onClick={() => setShowMobileMenu(!showMobileMenu)} aria-label="Toggle menu">
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            aria-label="Toggle menu"
+          >
             {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -157,23 +167,22 @@ export default function Hero() {
 
         <div className="absolute inset-0 bg-gradient-to-r from-[#13212F] to-transparent"></div>
 
-        {/* Hero Content */}
+        {/* Fixed Hero Content (from first slide only) */}
         <div className="relative z-10 max-w-lg text-left space-y-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white">
-            {currentSlide.title.split(' ').map((word, i) =>
-              word === 'Global' || word === 'Women' || word === 'Men' ? (
-                <span key={i} className="text-[#FBAF43]">{word} </span>
-              ) : (
-                word + ' '
-              )
-            )}
+            <span className="text-[#FBAF43]">
+              {heroText.title.split(' ')[0]}{' '}
+            </span>
+            {heroText.title.split(' ').slice(1).join(' ')}
           </h1>
 
-          <p className="text-base sm:text-lg md:text-xl text-white">{currentSlide.description}</p>
+          <p className="text-base sm:text-lg md:text-xl text-white">
+            {heroText.description}
+          </p>
 
           <Link href={heroData.primaryCtaLink || '#'}>
             <button className="relative px-8 py-3 font-semibold text-base md:text-lg rounded-full overflow-hidden text-white bg-[#FBAF43] shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-[#e59e3b]">
-              {currentSlide.cta}
+              {heroText.cta}
             </button>
           </Link>
         </div>
