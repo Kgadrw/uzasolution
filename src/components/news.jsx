@@ -25,7 +25,7 @@ export default function InsightsSection() {
   return (
     <section className="py-16 px-6 md:px-12 lg:px-24 bg-white">
       <div className="max-w-7xl mx-auto">
-        {/* Title Block */}
+        {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-6">
           <div>
             <div className="flex items-center mb-2">
@@ -38,42 +38,29 @@ export default function InsightsSection() {
               News & Trends in Africa’s Trade Revolution
             </h2>
           </div>
-          <Link
-            href="#"
-            className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-[#213348] font-semibold px-6 py-3 rounded-md transition-all duration-300 group shadow-md hover:shadow-lg text-sm md:text-base whitespace-nowrap"
-          >
-            Read All Insights
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
         </div>
 
-        {/* Article Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Articles Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 flex flex-col group"
-            >
-              <div className="overflow-hidden">
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-6 flex flex-col flex-1">
-                <h3 className="text-lg font-bold text-[#213348] font-[Montserrat] mb-4 line-clamp-2">
-                  {article.title}
-                </h3>
-                <div className="mt-auto">
-                  <Link
-                    href={article.link}
-                    className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm hover:text-[#e59e3b] transition-colors duration-300 group/link"
-                  >
-                    Read More
-                    <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform duration-300" />
-                  </Link>
-                </div>
+            <div key={idx} className="relative group overflow-hidden rounded-lg border border-white/10 backdrop-blur-sm cursor-pointer">
+              {/* Image */}
+              <img
+                src={article.image}
+                alt={article.title}
+                className="w-full h-64 object-cover transition-all duration-500 group-hover:brightness-110"
+              />
+
+              {/* Overlay Text on Hover */}
+              <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 text-center px-4">
+                <h3 className="text-white font-bold text-lg mb-2">{article.title}</h3>
+                <Link
+                  href={article.link}
+                  className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm hover:text-[#e59e3b] transition-colors duration-300"
+                >
+                  Read More
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
+                </Link>
               </div>
             </div>
           ))}

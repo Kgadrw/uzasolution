@@ -1,24 +1,16 @@
 'use client'
 
 import React from 'react'
-import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 
 export default function WhySection() {
   return (
-    <section className="relative w-full h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden">
-      {/* Background Image with Next.js */}
-      <Image
-        src="/7.jpg"
-        alt="Africa trade collaboration"
-        fill
-        priority={false}
-        loading="lazy"
-        placeholder="blur"
-        blurDataURL="/7-blur.jpg" // optional low-res placeholder
-        className="object-cover object-center"
-      />
-
+    <section
+      className="relative w-full h-[60vh] min-h-[400px] flex items-center justify-center overflow-hidden bg-fixed bg-cover bg-center"
+      style={{
+        backgroundImage: `url('/7.jpg')`,
+      }}
+    >
       {/* Overlay */}
       <div className="absolute inset-0 bg-[#13212F]/80 z-0" />
 

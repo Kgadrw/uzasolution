@@ -25,7 +25,7 @@ export default function WhyChooseUZA() {
   ]
 
   return (
-    <section className="py-20 px-6 md:px-12 lg:px-24 bg-white">
+    <section className="py-20 px-6 md:px-12 lg:px-24 bg-[#F8FAFC]">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left: Image */}
         <div className="w-full flex justify-center items-stretch">

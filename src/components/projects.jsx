@@ -2,42 +2,29 @@
 
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'   // ✅ Import Next.js Image
+import Image from 'next/image'
 import { ArrowRight, Play } from 'lucide-react'
 
 export default function WhoAreWe() {
   const images = [
-    {
-      id: 1,
-      src: '/21.jpg',
-      alt: 'Businessman with a laptop',
-      className: 'col-span-1 row-span-1'
-    },
-    {
-      id: 2,
-      src: '/22.jpg',
-      alt: 'Two professionals discussing',
-      className: 'col-span-1 row-span-1'
-    },
-    {
-      id: 3,
-      src: '/23.jpg',
-      alt: 'Person behind transparent interface',
-      className: 'col-span-1 row-span-2 relative',
-      hasVideo: true,
-      videoSrc: '/24.mp4'
-    },
-    {
-      id: 4,
-      src: '/23.jpg',
-      alt: 'Pharmacist or warehouse worker smiling',
-      className: 'col-span-1 row-span-1'
-    }
+    { id: 1, src: '/21.jpg', alt: 'Businessman with a laptop', className: 'col-span-1 row-span-1' },
+    { id: 2, src: '/22.jpg', alt: 'Two professionals discussing', className: 'col-span-1 row-span-1' },
+    { id: 3, src: '/23.jpg', alt: 'Person behind transparent interface', className: 'col-span-1 row-span-2 relative', hasVideo: true, videoSrc: '/24.mp4' },
+    { id: 4, src: '/23.jpg', alt: 'Pharmacist or warehouse worker smiling', className: 'col-span-1 row-span-1' }
   ]
 
   return (
-    <section id="who-are-we" className="py-20 px-8 md:px-16 lg:px-24 bg-[#13212F] text-white">
-      <div className="max-w-7xl mx-auto">
+    <section
+      id="who-are-we"
+      className="relative py-20 px-8 md:px-16 lg:px-24 text-white bg-fixed bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/hero.jpg')", // Replace with your fixed hero image
+      }}
+    >
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-[#13212F]/80 z-0"></div>
+
+      <div className="relative max-w-7xl mx-auto z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Text Content */}
           <div className="space-y-8">
@@ -98,14 +85,14 @@ export default function WhoAreWe() {
                       muted
                       loop
                       playsInline
-                      preload="metadata" // ✅ Prevents heavy load
+                      preload="metadata"
                     />
                   ) : (
                     <Image
                       src={image.src}
                       alt={image.alt}
                       fill
-                      loading="lazy" // ✅ Lazy load
+                      loading="lazy"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
