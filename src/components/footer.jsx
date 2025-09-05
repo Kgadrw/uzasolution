@@ -7,7 +7,7 @@ import { FaFacebookF, FaXTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/
 
 export default function Footer() {
   return (
-    <footer className="bg-[#19283A] text-gray-200 pt-12 pb-6 px-6 md:px-12">
+    <footer className="bg-[#19283A] text-gray-200 pt-12 pb-6 px-6 md:px-12 antialiased">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Branding & Contact */}
         <div>
@@ -19,6 +19,19 @@ export default function Footer() {
           <div className="flex items-center text-sm">
             <FiPhone className="text-[#FBAF43] mr-2" />
             <span>+250788888888</span>
+          </div>
+
+          {/* Google Map Embed */}
+          <div className="mt-6 rounded-lg overflow-hidden shadow-lg">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m23!1m12!1m3!1d127600.74046948539!2d29.976706427443276!3d-1.943525891566445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!4m8!3e6!4m0!4m5!1s0x19dca5bad4fbd373%3A0xe9b0424afd612b26!2sKN%202%20St%2C%20Kigali!3m2!1d-1.9435278999999999!2d30.0591084!5e0!3m2!1sen!2srw!4v1757073774622!5m2!1sen!2srw"
+              width="100%"
+              height="200"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
           </div>
         </div>
 
@@ -74,5 +87,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }
