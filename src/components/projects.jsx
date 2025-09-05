@@ -37,13 +37,13 @@ export default function WhoAreWe() {
             </div>
 
             {/* Main Heading */}
-            <h2 className="text-4xl md:text-5xl font-bold font-[Montserrat] leading-tight">
+            <h2 className="text-4xl md:text-5xl font-bold font-[Montserrat] leading-tight antialiased">
               Your Trusted Partner in<br />
-              <span className="text-[#FBAF43]">Transforming Africa's Trade</span>
+              <span className="text-[#FBAF43] antialiased">Transforming Africa's Trade</span>
             </h2>
 
             {/* Paragraph */}
-            <p className="text-lg text-gray-300 font-[Roboto] leading-relaxed">
+            <p className="text-lg text-gray-300 font-[Roboto] leading-relaxed antialiased">
               At UZA Solutions, we are driving Africa's trade revolution with innovative, tech-driven platforms that connect businesses to global markets.
               <br /><br />
               Our mission is to empower African entrepreneurs and companies with seamless access to sourcing, logistics, and cloud services creating a future of streamlined trade and growth.
