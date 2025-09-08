@@ -32,34 +32,175 @@ export default function Portfolio() {
                 </a>
               </div>
             </div>
-          </div>
         </div>
+      </div>
 
         {/* Floating illustrations */}
         
-      </div>
+          </div>
 
-      {/* Stats strip */}
-      <div className="px-8 md:px-16 lg:px-24 -mt-12 relative z-10">
+      {/* Stats strip (directly below hero) */}
+      <div className="px-8  md:px-16 lg:px-24 -mt-12 relative z-10">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
             { icon: '/globe.svg', label: 'Global factories', value: '10K+' },
             { icon: '/truck.jpg', label: 'Shipments managed', value: '350+' },
             { icon: '/file.svg', label: 'SKUs sourced', value: '5k+' },
-          ].map((s) => (
-            <div key={s.label} className="bg-white/80 backdrop-blur rounded-xl shadow-lg border border-gray-200/50 p-5 flex items-center gap-4">
-              <div className="relative w-12 h-12 overflow-hidden rounded-md bg-[#F8FAFC]">
-                <Image src={s.icon} alt={s.label} fill className="object-cover" />
+          ].map((s, i) => {
+            const bgClasses = [
+              'bg-[#FFF7ED]', // soft orange
+              'bg-[#EAF5FF]', // soft blue
+              'bg-[#ECFDF3]', // soft green
+            ]
+            return (
+              <div
+                key={s.label}
+                className={`${bgClasses[i]} backdrop-blur rounded-xl shadow-lg border border-white/50 p-5 flex items-center gap-4`}
+              >
+                <div className="relative w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center overflow-hidden">
+                  <Image src={s.icon} alt={s.label} width={28} height={28} className="object-contain" />
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-[#213348]">{s.value}</p>
+                  <p className="text-sm text-[#213348]/80">{s.label}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-2xl font-bold text-[#213348]">{s.value}</p>
-                <p className="text-sm text-gray-600">{s.label}</p>
-              </div>
-            </div>
-          ))}
+            )
+          })}
+          </div>
+        </div>
+
+      {/* Info grid (compact cards like About) */}
+      <div className="py-12 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
+        <div className="flex items-center mb-6">
+          <span className="w-1.5 h-6 bg-[#FBAF43] rounded mr-3" />
+          <span className="text-xs font-bold uppercase tracking-widest text-[#FBAF43]">Company</span>
+          </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-[#213348] mb-6">UZA Solutions Ltd – Portfolio</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[1fr] grid-flow-dense">
+          {/* Overview */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-white/40 shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Company Overview</h3>
+            <ul className="text-gray-800 text-sm space-y-2">
+              <li><strong>Name:</strong> UZA Solutions Ltd</li>
+              <li><strong>HK:</strong> New City, 2 Lei Yue Mun Rd, Kwun Kong</li>
+              <li><strong>Rwanda:</strong> Nyarurembo, Kiyovu, Nyarugenge, Kigali</li>
+              <li><strong>TIN:</strong> 122907893</li>
+            </ul>
+      </div>
+
+          {/* Banking HK */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#E0F2FE] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Banking – Hong Kong</h3>
+            <ul className="text-gray-800 text-sm space-y-2">
+              <li>JP Morgan Chase HONG KONG BRANCH</li>
+              <li>Account: UZA SOLUTIONS Limited</li>
+              <li>Acc. No: 63115235394</li>
+              <li>SWIFT: CHASHKHHXXX</li>
+              <li>Address: CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL</li>
+            </ul>
+      </div>
+
+          {/* Banking Rwanda */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#E8F5E9] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Banking – Rwanda</h3>
+            <ul className="text-gray-800 text-sm space-y-2">
+              <li>Equity Bank</li>
+              <li>Account: UZA SOLUTIONS Ltd</li>
+              <li>Acc. No (USD): 4013201237332</li>
+            </ul>
+      </div>
+
+          {/* Products 1 */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#FFE7C2] shadow-sm md:col-span-2">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Construction & Building</h3>
+            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-700">
+              <li>Steel bars (HRB400E, other grades)</li>
+              <li>Cement products</li>
+              <li>Tiles, ceramics, sanitary ware</li>
+              <li>Pipes & fittings (PVC, PPR, HDPE, GI)</li>
+              <li>Valves, taps, plumbing accessories</li>
+              <li>Roofing sheets and profiles</li>
+              <li>Aluminum doors, windows, partitions</li>
+              <li>Glass panels, balustrades, cladding</li>
+              <li>Scaffolding, site safety</li>
+              <li>Paints, coatings, decorative</li>
+            </ul>
+          </div>
+
+          {/* Products 2 */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#E9D5FF] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Finishing & House Equipment</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li>Kitchen cabinets, countertops</li>
+              <li>Wardrobes, interior fittings</li>
+              <li>Bathroom fittings</li>
+              <li>Lighting (indoor/outdoor, LED, solar)</li>
+              <li>Flooring (wood, vinyl, laminate, specialty)</li>
+              <li>Furniture (residential, office, hospitality)</li>
+              <li>Smart home systems, appliances</li>
+            </ul>
+          </div>
+
+          {/* Products 3 */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#B2EBF2] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Industrial & Construction</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li>Concrete mixers, vibrators, bar benders</li>
+              <li>Irrigation systems, pumps</li>
+              <li>Generators, transformers</li>
+              <li>Fuji Elevators partnership</li>
+              <li>Specialized machinery (on request)</li>
+            </ul>
+            <p className="text-xs text-gray-600 mt-2">Custom/branded items available per project specs.</p>
+          </div>
+
+          {/* Why choose us */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#FFF9C4] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Why Choose Us</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li>Direct from manufacturers</li>
+              <li>Capacity for any order size</li>
+              <li>Customization & branding</li>
+              <li>Proven supply in Rwanda</li>
+              <li>Trusted logistics (Maersk, etc.)</li>
+            </ul>
+          </div>
+
+          {/* Experience */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#E0E7FF] shadow-sm md:col-span-2">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Experience & Capability</h3>
+            <p className="text-sm text-gray-700">We’ve delivered construction equipment, packaging, finishing products, and industrial machines for contractors and businesses across Rwanda. Our ongoing partnership with Fuji Elevators shows our ability to manage high‑value, specialized orders.</p>
+          </div>
+
+          {/* Contact */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#E3F2FD] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Contact</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li><strong>Email:</strong> info@uzasolutionsltd.com</li>
+              <li><strong>Phone:</strong> +250 788 371 081</li>
+              <li><strong>Web:</strong> uzasolutionsltd.com • uzabulk.com</li>
+              <li><strong>Address:</strong> Nyarurembo, Kiyovu, Nyarugenge, Kigali</li>
+            </ul>
+          </div>
+
+          {/* Legal */}
+          <div className="bg-white/80 backdrop-blur rounded-2xl p-6 border border-[#E5E7EB] shadow-sm">
+            <h3 className="text-lg font-semibold text-[#213348] mb-3">Legal & Compliance</h3>
+            <ul className="text-sm text-gray-700 space-y-2">
+              <li>Registered in Rwanda</li>
+              <li>Tax compliant (TIN: 122907893)</li>
+              <li>Meets international/national quality standards</li>
+              <li>CoC, warranties, compliance docs provided</li>
+            </ul>
+          </div>
         </div>
       </div>
 
+      {/* (moved stats above) */}
+
+      {/* Removed long lists: replaced above with compact grid */}
       {/* Solutions grid (carded UI) */}
       <div id="work" className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
         <h2 className="text-3xl md:text-4xl font-bold text-[#213348]">Platforms & Solutions</h2>
@@ -85,9 +226,7 @@ export default function Portfolio() {
             </a>
 
             {/* Accent illustration */}
-            <div className="pointer-events-none absolute -right-6 bottom-4 opacity-90 hidden md:block">
-              <Image src="/1200x600wa.png" alt="abstract" width={260} height={260} className="drop-shadow-2xl" />
-            </div>
+            
           </motion.div>
 
           {/* Top-right card */}
@@ -99,11 +238,9 @@ export default function Portfolio() {
               Work safely without sacrificing productivity
             </h4>
             <a href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
-              Work veilig <ArrowRight className="w-4 h-4" />
+              Lean more <ArrowRight className="w-4 h-4" />
             </a>
-            <div className="absolute right-4 top-6 w-20 h-20 md:w-24 md:h-24 opacity-90">
-              <Image src="/images.png" alt="fingerprint" fill className="object-contain" />
-            </div>
+            
           </motion.div>
 
           {/* Bottom-right dark card */}
@@ -133,7 +270,7 @@ export default function Portfolio() {
               <li className="flex items-center gap-3"><span className="w-2 h-2 bg-[#FBAF43] rounded-full" /> Direct‑from‑factory sourcing</li>
               <li className="flex items-center gap-3"><span className="w-2 h-2 bg-[#FBAF43] rounded-full" /> Customs, compliance, and QC</li>
               <li className="flex items-center gap-3"><span className="w-2 h-2 bg-[#FBAF43] rounded-full" /> Ocean, air, and trucking logistics</li>
-            </ul>
+        </ul>
           </div>
           <div className="relative order-1 lg:order-2 h-80 rounded-2xl overflow-hidden shadow-xl">
             <Image src="/truck.jpg" alt="Logistics" fill className="object-cover" />

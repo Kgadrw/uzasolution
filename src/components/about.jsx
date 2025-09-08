@@ -39,7 +39,7 @@ export default function AboutUs() {
         {/* Carded Solutions Grid (Homepage) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,_1fr)]">
           {/* Feature card */}
-          <motion.div
+            <motion.div
             whileHover={{ y: -4 }}
             className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden shadow-lg md:col-span-2 md:row-span-2 border border-white/10"
           >
@@ -84,8 +84,8 @@ export default function AboutUs() {
             <Link href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
               Get started <ArrowRight className="w-4 h-4" />
             </Link>
-          </motion.div>
-        </div>
+                </motion.div>
+              </div>
 
         {/* UZA Platforms imagery grid (with photos) */}
         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#F8FAFC]">
