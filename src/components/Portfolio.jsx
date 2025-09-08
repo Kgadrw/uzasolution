@@ -3,151 +3,163 @@
 import React from 'react'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function Portfolio() {
   return (
     <section className="w-full bg-white text-gray-900">
-      {/* Hero / Company Overview */}
-      <div className="relative w-full bg-[#13212F] text-white py-20 px-8 md:px-16 lg:px-24">
-        <h1 className="text-4xl md:text-5xl font-extrabold mb-6">
-          UZA Solutions Ltd – Company Portfolio
-        </h1>
-        <p className="text-lg md:text-xl max-w-3xl mb-4">
-          Rwandan-owned company dedicated to making trade simpler, faster, and more affordable.
-        </p>
-        <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg space-y-3">
-          <p><strong>Hong Kong Address:</strong> New City, 2 Lei Yue Mun Road, Kwun Kong, Hong Kong</p>
-          <p><strong>Rwanda Address:</strong> Nyarurembo, Kiyovu, Nyarugenge District, Kigali City, Rwanda</p>
-          <p><strong>Registration / TIN:</strong> 122907893</p>
-        </div>
-      </div>
-
-      {/* Banking Partners */}
-      <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">Banking Partners</h2>
-
-        <div className="grid md:grid-cols-2 gap-12">
-          <div className="bg-white p-6 rounded-lg shadow-lg space-y-3">
-            <h3 className="font-semibold text-lg mb-2">Hong Kong</h3>
-            <p><strong>Bank Name:</strong> JP Morgan Chase HONG KONG BRANCH</p>
-            <p><strong>Account Name:</strong> UZA SOLUTIONS Limited</p>
-            <p><strong>Account Number:</strong> 63115235394</p>
-            <p><strong>SWIFT Code:</strong> CHASHKHHXXX</p>
-            <p><strong>Address:</strong> CHARTER HOUSE, 8 CONNAUGHT ROAD, CENTRAL</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg space-y-3">
-            <h3 className="font-semibold text-lg mb-2">Rwanda</h3>
-            <p><strong>Bank Name:</strong> Equity Bank</p>
-            <p><strong>Account Name:</strong> UZA SOLUTIONS Ltd</p>
-            <p><strong>Account Number (USD):</strong> 4013201237332</p>
+      {/* Hero */}
+      <div className="relative overflow-hidden">
+        <div className="relative h-[520px] md:h-[640px]">
+          <Image src="/mall.jpg" alt="Portfolio hero" fill className="object-cover" priority />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
+          <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
+            <div className="max-w-3xl text-white">
+              <div className="flex items-center mb-4">
+                <span className="w-1.5 h-6 bg-[#FBAF43] rounded mr-3" />
+                <span className="uppercase text-xs tracking-widest text-[#FBAF43] font-bold">Portfolio</span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">Building Africa’s modern supply engine</h1>
+              <p className="mt-5 text-lg md:text-xl text-gray-200">
+                Sourcing, logistics, and digital infrastructure for reliable imports and regional trade.
+              </p>
+              <div className="mt-8 flex gap-3">
+                <a href="#work" className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-6 py-3 rounded-full transition-all">
+                  Explore work <ArrowRight className="w-4 h-4" />
+                </a>
+                <a href="#contact" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-full transition-all">
+                  Get in touch
+                </a>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* About Us */}
-      <div className="py-16 px-8 md:px-16 lg:px-24">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">About Us</h2>
-        <p className="text-lg leading-relaxed mb-4">
-          UZA Solutions Ltd is a Rwandan-owned company dedicated to making trade simpler, faster, and more affordable.
-          Through <a href="https://www.uzabulk.com" className="text-[#FBAF43] underline">UzaBulk.com</a>, we connect businesses directly with vetted global and regional manufacturers.
-        </p>
-        <p className="text-lg leading-relaxed mb-4">
-          Since we started, we have successfully imported and supplied construction equipment, finishing products, industrial machines, and packaging materials. Our strength lies in sourcing directly from factories, adapting to client requirements, and delivering reliably.
-        </p>
-      </div>
-
-      {/* Products & Supply Capacity */}
-      <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">Products & Supply Capacity</h2>
+        {/* Floating illustrations */}
         
-        <div className="space-y-12">
-          {/* Construction & Building Materials */}
-          <div>
-            <h3 className="text-2xl font-semibold mb-4">Construction & Building Materials</h3>
-            <ul className="list-disc list-inside space-y-2">
-              <li>Steel bars (HRB400E and other grades)</li>
-              <li>Cement and cement-related products</li>
-              <li>Tiles, ceramics, and sanitary ware</li>
-              <li>Pipes & fittings (PVC, PPR, HDPE, GI)</li>
-              <li>Valves, taps, and plumbing accessories</li>
-              <li>Roofing sheets and profiles</li>
-              <li>Aluminum doors, windows, and partitions</li>
-              <li>Glass panels, balustrades, and cladding systems</li>
-              <li>Scaffolding and site safety materials</li>
-              <li>Paints, coatings, and decorative products</li>
+      </div>
+
+      {/* Stats strip */}
+      <div className="px-8 md:px-16 lg:px-24 -mt-12 relative z-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[
+            { icon: '/globe.svg', label: 'Global factories', value: '10K+' },
+            { icon: '/truck.jpg', label: 'Shipments managed', value: '350+' },
+            { icon: '/file.svg', label: 'SKUs sourced', value: '5k+' },
+          ].map((s) => (
+            <div key={s.label} className="bg-white/80 backdrop-blur rounded-xl shadow-lg border border-gray-200/50 p-5 flex items-center gap-4">
+              <div className="relative w-12 h-12 overflow-hidden rounded-md bg-[#F8FAFC]">
+                <Image src={s.icon} alt={s.label} fill className="object-cover" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-[#213348]">{s.value}</p>
+                <p className="text-sm text-gray-600">{s.label}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Solutions grid */}
+      <div id="work" className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#213348]">Platforms & Solutions</h2>
+        <p className="text-gray-600 mt-2">Tech-first products powering procurement and logistics.</p>
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          {[
+            { title: 'UZA Bulk', img: '/1.jpg' },
+            { title: 'UZA Logistics', img: '/2.jpg' },
+            { title: 'UZA Mall', img: '/3.jpg' },
+            { title: 'UZA Cloud', img: '/4.jpg' },
+          ].map((card) => (
+            <motion.div key={card.title} whileHover={{ y: -6 }} className="group bg-white/80 backdrop-blur rounded-xl overflow-hidden border border-gray-200/50 shadow-sm">
+              <div className="relative h-44">
+                <Image src={card.img} alt={card.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <div className="p-5">
+                <h3 className="font-semibold text-lg">{card.title}</h3>
+                <p className="text-sm text-gray-600 mt-1">Enterprise-grade platform with verified suppliers and transparent pricing.</p>
+                <button className="mt-4 inline-flex items-center gap-1 text-[#FBAF43] font-semibold">
+                  Learn more <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Capability feature */}
+      <div className="py-16 px-8 md:px-16 lg:px-24">
+        <div className="grid lg:grid-cols-2 gap-10 items-center">
+          <div className="order-2 lg:order-1">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#213348]">End‑to‑end procurement, simplified</h2>
+            <p className="mt-3 text-gray-700">
+              From RFQs and factory audits to shipping and last‑mile delivery, we orchestrate reliable supply using data and deep vendor networks.
+            </p>
+            <ul className="mt-6 space-y-3 text-gray-800">
+              <li className="flex items-center gap-3"><span className="w-2 h-2 bg-[#FBAF43] rounded-full" /> Direct‑from‑factory sourcing</li>
+              <li className="flex items-center gap-3"><span className="w-2 h-2 bg-[#FBAF43] rounded-full" /> Customs, compliance, and QC</li>
+              <li className="flex items-center gap-3"><span className="w-2 h-2 bg-[#FBAF43] rounded-full" /> Ocean, air, and trucking logistics</li>
             </ul>
           </div>
-
-          {/* Finishing Materials & House Equipment */}
-          <div>
-            <h3 className="text-2xl font-semibold mb-4">Finishing Materials & House Equipment</h3>
-            <ul className="list-disc list-inside space-y-2">
-              <li>Kitchen cabinets and countertops</li>
-              <li>Wardrobes and interior fittings</li>
-              <li>Bathroom fittings (toilets, sinks, bathtubs, showers, mixers)</li>
-              <li>Lighting systems (indoor/outdoor, LED, solar)</li>
-              <li>Flooring solutions (wood, vinyl, laminate, specialty finishes)</li>
-              <li>Furniture (residential, office, hospitality)</li>
-              <li>Smart home systems and appliances</li>
-            </ul>
-          </div>
-
-          {/* Industrial & Construction Equipment */}
-          <div>
-            <h3 className="text-2xl font-semibold mb-4">Industrial & Construction Equipment</h3>
-            <ul className="list-disc list-inside space-y-2">
-              <li>Concrete mixers, vibrators, and bar benders</li>
-              <li>Irrigation systems and pumps</li>
-              <li>Generators and transformers</li>
-              <li>Fuji Elevators – partnership for processing elevator orders</li>
-              <li>Specialized construction machinery (on request)</li>
-            </ul>
+          <div className="relative order-1 lg:order-2 h-80 rounded-2xl overflow-hidden shadow-xl">
+            <Image src="/truck.jpg" alt="Logistics" fill className="object-cover" />
+            <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur p-3 rounded-lg shadow">
+              <div className="flex items-center gap-2 text-sm text-[#213348]"><Image src="/window.svg" alt="UI" width={18} height={18} /> Live shipment tracking</div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Why Choose Us */}
+      {/* Partners */}
+      <div className="py-12 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
+        <p className="uppercase text-xs tracking-widest text-center text-gray-500">Trusted logistics and marketplace partners</p>
+        <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-10 items-center justify-items-center opacity-90">
+          {['/amazon.png','/ebay.png','/alibaba.png','/maersk.png'].map((logo) => (
+            <div key={logo} className="relative w-40 h-14 md:w-52 md:h-16">
+              <Image src={logo} alt="partner" fill className="object-contain" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Gallery */}
       <div className="py-16 px-8 md:px-16 lg:px-24">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">Why Choose Us</h2>
-        <ul className="list-disc list-inside space-y-3 text-lg">
-          <li>Direct from Manufacturers – bypass middlemen for right products at right price</li>
-          <li>Capacity for Any Order – small or large-scale imports handled efficiently</li>
-          <li>Customization Options – branded, modified, or tailored products</li>
-          <li>Proven Supply Experience in Rwanda – supporting contractors, wholesalers, and businesses</li>
-          <li>Trusted Logistics – partners like Maersk ensure safe, timely deliveries</li>
-        </ul>
+        <h2 className="text-3xl md:text-4xl font-bold text-[#213348]">Recent work</h2>
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="md:col-span-2 relative h-64 rounded-xl overflow-hidden">
+            <Image src="/news1.jpg" alt="work" fill className="object-cover" />
+          </div>
+          <div className="relative h-64 rounded-xl overflow-hidden">
+            <Image src="/news2.jpg" alt="work" fill className="object-cover" />
+          </div>
+          <div className="relative h-64 rounded-xl overflow-hidden">
+            <Image src="/news3.jpg" alt="work" fill className="object-cover" />
+          </div>
+          <div className="relative h-64 rounded-xl overflow-hidden md:col-span-1">
+            <Image src="/mockup.PNG" alt="mockup" fill className="object-cover" />
+          </div>
+          <div className="relative h-64 rounded-xl overflow-hidden md:col-span-3">
+            <Image src="/bulk.jpg" alt="bulk" fill className="object-cover" />
+          </div>
+        </div>
       </div>
 
-      {/* Experience & Capability */}
-      <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">Experience & Capability</h2>
-        <p className="text-lg leading-relaxed mb-4">
-          UZA Solutions has built a reputation for reliability in Rwanda’s construction and business supply chain. We have delivered construction equipment, packaging solutions, finishing products, and industrial machines for contractors and businesses.
-        </p>
-        <p className="text-lg leading-relaxed">
-          Our ongoing partnership with Fuji Elevators demonstrates our ability to handle specialized, high-value orders, positioning us as a long-term partner for both complex projects and routine supplies.
-        </p>
-      </div>
-
-      {/* Legal & Compliance */}
-      <div className="py-16 px-8 md:px-16 lg:px-24">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">Legal & Compliance</h2>
-        <ul className="list-disc list-inside space-y-3 text-lg">
-          <li>Fully registered company in Rwanda</li>
-          <li>Tax compliant (TIN: 122907893)</li>
-          <li>Imports and supplies meet international and national quality standards</li>
-          <li>Certificates of Conformity (CoC), warranties, and compliance documents provided where required</li>
-        </ul>
-      </div>
-
-      {/* Contact Information */}
-      <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
-        <h2 className="text-3xl md:text-4xl font-bold mb-8">Contact Information</h2>
-        <p className="text-lg mb-2"><strong>Email:</strong> info@uzasolutionsltd.com</p>
-        <p className="text-lg mb-2"><strong>Phone:</strong> ‪+250 788 371 081‬‬</p>
-        <p className="text-lg mb-2"><strong>Websites:</strong> <a href="https://www.uzasolutionsltd.com" className="text-[#FBAF43] underline">www.uzasolutionsltd.com</a> | <a href="https://www.uzabulk.com" className="text-[#FBAF43] underline">www.uzabulk.com</a></p>
-        <p className="text-lg"><strong>Local Address:</strong> Nyarurembo, Kiyovu, Nyarugenge District, Kigali City, Rwanda</p>
+      {/* CTA */}
+      <div className="px-8 md:px-16 lg:px-24 pb-20">
+        <div className="relative overflow-hidden rounded-2xl bg-[#213348] text-white">
+          <div className="absolute inset-0 opacity-20">
+            <Image src="/bg.gif" alt="bg" fill className="object-cover" />
+          </div>
+          <div className="relative p-10 md:p-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div>
+              <h3 className="text-2xl md:text-3xl font-bold">Ready to source at scale?</h3>
+              <p className="mt-2 text-gray-200 max-w-xl">Let’s move from requirement to delivery with speed, compliance, and cost control.</p>
+            </div>
+            <a href="/contact" className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-6 py-3 rounded-full transition-all">
+              Talk to us <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   )

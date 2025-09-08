@@ -54,7 +54,7 @@ export default function InsightsSection() {
           {articles.map((article) => (
             <article
               key={article.type === 'video' ? article.videoId : article.title}
-              className="bg-white rounded-lg overflow-hidden border- border transition-shadow duration-300"
+              className="bg-white rounded-lg overflow-hidden border border-gray-200/50 transition-shadow duration-300"
             >
               {article.type === 'video' ? (
                 <div className="relative">

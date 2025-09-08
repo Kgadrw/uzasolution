@@ -6,7 +6,7 @@ import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const platforms = [
-  { id: 1, title: 'UZA Bulk', image: '/1.jpg', link: '#' },
+  { id: 1, title: 'UZA Bulk', image: '/1.jpg', link: 'https://www.uzabulk.com/' },
   { id: 2, title: 'UZA Logistics', image: '/2.jpg', link: '#' },
   { id: 3, title: 'UZA Mall', image: '/3.jpg', link: '#' },
   { id: 4, title: 'UZA Cloud', image: '/4.jpg', link: '#' },
@@ -34,7 +34,7 @@ export default function AboutUs() {
               UZA Solutions streamlines trade with platforms for sourcing, logistics, and cloud services, enabling business growth in the digital age.
             </p>
             <Link
-              href="#"
+              href="https://www.uzabulk.com/"
               className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl"
             >
               Explore
