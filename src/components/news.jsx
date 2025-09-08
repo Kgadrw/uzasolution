@@ -1,5 +1,7 @@
 'use client';
 import React, { useState, useRef } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export default function InsightsSection() {
   const articles = [
@@ -50,11 +52,12 @@ export default function InsightsSection() {
         </div>
 
         {/* Articles Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {articles.map((article) => (
-            <article
+            <motion.article
               key={article.type === 'video' ? article.videoId : article.title}
-              className="bg-white rounded-lg overflow-hidden border border-gray-200/50 transition-shadow duration-300"
+              whileHover={{ y: -4 }}
+              className="bg-white/70 backdrop-blur rounded-lg overflow-hidden border border-white/40 transition-shadow duration-300 shadow-sm"
             >
               {article.type === 'video' ? (
                 <div className="relative">
@@ -74,13 +77,13 @@ export default function InsightsSection() {
                   ></iframe>
                 </div>
               ) : (
-                <div>
+                <Link href={`/news`}>
                   <img
                     src={article.image}
                     alt={article.title}
                     className="w-full h-64 object-cover"
                   />
-                </div>
+                </Link>
               )}
 
               {/* Article Body */}
@@ -94,9 +97,9 @@ export default function InsightsSection() {
                     : 'Read more about this story shaping Africa’s trade landscape.'}
                 </p>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

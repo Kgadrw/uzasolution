@@ -1,20 +1,36 @@
 'use client'
 
+import React from 'react'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
 import { newsItems } from '../data'
+import { useRouter } from 'next/navigation'
+import { ArrowLeft } from 'lucide-react'
 
 const Navbar = dynamic(() => import('../../../components/navbar'))
 const Footer = dynamic(() => import('../../../components/footer'))
 
 export default function NewsArticlePage({ params }) {
-  const article = newsItems.find((n) => n.slug === params.slug)
+  const resolvedParams = React.use(params)
+  const article = newsItems.find((n) => n.slug === resolvedParams.slug)
   if (!article) return notFound()
+  const router = useRouter()
 
   return (
     <div>
       <Navbar initialSolid />
+      {/* Back button */}
+      <button
+        onClick={() => router.back()}
+        aria-label="Go back"
+        className="fixed top-20 left-4 z-40 rounded-full bg-white/40 backdrop-blur px-3 py-2 md:px-4 md:py-2 text-[#213348] border border-white/40 shadow-md hover:bg-white/60 transition"
+      >
+        <span className="inline-flex items-center gap-2">
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden md:inline">Back</span>
+        </span>
+      </button>
       {/* Hero */}
       <section className="relative w-full">
         <div className="relative h-[320px] md:h-[420px]">

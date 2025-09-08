@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react'
 
 export default function GlobalImpactHero() {
   return (
-    <section className="w-full py-16 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans">
+    <section className="w-full py-0 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left: Content Block */}
         <div className="space-y-6">
@@ -33,7 +33,7 @@ export default function GlobalImpactHero() {
           {/* Stat Badges */}
           <div className="flex flex-col gap-4 mb-6">
             {/* Stat 1 */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-white/70 backdrop-blur rounded-xl p-3 border border-gray-200/50 w-max">
               <span className="relative flex items-center justify-center w-12 h-12">
                 {/* SVG Arc 40% */}
                 <svg className="absolute top-0 left-0 w-12 h-12" viewBox="0 0 40 40">
@@ -56,7 +56,7 @@ export default function GlobalImpactHero() {
             </div>
 
             {/* Stat 2 */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-white/70 backdrop-blur rounded-xl p-3 border border-gray-200/50 w-max">
               <span className="relative flex items-center justify-center w-12 h-12">
                 {/* SVG Arc 60% */}
                 <svg className="absolute top-0 left-0 w-12 h-12" viewBox="0 0 40 40">
