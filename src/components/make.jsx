@@ -21,7 +21,7 @@ export default function GlobalImpactHero() {
 
           {/* Main Heading */}
           <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-2">
-            Partnering with Industry Giants to <br className="hidden md:block" /> Revolutionize African Trade
+            Partnering with Industry Giants to <br className="text-[#FBAF43] hidden md:block " /> Revolutionize African Trade
           </h1>
 
           {/* Subtext */}
