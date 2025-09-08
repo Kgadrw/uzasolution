@@ -210,50 +210,58 @@ export default function Portfolio() {
           {/* Feature card (left, spans 2 rows) */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden shadow-lg md:col-span-2 md:row-span-2 border border-white/10"
-          >
+            className="relative rounded-2xl overflow-hidden shadow-lg md:col-span-2 md:row-span-2 border border-white/20 group"
+            >
+            <Image src="/hero3.jpg" alt="AI Integrations" fill className="object-cover transition-transform duration-500 group-hover:scale-[1.03]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0E2A44]/90 via-[#0E2A44]/60 to-transparent" />
+            <div className="relative z-10 p-8 text-white">
             <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
-              Integrations & AI
+            Integrations &amp; AI
             </span>
             <h3 className="text-2xl md:text-3xl font-extrabold leading-snug max-w-xl">
-              Embrace AI capabilities to help you in daily operations
+            Embrace AI capabilities to help you in daily operations
             </h3>
             <p className="mt-3 text-sm md:text-base text-gray-200 max-w-lg">
-              Automate RFQs, documents, and tracking with intelligent workflows, built into UZA platforms.
+            Automate RFQs, documents, and tracking with intelligent workflows, built into UZA platforms.
             </p>
             <a href="#" className="mt-6 inline-flex items-center gap-2 bg-white text-[#213348] hover:bg-[#FBAF43] hover:text-[#213348] font-semibold px-5 py-3 rounded-full transition-colors w-max">
-              Work smarter <ArrowRight className="w-4 h-4" />
+            Work smarter <ArrowRight className="w-4 h-4" />
             </a>
-
-            {/* Accent illustration */}
-            
-          </motion.div>
+            </div>
+            </motion.div>
 
           {/* Top-right card */}
-          <motion.div whileHover={{ y: -4 }} className="relative bg-white/80 backdrop-blur rounded-2xl p-6 shadow-md border border-gray-200/50">
-            <span className="inline-block text-[10px] uppercase tracking-widest text-[#213348] bg-[#F8FAFC] border border-gray-200/60 rounded-full px-3 py-1">
-              Secure workspace
+          <motion.div whileHover={{ y: -4 }} className="relative rounded-2xl overflow-hidden shadow-md border border-white/20 group">
+            <Image src="/news2.jpg" alt="Secure workspace" fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-transparent" />
+            <div className="relative z-10 p-6 text-white">
+            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
+            Secure workspace
             </span>
-            <h4 className="mt-3 text-lg font-bold text-[#213348] leading-snug pr-24">
-              Work safely without sacrificing productivity
+            <h4 className="mt-3 text-lg font-bold leading-snug pr-24">
+            Work safely without sacrificing productivity
             </h4>
             <a href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
-              Lean more <ArrowRight className="w-4 h-4" />
+            Learn more <ArrowRight className="w-4 h-4" />
             </a>
-            
-          </motion.div>
+            </div>
+            </motion.div>
 
           {/* Bottom-right dark card */}
-          <motion.div whileHover={{ y: -4 }} className="relative bg-[#0E1A28] text-white rounded-2xl p-6 shadow-md border border-white/10">
-            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
-              Successful adoption
-            </span>
-            <h4 className="mt-3 text-lg font-bold leading-snug">
-              Software success depends on how well teams work with it
-            </h4>
-            <a href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
-              Get started <ArrowRight className="w-4 h-4" />
-            </a>
+          <motion.div whileHover={{ y: -4 }} className="relative rounded-2xl overflow-hidden shadow-md border border-white/20 group">
+          <Image src="/news1.jpg" alt="Successful adoption" fill className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/50 to-transparent" />
+          <div className="relative z-10 p-6 text-white">
+          <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
+          Successful adoption
+          </span>
+          <h4 className="mt-3 text-lg font-bold leading-snug">
+          Software success depends on how well teams work with it
+          </h4>
+          <a href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
+          Get started <ArrowRight className="w-4 h-4" />
+          </a>
+          </div>
           </motion.div>
         </div>
       </div>
