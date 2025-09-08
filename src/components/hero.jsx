@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
@@ -10,20 +10,19 @@ export default function Hero() {
   const [heroData, setHeroData] = useState({})
   const [currentIndex, setCurrentIndex] = useState(0)
   const [nextIndex, setNextIndex] = useState(null)
-  const [isFixed, setIsFixed] = useState(false)
-  const [showNav, setShowNav] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const [showNavbar, setShowNavbar] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
   const mobileMenuRef = useRef(null)
 
-  // Hero slides (backgrounds only now)
+  // slides
   const slides = [
     { image: '/hero.jpg' },
     { image: '/hero2.jpg' },
     { image: '/hero3.jpg' },
   ]
 
-  // Static text (only from first slide)
   const heroText = {
     title: "Africa’s Gateway to Global Trade",
     description:
@@ -31,7 +30,7 @@ export default function Hero() {
     cta: "Get Started",
   }
 
-  // Fetch Hero data
+  // fetch hero sanity data
   useEffect(() => {
     const fetchHero = async () => {
       const query = `*[_type == "hero"][0]`
@@ -41,150 +40,142 @@ export default function Hero() {
     fetchHero()
   }, [])
 
-  // Background slider
+  // background slideshow
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIdx = (currentIndex + 1) % slides.length
       setNextIndex(nextIdx)
-    }, 3000) // switch every 3s
+    }, 4000)
     return () => clearInterval(interval)
   }, [currentIndex])
 
-  // Update currentIndex after slide
   useEffect(() => {
     if (nextIndex !== null) {
       const timeout = setTimeout(() => {
         setCurrentIndex(nextIndex)
         setNextIndex(null)
-      }, 1000) // duration of slide animation
+      }, 800)
       return () => clearTimeout(timeout)
     }
   }, [nextIndex])
 
-  // Scroll behavior
+  // navbar scroll listener
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
-      const heroHeight = window.innerHeight * 0.8
-      setIsFixed(currentScrollY > heroHeight)
-      if (!showMobileMenu) setShowNav(currentScrollY < lastScrollY)
+
+      // change background when scrolled
+      if (currentScrollY > 50) setScrolled(true)
+      else setScrolled(false)
+
+      // detect scroll direction
+      if (currentScrollY > lastScrollY && currentScrollY > 100) setShowNavbar(false)
+      else setShowNavbar(true)
+
       setLastScrollY(currentScrollY)
     }
+
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY, showMobileMenu])
-
-  // Close mobile menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        showMobileMenu &&
-        mobileMenuRef.current &&
-        !mobileMenuRef.current.contains(event.target)
-      ) {
-        setShowMobileMenu(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showMobileMenu])
-
-  const navBaseClasses =
-    'top-0 left-0 right-0 z-50 px-8 md:px-16 lg:px-24 py-2 flex justify-between items-center font-sans text-white transition-all duration-300 antialiased'
-  const navPositionClass = isFixed
-    ? `fixed ${showNav || showMobileMenu ? 'translate-y-0' : '-translate-y-full'} bg-[#213348]`
-    : 'absolute bg-transparent'
+  }, [lastScrollY])
 
   const currentSlide = slides[currentIndex]
-  const nextSlide = nextIndex !== null ? slides[nextIndex] : null
 
   return (
-    <section className="relative flex flex-col w-full min-h-screen font-sans">
-      {/* Navbar */}
-      <nav className={`${navBaseClasses} ${navPositionClass}`}>
-        <div className="text-xl font-bold">
-          <Link href="/">
+    <section className="relative w-full font-sans">
+      {/* -------- Main Nav -------- */}
+      <nav
+        className={`fixed top-0 left-0 w-full z-20 transition-all duration-300 ${
+          scrolled ? 'bg-[#213348] text-white shadow-md' : 'bg-transparent text-white'
+        } ${showNavbar ? 'translate-y-0' : '-translate-y-full'}`}
+      >
+        <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-2">
+          {/* Logo */}
+          <Link href="/" className="flex items-center">
             <Image
               src={heroData.logo?.asset?.url || '/logo.png'}
               alt="Logo"
-              width={96}
-              height={48}
-              priority
+              width={100}
+              height={50}
+              className="object-contain"
             />
           </Link>
-        </div>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex ml-auto space-x-8 items-center text-base font-semibold antialiased">
-          <Link className="hover:text-[#FBAF43]" href="/">
-            Home
-          </Link>
-          <Link className="hover:text-[#FBAF43]" href="/#about">
-            About
-          </Link>
-          <Link className="hover:text-[#FBAF43]" href="/portfolio">
-            Portfolio
-          </Link>
-          <Link className="hover:text-[#FBAF43]" href="/#news">
-            News
-          </Link>
-          <Link className="hover:text-[#FBAF43]" href="/#contact">
-            Contact
-          </Link>
-        </div>
+          {/* Desktop Nav */}
+          <div className="hidden md:flex space-x-6 font-regular text-sm">
+            <Link href="/" className="hover:text-[#FBAF43]">Home</Link>
+            <Link href="/#about" className="hover:text-[#FBAF43]">About</Link>
+            <Link href="/portfolio" className="hover:text-[#FBAF43]">Portfolio</Link>
+            <Link href="/#news" className="hover:text-[#FBAF43]">News</Link>
+            <Link href="/#contact" className="hover:text-[#FBAF43]">Contact</Link>
+          </div>
 
-        {/* Mobile Menu Toggle */}
-        <div className="flex items-center md:hidden">
+          {/* Mobile Nav */}
           <button
             onClick={() => setShowMobileMenu(!showMobileMenu)}
-            aria-label="Toggle menu"
+            aria-label="Toggle Menu"
+            className="md:hidden"
           >
             {showMobileMenu ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
+
+        {/* Mobile Dropdown */}
+        {showMobileMenu && (
+          <div
+            ref={mobileMenuRef}
+            className={`md:hidden px-6 pb-4 space-y-3 ${
+              scrolled ? 'bg-[#213348]' : 'bg-[#00142B]/90'
+            }`}
+          >
+            <Link href="/" className="block hover:text-[#FBAF43]">Home</Link>
+            <Link href="/#about" className="block hover:text-[#FBAF43]">About</Link>
+            <Link href="/portfolio" className="block hover:text-[#FBAF43]">Portfolio</Link>
+            <Link href="/#news" className="block hover:text-[#FBAF43]">News</Link>
+            <Link href="/#contact" className="block hover:text-[#FBAF43]">Contact</Link>
+          </div>
+        )}
       </nav>
 
-      {/* Hero Section */}
-      <div className="relative w-full min-h-screen flex items-center px-8 md:px-16 lg:px-24 overflow-hidden">
-        {/* Current background */}
+      {/* -------- Hero Section -------- */}
+      <div className="relative h-[700px] w-full overflow-hidden">
+        {/* Background Image */}
         <motion.div
           key={currentSlide.image}
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${currentSlide.image})` }}
-        />
-
-        {/* Sliding next background */}
-        {nextSlide && (
-          <motion.div
-            key={nextSlide.image}
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${nextSlide.image})` }}
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            transition={{ duration: 1, ease: 'easeInOut' }}
+          className="absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+        >
+          <Image
+            src={currentSlide.image}
+            alt="Hero Slide"
+            fill
+            className="object-cover"
+            priority
           />
-        )}
+        </motion.div>
 
-        <div className="absolute inset-0 bg-gradient-to-r from-[#13212F] to-transparent"></div>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent" />
 
-        {/* Fixed Hero Content (from first slide only) */}
-        <div className="relative z-10 max-w-lg text-left space-y-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white">
-            <span className="text-[#FBAF43]">
-              {heroText.title.split(' ')[0]}{' '}
-            </span>
-            {heroText.title.split(' ').slice(1).join(' ')}
-          </h1>
-
-          <p className="text-base sm:text-lg md:text-xl text-white">
-            {heroText.description}
-          </p>
-
-          <Link href={heroData.primaryCtaLink || '#'}>
-            <button className="relative px-8 py-3 font-semibold text-base md:text-lg rounded-full overflow-hidden text-white bg-[#FBAF43] shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-[#e59e3b]">
-              {heroText.cta}
-            </button>
-          </Link>
+        {/* Hero Content */}
+        <div className="relative z-10 flex h-full items-center pl-[150px] pr-6">
+          <div className="max-w-xl text-left">
+            <h1 className="text-4xl md:text-6xl font-bold leading-tight text-white">
+              <span className="text-[#FBAF43]">Africa</span>’s Gateway to Global Trade
+            </h1>
+            <p className="mt-6 text-lg md:text-xl text-gray-200">
+              {heroText.description}
+            </p>
+            <div className="mt-8">
+              <Link href={heroData.primaryCtaLink || '#'}>
+                <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl">
+                  {heroText.cta}
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
