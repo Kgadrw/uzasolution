@@ -14,7 +14,7 @@ const platforms = [
 
 export default function AboutUs() {
   return (
-    <section id="about" className="py-20 px-4 md:px-16 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white">
+    <section id="about" className="py-20 px-4 md:px-16 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
@@ -25,17 +25,17 @@ export default function AboutUs() {
                 Our Solutions
               </p>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 font-[Montserrat] leading-tight">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
               Tech-Driven Platforms to Power Africa's Digital Trade Future
             </h2>
           </div>
-          <div className="space-y-6">
-            <p className="text-lg text-gray-600 font-[Roboto] leading-relaxed">
+          <div className="space-y-4">
+            <p className="text-base md:text-lg text-gray-700 leading-relaxed">
               UZA Solutions streamlines trade with platforms for sourcing, logistics, and cloud services, enabling business growth in the digital age.
             </p>
             <Link
               href="#"
-              className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-white font-semibold px-6 py-3 rounded-md transition-colors duration-300 group"
+              className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl"
             >
               Explore
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -44,7 +44,7 @@ export default function AboutUs() {
         </div>
 
         {/* Platform Images Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {platforms.map((platform) => (
             <motion.div
               key={platform.id}
@@ -82,7 +82,7 @@ export default function AboutUs() {
                 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               >
-                <h3 className="text-lg font-bold font-[Montserrat]">{platform.title}</h3>
+                <h3 className="text-base font-bold text-gray-900">{platform.title}</h3>
                 <Link
                   href={platform.link}
                   className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm hover:text-[#e59e3b] transition-colors duration-300"

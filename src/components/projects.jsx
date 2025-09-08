@@ -16,18 +16,12 @@ export default function WhoAreWe() {
   return (
     <section
       id="who-are-we"
-      className="relative py-20 px-8 md:px-16 lg:px-24 text-white bg-fixed bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/hero.jpg')", // Replace with your fixed hero image
-      }}
+      className="relative py-20 px-8 md:px-16 lg:px-24 font-sans bg-[#F8FAFC]"
     >
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-[#13212F]/80 z-0"></div>
-
       <div className="relative max-w-7xl mx-auto z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Text Content */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Small Title */}
             <div className="flex items-center">
               <span className="w-1 h-5 bg-[#FBAF43] rounded mr-3"></span>
@@ -37,13 +31,13 @@ export default function WhoAreWe() {
             </div>
 
             {/* Main Heading */}
-            <h2 className="text-4xl md:text-5xl font-bold font-[Montserrat] leading-tight antialiased">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight antialiased">
               Your Trusted Partner in<br />
               <span className="text-[#FBAF43] antialiased">Transforming Africa's Trade</span>
             </h2>
 
             {/* Paragraph */}
-            <p className="text-lg text-gray-300 font-[Roboto] leading-relaxed antialiased">
+            <p className="text-base md:text-lg text-gray-900 leading-relaxed antialiased">
               At UZA Solutions, we are driving Africa's trade revolution with innovative, tech-driven platforms that connect businesses to global markets.
               <br /><br />
               Our mission is to empower African entrepreneurs and companies with seamless access to sourcing, logistics, and cloud services creating a future of streamlined trade and growth.
@@ -52,7 +46,7 @@ export default function WhoAreWe() {
             {/* CTA Button */}
             <Link
               href="#"
-              className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-white font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl"
+              className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl"
             >
               Learn More
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -106,8 +100,8 @@ export default function WhoAreWe() {
                     </div>
                   )}
 
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  {/* Hover Effect - Increase Brightness */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-transparent brightness-110"></div>
                 </div>
               ))}
             </div>

@@ -1,29 +1,38 @@
 'use client';
-import React from 'react';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import React, { useState, useRef } from 'react';
 
 export default function InsightsSection() {
   const articles = [
     {
-      image: '/news1.jpg',
-      title: 'How Digital Platforms Are Transforming African Trade',
-      link: '#',
+      type: 'video',
+      videoId: 'Prs33Sr-HKs', // just the YouTube ID
+      title: 'UZA Short: Quick Insights on Africa’s Trade',
     },
     {
+      type: 'image',
       image: '/news2.jpg',
       title: 'Partnerships with Global Giants: The UZA Approach',
-      link: '#',
     },
     {
+      type: 'image',
       image: '/news3.jpg',
       title: 'Logistics Innovation: Speeding Up Africa’s Supply Chains',
-      link: '#',
     },
   ];
 
+  const [playVideo, setPlayVideo] = useState(null);
+  const videoRefs = useRef({});
+
+  const handlePlay = (id) => {
+    setPlayVideo(id);
+    const iframe = videoRefs.current[id];
+    if (iframe) {
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&controls=1`;
+    }
+  };
+
   return (
-    <section className="py-16 px-6 md:px-12 lg:px-24 bg-white">
+    <section className="py-16 px-6 md:px-12 lg:px-24 bg-white font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12 gap-6">
@@ -34,7 +43,7 @@ export default function InsightsSection() {
                 Insights
               </span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#213348] font-[Montserrat] leading-snug">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#213348] leading-snug">
               News & Trends in Africa’s Trade Revolution
             </h2>
           </div>
@@ -42,27 +51,50 @@ export default function InsightsSection() {
 
         {/* Articles Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article, idx) => (
-            <div key={idx} className="relative group overflow-hidden rounded-lg border border-white/10 backdrop-blur-sm cursor-pointer">
-              {/* Image */}
-              <img
-                src={article.image}
-                alt={article.title}
-                className="w-full h-64 object-cover transition-all duration-500 group-hover:brightness-110"
-              />
+          {articles.map((article) => (
+            <article
+              key={article.type === 'video' ? article.videoId : article.title}
+              className="bg-white rounded-lg overflow-hidden border- border transition-shadow duration-300"
+            >
+              {article.type === 'video' ? (
+                <div className="relative">
+                  <iframe
+                    ref={(el) => (videoRefs.current[article.videoId] = el)}
+                    className="w-full h-64"
+                    src={
+                      playVideo === article.videoId
+                        ? `https://www.youtube.com/embed/${article.videoId}?autoplay=1&controls=1`
+                        : `https://www.youtube.com/embed/${article.videoId}?controls=0`
+                    }
+                    title={article.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    onClick={() => handlePlay(article.videoId)}
+                  ></iframe>
+                </div>
+              ) : (
+                <div>
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-64 object-cover"
+                  />
+                </div>
+              )}
 
-              {/* Overlay Text on Hover */}
-              <div className="absolute inset-0 flex flex-col justify-center items-center bg-black/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 text-center px-4">
-                <h3 className="text-white font-bold text-lg mb-2">{article.title}</h3>
-                <Link
-                  href={article.link}
-                  className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm hover:text-[#e59e3b] transition-colors duration-300"
-                >
-                  Read More
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
+              {/* Article Body */}
+              <div className="p-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {article.title}
+                </h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  {article.type === 'video'
+                    ? 'Watch our short video insight on Africa’s trade.'
+                    : 'Read more about this story shaping Africa’s trade landscape.'}
+                </p>
               </div>
-            </div>
+            </article>
           ))}
         </div>
       </div>

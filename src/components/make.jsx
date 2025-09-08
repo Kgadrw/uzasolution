@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react'
 
 export default function GlobalImpactHero() {
   return (
-    <section className="w-full py-16 px-6 md:px-12 lg:px-24 bg-[#F8FAFC]">
+    <section className="w-full py-16 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         {/* Left: Content Block */}
         <div className="space-y-6">
@@ -20,13 +20,12 @@ export default function GlobalImpactHero() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#19283A] font-[Montserrat] leading-tight mb-2">
-            Partnering with Industry Giants to{' '}
-            <br className="hidden md:block" /> Revolutionize African Trade
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-2">
+            Partnering with Industry Giants to <br className="hidden md:block" /> Revolutionize African Trade
           </h1>
 
           {/* Subtext */}
-          <p className="text-sm md:text-base text-[#19283A] font-[Roboto] max-w-lg mb-6">
+          <p className="text-sm md:text-base text-gray-800 max-w-lg mb-6 leading-relaxed">
             With trusted global partners like Alibaba and Maersk, UZA Solutions is transforming the
             way African businesses trade globally.
           </p>
@@ -40,20 +39,18 @@ export default function GlobalImpactHero() {
                 <svg className="absolute top-0 left-0 w-12 h-12" viewBox="0 0 40 40">
                   <circle cx="20" cy="20" r="18" fill="none" stroke="#E5E7EB" strokeWidth="4" />
                   <path
-                    d="M20 2
-                      a 18 18 0 1 1 0 36
-                      a 18 18 0 1 1 0 -36"
+                    d="M20 2 a 18 18 0 1 1 0 36 a 18 18 0 1 1 0 -36"
                     fill="none"
                     stroke="#22C55E"
                     strokeWidth="4"
                     strokeDasharray="113.097, 113.097"
-                    strokeDashoffset="67.858" /* 40% */
+                    strokeDashoffset="67.858"
                     strokeLinecap="round"
                   />
                 </svg>
-                <span className="text-[#22C55E] font-bold text-base z-10">40%</span>
+                <span className="text-[#22C55E] font-bold text-sm md:text-base z-10">40%</span>
               </span>
-              <span className="text-[#19283A] font-medium text-sm md:text-base">
+              <span className="text-gray-800 font-medium text-sm md:text-base">
                 Cost reduction in sourcing through UZA Bulk
               </span>
             </div>
@@ -65,20 +62,18 @@ export default function GlobalImpactHero() {
                 <svg className="absolute top-0 left-0 w-12 h-12" viewBox="0 0 40 40">
                   <circle cx="20" cy="20" r="18" fill="none" stroke="#E5E7EB" strokeWidth="4" />
                   <path
-                    d="M20 2
-                      a 18 18 0 1 1 0 36
-                      a 18 18 0 1 1 0 -36"
+                    d="M20 2 a 18 18 0 1 1 0 36 a 18 18 0 1 1 0 -36"
                     fill="none"
                     stroke="#22C55E"
                     strokeWidth="4"
                     strokeDasharray="113.097, 113.097"
-                    strokeDashoffset="45.239" /* 60% */
+                    strokeDashoffset="45.239"
                     strokeLinecap="round"
                   />
                 </svg>
-                <span className="text-[#22C55E] font-bold text-base z-10">60%</span>
+                <span className="text-[#22C55E] font-bold text-sm md:text-base z-10">60%</span>
               </span>
-              <span className="text-[#19283A] font-medium text-sm md:text-base">
+              <span className="text-gray-800 font-medium text-sm md:text-base">
                 Faster shipping times with UZA Logistics
               </span>
             </div>
@@ -87,7 +82,7 @@ export default function GlobalImpactHero() {
           {/* CTA Button */}
           <Link
             href="#"
-            className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-[#19283A] font-semibold px-6 py-3 rounded-md transition-all duration-300 group shadow-md hover:shadow-lg text-base"
+            className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl"
           >
             Get in Touch
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
@@ -104,7 +99,7 @@ export default function GlobalImpactHero() {
               height={340}
               loading="lazy"
               placeholder="blur"
-              blurDataURL="/8-blur.png" // optional
+              blurDataURL="/8-blur.png"
               className="relative z-10 w-full h-auto object-contain"
             />
           </div>
