@@ -16,7 +16,7 @@ export default function WhoAreWe() {
   return (
     <section
       id="who-are-we"
-      className="relative py-20 px-8 md:px-16 lg:px-24 font-sans bg-[#F8FAFC]"
+      className="relative py-0 px-8 md:px-16 lg:px-24 font-sans bg-[#F8FAFC]"
     >
       <div className="relative max-w-7xl mx-auto z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -56,8 +56,8 @@ export default function WhoAreWe() {
           {/* Right Side - Image Grid */}
           <div className="relative">
             {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="grid grid-cols-8 gap-2 h-full">
+            <div className="absolute inset-0 opacity-5">
+              <div className="grid grid-cols-10 gap-2 h-full">
                 {Array.from({ length: 64 }).map((_, i) => (
                   <div key={i} className="w-2 h-2 bg-[#FBAF43] rounded-full"></div>
                 ))}
@@ -65,16 +65,16 @@ export default function WhoAreWe() {
             </div>
 
             {/* Image Grid */}
-            <div className="grid grid-cols-2 grid-rows-3 gap-4 h-96 md:h-[500px] relative z-10">
+            <div className="grid grid-cols-2 grid-rows-3 gap-3 h-80 md:h-[420px] relative z-10">
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className={`group relative overflow-hidden rounded-lg hover:shadow-2xl transition-all duration-300 cursor-pointer ${image.className}`}
+                  className={`group relative overflow-hidden rounded-2xl bg-white/40 backdrop-blur border border-white/40 shadow-lg hover:shadow-xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${image.className}`}
                 >
                   {image.hasVideo ? (
                     <video
                       src={image.videoSrc}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                       autoPlay
                       muted
                       loop
@@ -87,21 +87,21 @@ export default function WhoAreWe() {
                       alt={image.alt}
                       fill
                       loading="lazy"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
                     />
                   )}
 
                   {/* Video Play Button Overlay */}
                   {image.hasVideo && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-transparent rounded-full p-4 border-2 border-[#FBAF43] group-hover:scale-110 transition-transform duration-300">
-                        <Play className="w-6 h-6 text-[#FBAF43] ml-1" />
+                      <div className="bg-[#00142B]/30 backdrop-blur rounded-full p-3 border border-[#FBAF43]/60 group-hover:scale-110 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                        <Play className="w-5 h-5 text-[#FBAF43] ml-0.5" />
                       </div>
                     </div>
                   )}
 
                   {/* Hover Effect - Increase Brightness */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-transparent brightness-110"></div>
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
                 </div>
               ))}
             </div>

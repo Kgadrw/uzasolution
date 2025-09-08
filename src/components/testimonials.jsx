@@ -36,7 +36,7 @@ export default function Testimonials() {
   const loopedTestimonials = [...testimonials, ...testimonials]
 
   return (
-    <section className="py-20 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
+    <section className="py-0 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto text-center">
         {/* Header */}
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#FBAF43] mb-12">
@@ -57,7 +57,7 @@ export default function Testimonials() {
             {loopedTestimonials.map((t, i) => (
               <div
                 key={i}
-                className="min-w-[300px] max-w-sm bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between"
+                className="min-w-[300px] max-w-sm bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-200/50"
               >
                 <Quote className="w-6 h-6 text-[#FBAF43] mb-3 opacity-70" />
                 <p className="text-gray-700 text-base leading-relaxed mb-4">

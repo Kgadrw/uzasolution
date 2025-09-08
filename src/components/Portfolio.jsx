@@ -60,30 +60,64 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Solutions grid */}
+      {/* Solutions grid (carded UI) */}
       <div id="work" className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
         <h2 className="text-3xl md:text-4xl font-bold text-[#213348]">Platforms & Solutions</h2>
         <p className="text-gray-600 mt-2">Tech-first products powering procurement and logistics.</p>
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          {[
-            { title: 'UZA Bulk', img: '/1.jpg' },
-            { title: 'UZA Logistics', img: '/2.jpg' },
-            { title: 'UZA Mall', img: '/3.jpg' },
-            { title: 'UZA Cloud', img: '/4.jpg' },
-          ].map((card) => (
-            <motion.div key={card.title} whileHover={{ y: -6 }} className="group bg-white/80 backdrop-blur rounded-xl overflow-hidden border border-gray-200/50 shadow-sm">
-              <div className="relative h-44">
-                <Image src={card.img} alt={card.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-lg">{card.title}</h3>
-                <p className="text-sm text-gray-600 mt-1">Enterprise-grade platform with verified suppliers and transparent pricing.</p>
-                <button className="mt-4 inline-flex items-center gap-1 text-[#FBAF43] font-semibold">
-                  Learn more <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </motion.div>
-          ))}
+
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,_1fr)]">
+          {/* Feature card (left, spans 2 rows) */}
+          <motion.div
+            whileHover={{ y: -4 }}
+            className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden shadow-lg md:col-span-2 md:row-span-2 border border-white/10"
+          >
+            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
+              Integrations & AI
+            </span>
+            <h3 className="text-2xl md:text-3xl font-extrabold leading-snug max-w-xl">
+              Embrace AI capabilities to help you in daily operations
+            </h3>
+            <p className="mt-3 text-sm md:text-base text-gray-200 max-w-lg">
+              Automate RFQs, documents, and tracking with intelligent workflows, built into UZA platforms.
+            </p>
+            <a href="#" className="mt-6 inline-flex items-center gap-2 bg-white text-[#213348] hover:bg-[#FBAF43] hover:text-[#213348] font-semibold px-5 py-3 rounded-full transition-colors w-max">
+              Work smarter <ArrowRight className="w-4 h-4" />
+            </a>
+
+            {/* Accent illustration */}
+            <div className="pointer-events-none absolute -right-6 bottom-4 opacity-90 hidden md:block">
+              <Image src="/1200x600wa.png" alt="abstract" width={260} height={260} className="drop-shadow-2xl" />
+            </div>
+          </motion.div>
+
+          {/* Top-right card */}
+          <motion.div whileHover={{ y: -4 }} className="relative bg-white/80 backdrop-blur rounded-2xl p-6 shadow-md border border-gray-200/50">
+            <span className="inline-block text-[10px] uppercase tracking-widest text-[#213348] bg-[#F8FAFC] border border-gray-200/60 rounded-full px-3 py-1">
+              Secure workspace
+            </span>
+            <h4 className="mt-3 text-lg font-bold text-[#213348] leading-snug pr-24">
+              Work safely without sacrificing productivity
+            </h4>
+            <a href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
+              Work veilig <ArrowRight className="w-4 h-4" />
+            </a>
+            <div className="absolute right-4 top-6 w-20 h-20 md:w-24 md:h-24 opacity-90">
+              <Image src="/images.png" alt="fingerprint" fill className="object-contain" />
+            </div>
+          </motion.div>
+
+          {/* Bottom-right dark card */}
+          <motion.div whileHover={{ y: -4 }} className="relative bg-[#0E1A28] text-white rounded-2xl p-6 shadow-md border border-white/10">
+            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
+              Successful adoption
+            </span>
+            <h4 className="mt-3 text-lg font-bold leading-snug">
+              Software success depends on how well teams work with it
+            </h4>
+            <a href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
+              Get started <ArrowRight className="w-4 h-4" />
+            </a>
+          </motion.div>
         </div>
       </div>
 

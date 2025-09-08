@@ -5,16 +5,9 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-const platforms = [
-  { id: 1, title: 'UZA Bulk', image: '/1.jpg', link: 'https://www.uzabulk.com/' },
-  { id: 2, title: 'UZA Logistics', image: '/2.jpg', link: '#' },
-  { id: 3, title: 'UZA Mall', image: '/3.jpg', link: '#' },
-  { id: 4, title: 'UZA Cloud', image: '/4.jpg', link: '#' },
-]
-
 export default function AboutUs() {
   return (
-    <section id="about" className="py-20 px-4 md:px-16 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white font-sans">
+    <section id="about" className="py-20 px-4 md:px-16 lg:px-24 bg-[#F8FAFC] font-sans">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
@@ -43,55 +36,85 @@ export default function AboutUs() {
           </div>
         </div>
 
-        {/* Platform Images Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {platforms.map((platform) => (
-            <motion.div
-              key={platform.id}
-              className="relative group cursor-pointer"
-              whileHover="hover"
-              initial="rest"
-              animate="rest"
-              variants={{
-                rest: {},
-                hover: {},
-              }}
-            >
-              {/* Image */}
-              <div className="relative w-full h-64 overflow-hidden">
-                <motion.div
-                  className="w-full h-full"
-                  whileHover={{ filter: 'brightness(1.2)' }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Image
-                    src={platform.image}
-                    alt={platform.title}
-                    fill
-                    className="object-cover w-full h-full"
-                  />
-                </motion.div>
-              </div>
+        {/* Carded Solutions Grid (Homepage) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,_1fr)]">
+          {/* Feature card */}
+          <motion.div
+            whileHover={{ y: -4 }}
+            className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden shadow-lg md:col-span-2 md:row-span-2 border border-white/10"
+          >
+            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
+              Integrations & AI
+            </span>
+            <h3 className="text-2xl md:text-3xl font-extrabold leading-snug max-w-xl">
+              Embrace AI to help you work smarter every day
+            </h3>
+            <p className="mt-3 text-sm md:text-base text-gray-200 max-w-lg">
+              Automate sourcing workflows, QC docs, and shipment tracking inside our platforms.
+            </p>
+            <Link href="https://www.uzabulk.com/" className="mt-6 inline-flex items-center gap-2 bg-white text-[#213348] hover:bg-[#FBAF43] hover:text-[#213348] font-semibold px-5 py-3 rounded-full transition-colors w-max">
+              Start now <ArrowRight className="w-4 h-4" />
+            </Link>
+            {/* Decorative blob instead of image */}
+            <div className="pointer-events-none absolute -right-10 bottom-0 w-64 h-64 rounded-full bg-gradient-to-tr from-[#FBAF43] to-[#4fd1c5] opacity-20 blur-2xl hidden md:block" />
+          </motion.div>
 
-              {/* Texts Below Image */}
-              <motion.div
-                className="mt-3 text-center flex flex-col gap-2"
-                variants={{
-                  rest: { opacity: 1, y: 0 },
-                  hover: { opacity: 1, y: -5 },
-                }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              >
-                <h3 className="text-base font-bold text-gray-900">{platform.title}</h3>
-                <Link
-                  href={platform.link}
-                  className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm hover:text-[#e59e3b] transition-colors duration-300"
-                >
-                  Learn More
-                  <ArrowRight className="w-3 h-3" />
-                </Link>
-              </motion.div>
-            </motion.div>
+          {/* Secure workspace */}
+          <motion.div whileHover={{ y: -4 }} className="relative bg-white/80 backdrop-blur rounded-2xl p-6 shadow-md border border-gray-200/50">
+            <span className="inline-block text-[10px] uppercase tracking-widest text-[#213348] bg-[#F8FAFC] border border-gray-200/60 rounded-full px-3 py-1">
+              Secure workspace
+            </span>
+            <h4 className="mt-3 text-lg font-bold text-[#213348] leading-snug pr-24">
+              Work safely without sacrificing productivity
+            </h4>
+            <Link href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
+              Learn more <ArrowRight className="w-4 h-4" />
+            </Link>
+
+          </motion.div>
+
+          {/* Adoption */}
+          <motion.div whileHover={{ y: -4 }} className="relative bg-[#0E1A28] text-white rounded-2xl p-6 shadow-md border border-white/10">
+            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
+              Successful adoption
+            </span>
+            <h4 className="mt-3 text-lg font-bold leading-snug">
+              Success lies in how teams use software effectively
+            </h4>
+            <Link href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
+              Get started <ArrowRight className="w-4 h-4" />
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* UZA Platforms imagery grid (with photos) */}
+        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#F8FAFC]">
+          {[
+            { title: 'UZA Bulk', desc: 'Direct-from-factory sourcing for scale and reliability.', href: 'https://www.uzabulk.com/', img: '/1.jpg' },
+            { title: 'UZA Mall', desc: 'Curated B2B catalog with transparent pricing.', href: '#', img: '/3.jpg' },
+            { title: 'UZA Logistics', desc: 'Ocean, air, and last-mile with live tracking.', href: '#', img: '/2.jpg' },
+          ].map((item) => (
+            <motion.a
+              key={item.title}
+              href={item.href}
+              whileHover={{ y: -4 }}
+              className="group relative rounded-2xl overflow-hidden border border-white/20 shadow-lg block"
+            >
+              <div className="relative h-56">
+                <Image src={item.img} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#00142B]/80 via-[#00142B]/30 to-transparent" />
+                <div className="absolute left-0 right-0 bottom-0 p-5 text-white">
+                  <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-2">
+                    Platform
+                  </span>
+                  <h5 className="text-lg font-bold">{item.title}</h5>
+                  <p className="text-xs text-gray-200 mt-1">{item.desc}</p>
+                  <span className="inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm mt-3">
+                    Explore <ArrowRight className="w-4 h-4" />
+                  </span>
+                </div>
+              </div>
+            </motion.a>
           ))}
         </div>
       </div>

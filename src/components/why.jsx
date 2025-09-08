@@ -35,8 +35,7 @@ export default function WhyChooseUZA() {
         {/* Left: YouTube Video */}
         <div className="w-full flex justify-center items-stretch">
           <div
-            className="relative w-full max-w-2xl min-h-[450px] rounded-xl overflow-hidden shadow-lg cursor-pointer"
-            style={{ backdropFilter: 'blur(6px)' }}
+            className="relative w-full max-w-2xl min-h-[450px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white/40 backdrop-blur border border-white/30"
             onClick={handlePlay}
           >
             <iframe
@@ -75,8 +74,8 @@ export default function WhyChooseUZA() {
 
           <div className="grid grid-cols-2 gap-6 mt-6">
             {features.map((feature, idx) => (
-              <div key={idx} className="flex items-center gap-4">
-                <div className="bg-[#FBAF43]/20 rounded-lg p-3 flex items-center justify-center">
+              <div key={idx} className="flex items-center gap-4 bg-white/70 backdrop-blur rounded-xl p-3 border border-gray-200/50">
+                <div className="bg-[#FBAF43]/20 rounded-lg p-2 flex items-center justify-center">
                   {feature.icon}
                 </div>
                 <span className="font-semibold text-gray-900 text-base md:text-lg">
