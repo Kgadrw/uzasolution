@@ -6,27 +6,27 @@ import { Quote } from 'lucide-react'
 export default function Testimonials() {
   const testimonials = [
     {
-      name: 'Alice M., CEO, Global Trade Ltd.',
+      name: 'GAD KALISA, CEO, Global Trade Ltd.',
       comment:
         'UZA Solutions transformed the way we source products. Their platform saved us both time and money.',
     },
     {
-      name: 'James K., Entrepreneur, Kigali',
+      name: 'Gad Kalisa, Entrepreneur, Kigali',
       comment:
         'The logistics support is unmatched. I can now scale my business with confidence thanks to UZA.',
     },
     {
-      name: 'Sarah T., Supply Chain Manager',
+      name: 'Gad Kalisa, Supply Chain Manager',
       comment:
         'Professional, innovative, and impactful. UZA Solutions truly understands Africa’s trade ecosystem.',
     },
     {
-      name: 'Michael B., Founder, TradeAfrica',
+      name: 'Gad Kalisa, Founder, TradeAfrica',
       comment:
         'From sourcing to delivery, everything is smooth and transparent with UZA Solutions.',
     },
     {
-      name: 'Linda K., Business Owner',
+      name: 'Gad Kalisa, Business Owner',
       comment:
         'The professionalism and speed blew me away. Highly recommended for growing businesses.',
     },

@@ -7,7 +7,7 @@ import { FaFacebookF, FaXTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/
 
 export default function Footer() {
   return (
-    <footer className="bg-[#19283A] text-gray-200 pt-12 pb-6 px-6 md:px-12 antialiased">
+    <footer className="bg-[#19283A] text-gray-200 pt-12 pb-6 px-12 md:px-12 antialiased">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         
         {/* Branding & Contact */}

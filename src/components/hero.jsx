@@ -160,7 +160,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent" />
 
         {/* Hero Content */}
-        <div className="relative z-10 flex h-full items-center pl-[150px] pr-6">
+        <div className="relative z-10 flex h-full items-center pl-[80px] pr-4">
           <div className="max-w-xl text-left">
             <h1 className="text-4xl md:text-6xl font-bold leading-tight text-white">
               <span className="text-[#FBAF43]">Africa</span>’s Gateway to Global Trade
