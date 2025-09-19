@@ -13,8 +13,7 @@ export default function Portfolio() {
     { name: "ORVIA Group Ltd", logo: "/orvia.jpg" },
     { name: "Fuji Elevators", logo: "/fuji.jpeg" },
     { name: "Maersk", logo: "/maersk.png" },
-    { name: "Equity Bank Rwanda", logo: "/equity.png" },
-    { name: "JP Morgan Chase Hong Kong", logo: "/jpmorgan.png" },
+   
   ];
 
   // FAQ data
@@ -158,7 +157,7 @@ export default function Portfolio() {
     ].map((s) => (
       <div
         key={s.label}
-        className="bg-white rounded-2xl p-6 flex items-center gap-5  hover:shadow-sm transition-shadow duration-300 border-b-4 border-[#213348]/70"
+        className="bg-white rounded-2xl p-6 flex items-center gap-5  hover:shadow-sm transition-shadow duration-300 border-b-4 border-[#213348]"
       >
         <div className="w-14 h-14 flex items-center justify-center bg-[#FBAF43]/20 rounded-full">
           <Image src={s.icon} alt={s.label} width={32} height={32} className="object-contain" />
@@ -180,8 +179,10 @@ export default function Portfolio() {
         </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 items-center justify-items-center relative">
-          <div className="absolute top-1/3 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent pointer-events-none"></div>
-          <div className="absolute top-2/3 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent pointer-events-none"></div>
+          <div className="absolute top-2/4 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent pointer-events-none"></div>
+          
+          
+          
 
           <div className="hidden lg:block absolute left-1/4 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent pointer-events-none"></div>
           <div className="hidden lg:block absolute left-2/4 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent pointer-events-none"></div>
