@@ -36,7 +36,7 @@ export default function Testimonials() {
   const loopedTestimonials = [...testimonials, ...testimonials]
 
   return (
-    <section className="py-0 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
+    <section className="py-6 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto text-center">
         {/* Header */}
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#FBAF43] mb-12">
