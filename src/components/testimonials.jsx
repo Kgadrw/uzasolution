@@ -32,31 +32,57 @@ export default function Testimonials() {
     },
   ]
 
-  // Duplicate testimonials for smooth infinite scrolling
   const loopedTestimonials = [...testimonials, ...testimonials]
 
   return (
     <section className="py-6 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto text-center">
-        {/* Header */}
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#FBAF43] mb-12">
           What Our Clients Say
         </h2>
 
-        {/* Slider */}
+        {/* -------- First Row -------- */}
         <div className="relative w-full overflow-hidden py-4">
           <motion.div
             className="flex gap-6"
             animate={{ x: ['0%', '-100%'] }}
             transition={{
               repeat: Infinity,
-              duration: 50, // slower sliding
+              duration: 50,
               ease: 'linear',
             }}
           >
             {loopedTestimonials.map((t, i) => (
               <div
                 key={i}
+                className="min-w-[300px] max-w-sm bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-200/50"
+              >
+                <Quote className="w-6 h-6 text-[#FBAF43] mb-3 opacity-70" />
+                <p className="text-gray-700 text-base leading-relaxed mb-4">
+                  “{t.comment}”
+                </p>
+                <h4 className="font-semibold text-gray-900 text-sm mt-auto">
+                  {t.name}
+                </h4>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* -------- Second Row (Opposite Direction) -------- */}
+        <div className="relative w-full overflow-hidden py-4 mt-8">
+          <motion.div
+            className="flex gap-6"
+            animate={{ x: ['-100%', '0%'] }} // reverse direction
+            transition={{
+              repeat: Infinity,
+              duration: 50,
+              ease: 'linear',
+            }}
+          >
+            {loopedTestimonials.map((t, i) => (
+              <div
+                key={i + loopedTestimonials.length} // unique key
                 className="min-w-[300px] max-w-sm bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-200/50"
               >
                 <Quote className="w-6 h-6 text-[#FBAF43] mb-3 opacity-70" />

@@ -39,17 +39,13 @@ export default function WhyChooseUZA() {
             onClick={handlePlay}
           >
             <iframe
-              className="w-full h-full"
-              src={
-                play
-                  ? "https://www.youtube.com/embed/xVJa3Lypjww?autoplay=1&controls=1&autohide=0&fs=1&modestbranding=0&rel=0"
-                  : "https://www.youtube.com/embed/xVJa3Lypjww?controls=0&modestbranding=1&rel=0"
-              }
-              title="UZA Solutions Video"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            ></iframe>
+            className="w-full h-full rounded-xl shadow-lg"
+            src="https://www.youtube.com/embed/xVJa3Lypjww"
+            title="UZA Solutions Video"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
           </div>
         </div>
 
