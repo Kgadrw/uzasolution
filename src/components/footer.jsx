@@ -7,8 +7,21 @@ import { FaFacebookF, FaXTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/
 
 export default function Footer() {
   return (
-    <footer className="bg-[#19283A] text-gray-200 pt-12 pb-6 px-12 md:px-12 antialiased">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+    <footer className="bg-[#19283A] text-gray-200 pt-12 pb-6 px-12 md:px-12 antialiased relative overflow-hidden">
+      {/* Table-like grid background with gradient edges */}
+      <div className="absolute inset-0 opacity-12">
+        <div className="h-full w-full" style={{
+          backgroundImage: `
+            linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.2) 15%, rgba(255, 255, 255, 0.2) 85%, transparent 100%),
+            linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.2) 15%, rgba(255, 255, 255, 0.2) 85%, transparent 100%),
+            repeating-linear-gradient(to right, transparent 0px, transparent 32.5%, rgba(255, 255, 255, 0.12) 32.5%, rgba(255, 255, 255, 0.12) 33%),
+            repeating-linear-gradient(to bottom, transparent 0px, transparent 32.5%, rgba(255, 255, 255, 0.12) 32.5%, rgba(255, 255, 255, 0.12) 33%)
+          `,
+          backgroundSize: '100% 100%, 100% 100%, 33% 100%, 100% 33%'
+        }} />
+      </div>
+      
+      <div className="relative z-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         
         {/* Branding & Contact */}
         <div className="lg:col-span-1">
@@ -27,12 +40,12 @@ export default function Footer() {
         <div>
           <h3 className="text-base font-bold tracking-wide text-white mb-4">Useful Links</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link href="#about" className="hover:text-[#FBAF43] transition">About Us</Link></li>
-            <li><Link href="#campaigns" className="hover:text-[#FBAF43] transition">Campaigns</Link></li>
-            <li><Link href="#news" className="hover:text-[#FBAF43] transition">News & Trends</Link></li>
-            <li><Link href="#contact" className="hover:text-[#FBAF43] transition">Contact Us</Link></li>
-            <li><Link href="#partner" className="hover:text-[#FBAF43] transition">Partner with Us</Link></li>
-            <li><Link href="#privacy" className="hover:text-[#FBAF43] transition">Privacy Policy</Link></li>
+            <li><Link href="/about" className="hover:text-[#FBAF43] transition">About Us</Link></li>
+            <li><Link href="/campaigns" className="hover:text-[#FBAF43] transition">Campaigns</Link></li>
+            <li><Link href="/news" className="hover:text-[#FBAF43] transition">News & Trends</Link></li>
+            <li><Link href="/contact" className="hover:text-[#FBAF43] transition">Contact Us</Link></li>
+            <li><Link href="/contact" className="hover:text-[#FBAF43] transition">Partner with Us</Link></li>
+           
           </ul>
         </div>
 
@@ -40,10 +53,10 @@ export default function Footer() {
         <div>
           <h3 className="text-base font-bold tracking-wide text-white mb-4">Solutions</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link href="#bulk" className="hover:text-[#FBAF43] transition">UZA Bulk</Link></li>
-            <li><Link href="#mall" className="hover:text-[#FBAF43] transition">UZA Mall</Link></li>
-            <li><Link href="#logistics" className="hover:text-[#FBAF43] transition">UZA Logistics</Link></li>
-            <li><Link href="#cloud" className="hover:text-[#FBAF43] transition">UZA Cloud</Link></li>
+            <li><Link href="https://www.uzabulk.com/" className="hover:text-[#FBAF43] transition">UZA Bulk</Link></li>
+            <li><Link href="/comingsoon" className="hover:text-[#FBAF43] transition">UZA Mall</Link></li>
+            <li><Link href="/comingsoon" className="hover:text-[#FBAF43] transition">UZA Logistics</Link></li>
+            <li><Link href="/comingsoon" className="hover:text-[#FBAF43] transition">UZA Cloud</Link></li>
           </ul>
         </div>
 
@@ -65,7 +78,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="mt-10 pt-6 px-12 border-t border-[#2C3A4B] flex flex-col md:flex-row items-center justify-between text-sm">
+      <div className="relative z-10 mt-10 pt-6 px-12  max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between text-sm">
         <div className="mb-4 md:mb-0">© 2025 UZA Solutions. All rights reserved</div>
         <div className="flex gap-3">
           <a href="#" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaFacebookF className="w-4 h-4" /></a>

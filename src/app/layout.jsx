@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import LoadingPage from "../components/loading";
+import Chatbot from "@components/Chatbot";
 import "../app/globals.css";
 
 export default function RootLayout({ children }) {
@@ -51,6 +52,9 @@ export default function RootLayout({ children }) {
         ) : (
           <div className="min-h-screen bg-white text-gray-800 relative">
             {children}
+
+            {/* Chatbot */}
+            <Chatbot />
 
             {/* Slim Scroll Map */}
             <div className="fixed right-4 top-1/2 transform -translate-y-1/2 z-50 w-1.5 h-64 bg-gray-300 rounded-full overflow-hidden">

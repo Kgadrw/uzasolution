@@ -67,9 +67,7 @@ export default function AboutUs() {
             <h4 className="mt-3 text-lg font-bold text-[#213348] leading-snug pr-24">
               Work safely without sacrificing productivity
             </h4>
-            <Link href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
-              Learn more <ArrowRight className="w-4 h-4" />
-            </Link>
+            
 
           </motion.div>
 
@@ -81,9 +79,7 @@ export default function AboutUs() {
             <h4 className="mt-3 text-lg font-bold leading-snug">
               Success lies in how teams use software effectively
             </h4>
-            <Link href="#" className="mt-3 inline-flex items-center gap-1 text-[#FBAF43] font-semibold text-sm">
-              Get started <ArrowRight className="w-4 h-4" />
-            </Link>
+            
                 </motion.div>
               </div>
 
@@ -91,8 +87,8 @@ export default function AboutUs() {
         <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#F8FAFC]">
           {[
             { title: 'UZA Bulk', desc: 'Direct-from-factory sourcing for scale and reliability.', href: 'https://www.uzabulk.com/', img: '/1.jpg' },
-            { title: 'UZA Mall', desc: 'Curated B2B catalog with transparent pricing.', href: '#', img: '/3.jpg' },
-            { title: 'UZA Logistics', desc: 'Ocean, air, and last-mile with live tracking.', href: '#', img: '/2.jpg' },
+            { title: 'UZA Mall', desc: 'Curated B2B catalog with transparent pricing.', href: '/comingsoon', img: '/3.jpg' },
+            { title: 'UZA Logistics', desc: 'Ocean, air, and last-mile with live tracking.', href: '/comingsoon', img: '/2.jpg' },
           ].map((item) => (
             <motion.a
               key={item.title}

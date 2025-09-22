@@ -159,59 +159,50 @@ export default function Portfolio() {
           ))}
         </div>
       </div>
-      {/* Video Section - About Us Carousel */}
-            {/* Video Section - About Us Carousel */}
-      <div className="py-16 px-8 md:px-16 lg:px-24">
-        
-
-        <div className="relative max-w-6xl mx-auto">
-          {/* Video Display */}
-          <div className="aspect-video w-full relative">
-            <iframe
-              key={currentVideo}
-              className="w-full h-full rounded-xl shadow-lg"
-              src={videos[currentVideo].src}
-              title={videos[currentVideo].title}
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            ></iframe>
-
-            {/* Left / Right Navigation - using chevrons */}
-            <button
-              onClick={() =>
-                setCurrentVideo(
-                  currentVideo === 0 ? videos.length - 1 : currentVideo - 1
-                )
-              }
-              className="absolute left-[-60px] top-1/2 -translate-y-1/2 bg-gray-200/80 hover:bg-gray-300 text-gray-900 p-4 shadow-md z-10"
-            >
-              <ChevronLeft size={28} strokeWidth={2.5} />
-            </button>
-            <button
-              onClick={() =>
-                setCurrentVideo(
-                  currentVideo === videos.length - 1 ? 0 : currentVideo + 1
-                )
-              }
-              className="absolute right-[-60px] top-1/2 -translate-y-1/2 bg-gray-200/80 hover:bg-gray-300 text-gray-900 p-4 shadow-md z-10"
-            >
-              <ChevronRight size={28} strokeWidth={2.5} />
-            </button>
+      {/* Video Section - Interactive Video Selection */}
+      <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#213348] mb-4">
+              Our Story in Motion
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Choose a video to learn more about UZA Solutions and our mission to transform Africa's supply chain.
+            </p>
           </div>
 
-          {/* Pagination Dots */}
-          <div className="flex justify-center mt-4 gap-2">
-            {videos.map((_, index) => (
-              <span
+          {/* Video Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {videos.map((video, index) => (
+              <div
                 key={index}
-                onClick={() => setCurrentVideo(index)}
-                className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
-                  currentVideo === index ? "bg-[#213348]" : "bg-gray-300"
+                className={`group cursor-pointer transition-all duration-300 ${
+                  currentVideo === index 
+                    ? 'transform scale-105' 
+                    : 'hover:transform hover:scale-102'
                 }`}
-              ></span>
+                onClick={() => setCurrentVideo(index)}
+              >
+                {/* Video Thumbnail/Preview */}
+                <div className={`relative aspect-video rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
+                  currentVideo === index 
+                    ? 'ring-4 ring-[#FBAF43] shadow-2xl' 
+                    : 'group-hover:shadow-xl'
+                }`}>
+                  <iframe
+                    className="w-full h-full"
+                    src={video.src}
+                    title={video.title}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+
+              </div>
             ))}
           </div>
+
         </div>
       </div>
 
