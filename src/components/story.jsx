@@ -44,7 +44,7 @@ export default function AboutPage() {
       {/* Short UzaBulk Story with CEO */}
       <section className="py-16 px-6 md:px-20 bg-white">
         
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           
           {/* Story Text */}
           <motion.div
@@ -54,11 +54,11 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
           >
             
-            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">The UzaBulk Story</h2>
+            <h2 className="text-3xl md:text-4xl text-[#FBAF43] font-extrabold mb-4">The UzaBulk Story</h2>
             <p className="text-lg md:text-xl mb-4">
               Founded to create transparent trade for African businesses, UzaBulk connects companies directly to factories with no middlemen. The mission is to make trade fair, accessible, and affordable for all African businesses.
             </p>
-            <p className="font-semibold">Yves Nsengiyumva Iradukunda — CEO</p>
+            <p className="font-semibold text-[#FBAF43]">Yves Nsengiyumva Iradukunda — CEO</p>
           </motion.div>
 
           {/* CEO Image */}
@@ -70,7 +70,7 @@ export default function AboutPage() {
           >
             <Image
               src="/yves.jpeg"
-              alt="Yves Nsengiyumva Iradukunda"
+              alt="Yves N. Iradukunda"
               fill
               className="object-cover"
               priority
@@ -94,7 +94,7 @@ export default function AboutPage() {
 
         <div className="max-w-7xl mx-auto text-center mb-12 relative z-10">
           <motion.h2
-            className="text-3xl md:text-4xl font-extrabold"
+            className="text-3xl md:text-4xl text-[#FBAF43] font-extrabold"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}

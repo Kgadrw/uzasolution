@@ -49,6 +49,7 @@ export default function HeroSection() {
           <Link href="/" className="hover:text-[#FBAF43]">Home</Link>
           <Link href="/about" className="hover:text-[#FBAF43]">About</Link>
           <Link href="/portfolio" className="hover:text-[#FBAF43]">Portfolio</Link>
+          <Link href="/campaigns" className="hover:text-[#FBAF43]">Campaigns</Link>
           <Link href="/news" className="hover:text-[#FBAF43]">News</Link>
           <Link href="/contact" className="hover:text-[#FBAF43]">Contact</Link>
         </div>
@@ -67,6 +68,7 @@ export default function HeroSection() {
               <Link href="/" className="block hover:text-[#FBAF43]">Home</Link>
               <Link href="/about" className="block hover:text-[#FBAF43]">About</Link>
               <Link href="/portfolio" className="block hover:text-[#FBAF43]">Portfolio</Link>
+              <Link href="/campaigns" className="block hover:text-[#FBAF43]">Campaigns</Link>
               <Link href="/news" className="block hover:text-[#FBAF43]">News</Link>
               <Link href="/contact" className="block hover:text-[#FBAF43]">Contact</Link>
             </div>

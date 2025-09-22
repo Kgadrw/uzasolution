@@ -24,8 +24,8 @@ export default function Navbar({ initialSolid = false }) {
     return pathname.startsWith(href)
   }
 
-  const links = ['/', '/about', '/portfolio', '/news', '/contact']
-  const linkNames = ['Home', 'About', 'Portfolio', 'News', 'Contact']
+  const links = ['/', '/about', '/portfolio', '/campaigns', '/news', '/contact']
+  const linkNames = ['Home', 'About', 'Portfolio', 'Campaigns', 'News', 'Contact']
 
   return (
     <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-4xl">
