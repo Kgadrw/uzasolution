@@ -6,29 +6,39 @@ import { Quote } from 'lucide-react'
 export default function Testimonials() {
   const testimonials = [
     {
-      name: 'GAD KALISA, CEO, Global Trade Ltd.',
+      name: 'IRIBA Water Group Ltd',
       comment:
-        'UZA Solutions transformed the way we source products. Their platform saved us both time and money.',
+        'UZA Solutions has been instrumental in supplying us with high-quality equipment and materials. Their reliability and expertise in water industry solutions have helped us maintain our operations seamlessly.',
     },
     {
-      name: 'Gad Kalisa, Entrepreneur, Kigali',
+      name: 'Lindo Care',
       comment:
-        'The logistics support is unmatched. I can now scale my business with confidence thanks to UZA.',
+        'The healthcare sector requires precision and reliability. UZA Solutions has consistently delivered on their promise of sourcing and delivering healthcare-related products with exceptional quality and timeliness.',
     },
     {
-      name: 'Gad Kalisa, Supply Chain Manager',
+      name: 'Home Foods',
       comment:
-        'Professional, innovative, and impactful. UZA Solutions truly understands Africa’s trade ecosystem.',
+        'From packaging solutions to food equipment, UZA Solutions has been our trusted partner. Their understanding of the food industry needs and their ability to source quality products has been outstanding.',
     },
     {
-      name: 'Gad Kalisa, Founder, TradeAfrica',
+      name: 'Elite Restaurant',
       comment:
-        'From sourcing to delivery, everything is smooth and transparent with UZA Solutions.',
+        'UZA Solutions has provided us with customized materials and equipment that perfectly match our restaurant\'s needs. Their attention to detail and commitment to quality is remarkable.',
     },
     {
-      name: 'Gad Kalisa, Business Owner',
+      name: 'ORVIA Group Ltd',
       comment:
-        'The professionalism and speed blew me away. Highly recommended for growing businesses.',
+        'Working with UZA Solutions for our construction and finishing products has been a game-changer. Their comprehensive supply chain solutions have significantly improved our project delivery timelines.',
+    },
+    {
+      name: 'Fuji Elevators Partnership',
+      comment:
+        'Our strategic partnership with UZA Solutions has enabled us to deliver specialized equipment across Africa. Their logistics expertise and local market knowledge are invaluable.',
+    },
+    {
+      name: 'Maersk Logistics',
+      comment:
+        'UZA Solutions has been a reliable partner in ensuring smooth trade operations. Their commitment to excellence in logistics coordination has made our collaboration seamless and efficient.',
     },
   ]
 
@@ -38,7 +48,7 @@ export default function Testimonials() {
     <section className="py-6 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto text-center">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#FBAF43] mb-12">
-          What Our Clients Say
+          Trusted by Industry Leaders
         </h2>
 
         {/* -------- First Row -------- */}
