@@ -12,7 +12,7 @@ export default function PortfolioPage() {
     <div>
       <Navbar />
       <PortfolioSection />
-      <Testimonials />
+      
       <Footer />
     </div>
   )

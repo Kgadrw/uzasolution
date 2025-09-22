@@ -1,8 +1,7 @@
 'use client'
-
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import React, { useState } from 'react'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
 
 export default function Portfolio() {
   const clients = [
@@ -13,15 +12,20 @@ export default function Portfolio() {
     { name: "ORVIA Group Ltd", logo: "/orvia.jpg" },
     { name: "Fuji Elevators", logo: "/fuji.jpeg" },
     { name: "Maersk", logo: "/maersk.png" },
-   
+  ];
+    const videos = [
+    { src: "https://www.youtube.com/embed/xVJa3Lypjww", title: "Main Story" },
+    { src: "https://www.youtube.com/embed/2FCvn0r4EUs", title: "Short Intro" },
+    { src: "https://www.youtube.com/embed/Prs33Sr-HKs", title: "Vision" },
   ];
 
-  // FAQ data
+  const [currentVideo, setCurrentVideo] = useState(0);
+
   const faqs = [
     {
       question: "Company Overview",
       answer: (
-        <ul className="list-disc pl-5 space-y-1">
+        <ul className="list-disc pl-5 space-y-1 text-sm">
           <li><strong>Name:</strong> UZA Solutions Ltd</li>
           <li><strong>HK:</strong> New City, 2 Lei Yue Mun Rd</li>
           <li><strong>Rwanda:</strong> Nyarurembo, Kiyovu, Kigali</li>
@@ -31,150 +35,79 @@ export default function Portfolio() {
     },
     {
       question: "Banking – HK",
-      answer: (
-        <>
-          JP Morgan Chase HK <br />
-          Acc: UZA SOLUTIONS Limited <br />
-          No: 63115235394 <br />
-          SWIFT: CHASHKHHXXX <br />
-          Charter House, 8 Connaught Rd
-        </>
-      ),
+      answer: <p className="text-sm">JP Morgan Chase HK <br />Acc: UZA SOLUTIONS Limited <br />No: 63115235394 <br />SWIFT: CHASHKHHXXX <br />Charter House, 8 Connaught Rd</p>,
     },
     {
       question: "Banking – Rwanda",
-      answer: (
-        <>
-          Equity Bank <br />
-          Acc: UZA SOLUTIONS Ltd <br />
-          No (USD): 4013201237332
-        </>
-      ),
+      answer: <p className="text-sm">Equity Bank <br />Acc: UZA SOLUTIONS Ltd <br />No (USD): 4013201237332</p>,
     },
     {
       question: "Products",
-      answer: (
-        <>
-          <strong>Construction:</strong> Steel, Cement, Tiles, Pipes <br />
-          <strong>Finishing:</strong> Cabinets, Wardrobes, Lighting <br />
-          <strong>Industrial:</strong> Mixers, Pumps, Generators, Fuji Elevators
-        </>
-      ),
+      answer: <p className="text-sm"><strong>Construction:</strong> Steel, Cement, Tiles, Pipes <br /><strong>Finishing:</strong> Cabinets, Wardrobes, Lighting <br /><strong>Industrial:</strong> Mixers, Pumps, Generators, Fuji Elevators</p>,
     },
     {
       question: "Why Choose Us",
-      answer: (
-        <>
-          Direct from manufacturers <br />
-          Any order size <br />
-          Customization & branding <br />
-          Proven supply <br />
-          Trusted logistics
-        </>
-      ),
+      answer: <p className="text-sm">Direct from manufacturers <br />Any order size <br />Customization & branding <br />Proven supply <br />Trusted logistics</p>,
     },
     {
       question: "Experience",
-      answer: (
-        <>
-          Delivered construction equipment, finishing products & machines in Rwanda.  
-          Fuji Elevators partnership for high-value orders.
-        </>
-      ),
+      answer: <p className="text-sm">Delivered construction equipment, finishing products & machines in Rwanda. Fuji Elevators partnership for high-value orders.</p>,
     },
     {
       question: "Contact",
-      answer: (
-        <>
-          info@uzasolutionsltd.com <br />
-          +250 788 371 081 <br />
-          uzasolutionsltd.com • uzabulk.com <br />
-          Kigali, Rwanda
-        </>
-      ),
+      answer: <p className="text-sm">info@uzasolutionsltd.com <br />+250 788 371 081 <br />uzasolutionsltd.com • uzabulk.com <br />Kigali, Rwanda</p>,
     },
     {
       question: "Legal",
-      answer: (
-        <>
-          Registered in Rwanda <br />
-          Tax compliant (TIN: 122907893) <br />
-          Meets quality standards <br />
-          CoC, warranties, compliance docs
-        </>
-      ),
+      answer: <p className="text-sm">Registered in Rwanda <br />Tax compliant (TIN: 122907893) <br />Meets quality standards <br />CoC, warranties, compliance docs</p>,
     },
   ];
 
-  // independent toggle state for each FAQ
   const [openMap, setOpenMap] = useState({})
 
   const toggleFAQ = (index) => {
     setOpenMap((prev) => ({
       ...prev,
-      [index]: !prev[index], // toggle only this FAQ
+      [index]: !prev[index],
     }))
   }
 
   return (
     <section className="w-full bg-white text-gray-900">
-      {/* Hero */}
-      <div className="relative overflow-hidden">
-        <div className="relative h-[520px] md:h-[640px]">
-          <Image src="/mall.jpg" alt="Portfolio hero" fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
-          <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
-            <div className="max-w-3xl text-white">
-              <div className="flex items-center mb-4">
-                <span className="w-1.5 h-6 bg-[#FBAF43] rounded mr-3" />
-                <span className="uppercase text-xs tracking-widest text-[#FBAF43] font-bold">Portfolio</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold leading-tight">Building Africa’s modern supply engine</h1>
-              <p className="mt-5 text-lg md:text-xl text-gray-200">
-                Sourcing, logistics, and digital infrastructure for reliable imports and regional trade.
-              </p>
-              <div className="mt-8 flex gap-3">
-                <a href="#work" className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-6 py-3 rounded-full transition-all">
-                  Explore work <ArrowRight className="w-4 h-4" />
-                </a>
-                <a href="#contact" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-full transition-all">
-                  Get in touch
-                </a>
-              </div>
+      {/* Hero Section */}
+      <div className="relative h-[520px] md:h-[640px] overflow-hidden">
+        <Image src="/mall.jpg" alt="Portfolio hero" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
+        <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
+          <div className="max-w-3xl text-white">
+            <div className="flex items-center mb-4">
+              <span className="w-1.5 h-6 bg-[#FBAF43] rounded mr-3" />
+              <span className="uppercase text-xs tracking-widest text-[#FBAF43] font-bold">Portfolio</span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">Building Africa’s modern supply engine</h1>
+            <p className="mt-4 text-base md:text-lg text-gray-200">
+              Sourcing, logistics, and digital infrastructure for reliable imports and regional trade.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <a href="#work" className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-5 py-2.5 rounded-full transition-all">
+                Explore work <ArrowRight className="w-4 h-4" />
+              </a>
+              <a href="#contact" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2.5 rounded-full transition-all">
+                Get in touch
+              </a>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats strip */}
+      {/* Video Section */}
+            {/* Video Section - Company Story */}
       
-    <div className="px-8 md:px-16 lg:px-24 -mt-12 relative z-10">
-  <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-    {[
-      { icon: '/globe.svg', label: 'Global factories', value: '10K+' },
-      { icon: '/truck.jpg', label: 'Shipments managed', value: '350+' },
-      { icon: '/file.svg', label: 'SKUs sourced', value: '5k+' }
-    ].map((s) => (
-      <div
-        key={s.label}
-        className="bg-white rounded-2xl p-6 flex items-center gap-5  hover:shadow-sm transition-shadow duration-300 border-b-4 border-[#213348]"
-      >
-        <div className="w-14 h-14 flex items-center justify-center bg-[#FBAF43]/20 rounded-full">
-          <Image src={s.icon} alt={s.label} width={32} height={32} className="object-contain" />
-        </div>
-        <div>
-          <p className="text-2xl md:text-3xl font-bold text-[#00142B]">{s.value}</p>
-          <p className="text-sm md:text-base text-[#00142B]">{s.label}</p>
-        </div>
-      </div>
-    ))}
-  </div>
-</div>
 
 
       {/* Recent Work */}
       <div className="py-16 px-8 md:px-16 lg:px-24">
-        <h2 className="text-3xl md:text-6xl lg:text-7xl font-extrabold text-[#213348] text-center mb-12">
+        <h2 className="text-4xl md:text-5xl lg:text-5xl font-extrabold text-[#213348] text-center mb-12">
           Recent Work
         </h2>
 
@@ -202,26 +135,23 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Portfolio FAQ Section - 3 per row, independent toggle */}
+      {/* FAQ Section */}
       <div className="py-16 px-6 md:px-12 lg:px-20 bg-white">
-        <h2 className="text-3xl md:text-6xl lg:text-7xl font-extrabold text-[#213348] text-center mb-12">
-          FAQS
+        <h2 className="text-3xl md:text-5xl font-extrabold text-[#213348] text-center mb-12">
+          FAQs
         </h2>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {faqs.map((faq, index) => (
             <div key={index} className="border border-gray-200 rounded-xl overflow-hidden">
               <button
                 onClick={() => toggleFAQ(index)}
-                className="w-full text-left px-6 py-4 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center"
+                className="w-full text-left px-6 py-3 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center"
               >
-                <span className="font-semibold text-gray-800">{faq.question}</span>
-                <span className="text-gray-500">
-                  {openMap[index] ? "−" : "+"}
-                </span>
+                <span className="font-semibold text-gray-800 text-sm md:text-base">{faq.question}</span>
+                <span className="text-gray-500 text-lg">{openMap[index] ? "−" : "+"}</span>
               </button>
               {openMap[index] && (
-                <div className="px-6 py-4 bg-white text-gray-700 border-t border-gray-200 transition-all">
+                <div className="px-6 py-4 bg-white text-gray-700 border-t border-gray-200 text-sm transition-all">
                   {faq.answer}
                 </div>
               )}
@@ -229,24 +159,65 @@ export default function Portfolio() {
           ))}
         </div>
       </div>
+      {/* Video Section - About Us Carousel */}
+            {/* Video Section - About Us Carousel */}
+      <div className="py-16 px-8 md:px-16 lg:px-24">
+        
 
-      {/* CTA */}
-      <div className="px-8 md:px-16 lg:px-24 pb-20">
-        <div className="relative overflow-hidden rounded-2xl bg-[#213348] text-white">
-          <div className="absolute inset-0 opacity-20">
-            <Image src="/bg.gif" alt="bg" fill className="object-cover" />
+        <div className="relative max-w-6xl mx-auto">
+          {/* Video Display */}
+          <div className="aspect-video w-full relative">
+            <iframe
+              key={currentVideo}
+              className="w-full h-full rounded-xl shadow-lg"
+              src={videos[currentVideo].src}
+              title={videos[currentVideo].title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+
+            {/* Left / Right Navigation - using chevrons */}
+            <button
+              onClick={() =>
+                setCurrentVideo(
+                  currentVideo === 0 ? videos.length - 1 : currentVideo - 1
+                )
+              }
+              className="absolute left-[-60px] top-1/2 -translate-y-1/2 bg-gray-200/80 hover:bg-gray-300 text-gray-900 p-4 shadow-md z-10"
+            >
+              <ChevronLeft size={28} strokeWidth={2.5} />
+            </button>
+            <button
+              onClick={() =>
+                setCurrentVideo(
+                  currentVideo === videos.length - 1 ? 0 : currentVideo + 1
+                )
+              }
+              className="absolute right-[-60px] top-1/2 -translate-y-1/2 bg-gray-200/80 hover:bg-gray-300 text-gray-900 p-4 shadow-md z-10"
+            >
+              <ChevronRight size={28} strokeWidth={2.5} />
+            </button>
           </div>
-          <div className="relative p-10 md:p-14 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <h3 className="text-2xl md:text-3xl font-bold">Ready to source at scale?</h3>
-              <p className="mt-2 text-gray-200 max-w-xl">Let’s move from requirement to delivery with speed, compliance, and cost control.</p>
-            </div>
-            <a href="/contact" className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-6 py-3 rounded-full transition-all">
-              Talk to us <ArrowRight className="w-4 h-4" />
-            </a>
+
+          {/* Pagination Dots */}
+          <div className="flex justify-center mt-4 gap-2">
+            {videos.map((_, index) => (
+              <span
+                key={index}
+                onClick={() => setCurrentVideo(index)}
+                className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
+                  currentVideo === index ? "bg-[#213348]" : "bg-gray-300"
+                }`}
+              ></span>
+            ))}
           </div>
         </div>
       </div>
+
+
+      {/* CTA Section */}
+      
     </section>
   )
 }

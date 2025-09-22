@@ -1,63 +1,150 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { Twitter, Linkedin } from 'lucide-react';
 
-export default function OurStory() {
-  const [expanded, setExpanded] = useState(false);
+const teamMembers = [
+  {
+    name: 'GAHAMANYI BADIANE',
+    role: 'Sales & Marketing Officer',
+    image: '/badiane.jpeg',
+    linkedin: 'https://linkedin.com/',
+  },
+  {
+    name: 'HABARUREMA HONORINE',
+    role: 'Sales Representative',
+    image: '/honorine.JPG',
+    linkedin: 'https://linkedin.com/',
+  },
+  {
+    name: 'GAD KALISA',
+    role: 'Software Engineer',
+    image: '/gad.jpeg',
+    linkedin: 'https://linkedin.com/',
+  },
+];
 
+export default function AboutPage() {
   return (
-    <section className="bg-gradient-to-r from-indigo-50 via-white to-pink-50 py-20 px-6 md:px-20">
-      <div className="max-w-5xl mx-auto text-center">
-        <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          The UzaBulk Story
-        </motion.h2>
-        <motion.p
-          className="text-lg md:text-xl text-gray-700 mb-12"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.3 }}
-        >
-          Born From a Scam, Built for Trust
-        </motion.p>
+    <div className="w-full">
+      {/* Hero Banner */}
+      <section className="relative w-full h-[35vh] md:h-[40vh] flex items-center justify-center">
+        <Image
+          src="/hero2.jpg"
+          alt="Hero Background"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent"></div>
+        
+      </section>
 
-        <motion.div
-          className={`text-left text-gray-800 prose prose-lg md:prose-xl max-w-4xl mx-auto overflow-hidden transition-all duration-500 ${
-            expanded ? 'max-h-screen' : 'max-h-[220px]'
-          }`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-        >
-          <p>A few years ago, I wanted to buy a cup-making machine. Like many African traders, I relied on a middleman in China who promised to handle everything. The price he quoted felt high, but I thought that’s just how business was done.</p>
+      {/* Short UzaBulk Story with CEO */}
+      <section className="py-16 px-6 md:px-20 bg-white">
+        
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          
+          {/* Story Text */}
+          <motion.div
+            className="text-gray-800"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            
+            <h2 className="text-3xl md:text-4xl font-extrabold mb-4">The UzaBulk Story</h2>
+            <p className="text-lg md:text-xl mb-4">
+              Founded to create transparent trade for African businesses, UzaBulk connects companies directly to factories with no middlemen. The mission is to make trade fair, accessible, and affordable for all African businesses.
+            </p>
+            <p className="font-semibold">Yves Nsengiyumva Iradukunda — CEO</p>
+          </motion.div>
 
-          <p>Something didn’t sit right with me, so I decided to travel to China and see things for myself.</p>
+          {/* CEO Image */}
+          <motion.div
+            className="relative w-48 h-48 md:w-60 md:h-60 mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+          >
+            <Image
+              src="/yves.jpeg"
+              alt="Yves Nsengiyumva Iradukunda"
+              fill
+              className="object-cover"
+              priority
+            />
+          </motion.div>
+        </div>
+      </section>
 
-          <p>When I reached the factory, I was shocked. The real factory price was less than half of what the middleman had told me. That’s when I realized: it wasn’t just me. Countless African businesses were being forced to pay double or even triple the real cost — simply because of hidden commissions.</p>
+      {/* Meet Our Team */}
+      <section className="relative py-16 px-6 md:px-20 bg-gray-50">
+        {/* Decorative Lines */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Horizontal Lines */}
+          <div className="absolute top-1/3 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          <div className="absolute top-2/3 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
 
-          <p>At that moment, I knew things had to change.</p>
+          {/* Vertical Lines */}
+          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+        </div>
 
-          <p>This experience gave birth to UzaBulk — a platform built to connect African businesses directly to factories, with no middlemen, no inflated costs, and no hidden games.</p>
+        <div className="max-w-7xl mx-auto text-center mb-12 relative z-10">
+          <motion.h2
+            className="text-3xl md:text-4xl font-extrabold"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            Meet Our Team
+          </motion.h2>
+          <p className="text-gray-700 mt-2">The talented people driving UzaBulk forward.</p>
+        </div>
 
-          <p>Today, UzaBulk gives you access to 20M+ products worldwide, delivered to Rwanda in as little as two weeks.</p>
+        {/* Meet Our Team */}
+<section className="relative py-16 px-6 md:px-20 bg-gray-50">
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12 relative z-10 justify-items-center">
+    {teamMembers.map((member, idx) => (
+      <motion.div
+        key={idx}
+        className="flex flex-col items-start text-left w-full max-w-xs"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: idx * 0.2 }}
+      >
+        {/* Profile Image */}
+        <div className="relative w-full h-64 mb-4">
+  <Image
+    src={member.image}
+    alt={member.name}
+    fill
+    className="object-cover filter grayscale hover:grayscale-0 object-[center_20%] rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg"
+    priority
+  />
+</div>
 
-          <p>I started this journey because I was tired of seeing African entrepreneurs being cheated. Now, my mission is simple: <strong>To make trade fair, transparent, and affordable for every business in Africa.</strong></p>
 
-          <p className="mt-6 font-semibold">Welcome to UzaSolutions. — Yves Nsengiyumva Iradukunda</p>
-        </motion.div>
+        {/* Name & Role */}
+        <h3 className="font-semibold text-xl text-[#0f172a]">{member.name}</h3>
+        <p className="text-[#0f172a] text-sm mb-4">{member.role}</p>
 
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="mt-8 px-6 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors"
-        >
-          {expanded ? 'Show Less' : 'Read More'}
-        </button>
-      </div>
-    </section>
+        {/* Social Icons */}
+        <div className="flex space-x-4">
+          
+          <a href={member.linkedin} target="_blank" rel="noreferrer">
+            <Linkedin className="w-5 h-5 text-gray-400 hover:text-blue-700  transition" />
+          </a>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+</section>
+
+
+      </section>
+    </div>
   );
 }
