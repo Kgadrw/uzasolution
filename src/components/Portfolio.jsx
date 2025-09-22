@@ -63,12 +63,12 @@ export default function Portfolio() {
     },
   ];
 
-  const [openMap, setOpenMap] = useState({})
+  const [openFAQs, setOpenFAQs] = useState({})
 
   const toggleFAQ = (index) => {
-    setOpenMap((prev) => ({
+    setOpenFAQs(prev => ({
       ...prev,
-      [index]: !prev[index],
+      [index]: !prev[index]
     }))
   }
 
@@ -76,27 +76,27 @@ export default function Portfolio() {
     <section className="w-full bg-white text-gray-900">
       {/* Hero Section */}
       <div className="relative h-[520px] md:h-[640px] overflow-hidden">
-        <Image src="/mall.jpg" alt="Portfolio hero" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
-        <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
-          <div className="max-w-3xl text-white">
-            <div className="flex items-center mb-4">
-              <span className="w-1.5 h-6 bg-[#FBAF43] rounded mr-3" />
-              <span className="uppercase text-xs tracking-widest text-[#FBAF43] font-bold">Portfolio</span>
-            </div>
+          <Image src="/mall.jpg" alt="Portfolio hero" fill className="object-cover" priority />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
+          <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
+            <div className="max-w-3xl text-white">
+              <div className="flex items-center mb-4">
+                <span className="w-1.5 h-6 bg-[#FBAF43] rounded mr-3" />
+                <span className="uppercase text-xs tracking-widest text-[#FBAF43] font-bold">Portfolio</span>
+              </div>
             <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">Building Africa’s modern supply engine</h1>
             <p className="mt-4 text-base md:text-lg text-gray-200">
-              Sourcing, logistics, and digital infrastructure for reliable imports and regional trade.
-            </p>
+                Sourcing, logistics, and digital infrastructure for reliable imports and regional trade.
+              </p>
             <div className="mt-6 flex gap-3">
               <a href="#work" className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-5 py-2.5 rounded-full transition-all">
-                Explore work <ArrowRight className="w-4 h-4" />
-              </a>
+                  Explore work <ArrowRight className="w-4 h-4" />
+                </a>
               <a href="#contact" className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2.5 rounded-full transition-all">
-                Get in touch
-              </a>
+                  Get in touch
+                </a>
+              </div>
             </div>
-          </div>
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export default function Portfolio() {
                 height={140}
                 className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
               />
-            </div>
+          </div>
           ))}
         </div>
       </div>
@@ -148,9 +148,9 @@ export default function Portfolio() {
                 className="w-full text-left px-6 py-3 bg-gray-50 hover:bg-gray-100 transition flex justify-between items-center"
               >
                 <span className="font-semibold text-gray-800 text-sm md:text-base">{faq.question}</span>
-                <span className="text-gray-500 text-lg">{openMap[index] ? "−" : "+"}</span>
+                <span className="text-gray-500 text-lg">{openFAQs[index] ? "−" : "+"}</span>
               </button>
-              {openMap[index] && (
+              {openFAQs[index] && (
                 <div className="px-6 py-4 bg-white text-gray-700 border-t border-gray-200 text-sm transition-all">
                   {faq.answer}
                 </div>
@@ -158,7 +158,7 @@ export default function Portfolio() {
             </div>
           ))}
         </div>
-      </div>
+          </div>
       {/* Video Section - Interactive Video Selection */}
       <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto">
@@ -169,7 +169,7 @@ export default function Portfolio() {
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               Choose a video to learn more about UZA Solutions and our mission to transform Africa's supply chain.
             </p>
-          </div>
+        </div>
 
           {/* Video Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -197,11 +197,11 @@ export default function Portfolio() {
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                   ></iframe>
-                </div>
+      </div>
 
-              </div>
-            ))}
-          </div>
+            </div>
+          ))}
+      </div>
 
         </div>
       </div>
