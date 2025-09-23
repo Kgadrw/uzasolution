@@ -46,7 +46,7 @@ export default function InsightsSection() {
               </span>
             </div>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#213348] leading-snug">
-              News & Trends in Africa’s Trade Revolution
+              News & Blogs
             </h2>
           </div>
         </div>

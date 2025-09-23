@@ -8,6 +8,7 @@ const TrustedCo = dynamic(() => import('../components/trusted'))
 const Make = dynamic(() => import('../components/make'))
 const News = dynamic(() => import('../components/news'))
 const Testimonials = dynamic(() => import('../components/testimonials'))
+const Partners = dynamic(() => import('../components/partners'))
 {/*const Portfolio = dynamic(() => import('../components/portfolio'))*/}
 const Footer = dynamic(() => import('../components/footer'))
 
@@ -22,6 +23,7 @@ const Page = () => {
       <Make />
       <TrustedCo />
       <Testimonials />
+      <Partners />
       <News />
      { /*<Portfolio />*/}
       <Footer />
