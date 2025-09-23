@@ -12,12 +12,7 @@ export default function AboutUs() {
         {/* UZA Platforms Section - Moved to Top */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-4">
-              <span className="w-1 h-5 bg-[#FBAF43] rounded mr-3"></span>
-              <p className="text-sm font-semibold text-[#FBAF43] uppercase tracking-wider">
-                Our Platforms
-              </p>
-            </div>
+            
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
               Discover Our Tech-Driven Solutions
             </h2>

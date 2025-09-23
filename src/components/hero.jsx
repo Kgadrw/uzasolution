@@ -65,7 +65,7 @@ export default function HeroSection() {
               {heroText.description}
             </p>
             <div className="mt-6 sm:mt-8">
-              <Link href="#">
+              <Link href="https://www.uzabulk.com/auth/login">
                 <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-6 py-3 sm:px-8 sm:py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl text-sm sm:text-base touch-manipulation">
                   {heroText.cta}
                 </button>
@@ -77,15 +77,15 @@ export default function HeroSection() {
         {/* -------- Slider Arrows -------- */}
         <button
           onClick={handlePrevSlide}
-          className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 text-white bg-black/30 hover:bg-black/50 rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
+          className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 text-white  rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
         >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          
         </button>
         <button
           onClick={handleNextSlide}
-          className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 text-white bg-black/30 hover:bg-black/50 rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
+          className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 text-white  rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
         >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          
         </button>
 
         {/* -------- Slider Dots -------- */}
