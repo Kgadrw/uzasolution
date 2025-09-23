@@ -66,30 +66,22 @@ export default function Contact() {
     setSubmitStatus(null)
 
     try {
-      // Create the email content
-      const emailContent = `
-New Contact Form Submission
+      // Send email using API
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          message: formData.message
+        })
+      })
 
-Name: ${formData.firstName} ${formData.lastName}
-Email: ${formData.email}
-Company: ${formData.company || 'Not provided'}
-
-Message:
-${formData.message}
-
----
-This message was sent from the UZA Solutions contact form.
-      `.trim()
-
-      // Send email using a simple mailto approach
-      const subject = `New Contact Form Submission from ${formData.firstName} ${formData.lastName}`
-      const mailtoLink = `mailto:info@uzasolutions.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailContent)}`
-      
-      // Open mailto link
-      window.open(mailtoLink, '_blank')
-      
-      // Simulate success (since mailto doesn't provide feedback)
-      setTimeout(() => {
+      if (response.ok) {
+        // Success
         setShowRocket(true)
         setSubmitStatus('success')
         setIsLoading(false)
@@ -105,7 +97,11 @@ This message was sent from the UZA Solutions contact form.
         setTimeout(() => {
           setShowRocket(false)
         }, 2000)
-      }, 1000)
+      } else {
+        // Error
+        setSubmitStatus('error')
+        setIsLoading(false)
+      }
 
     } catch (error) {
       console.error('Error sending email:', error)
