@@ -7,7 +7,7 @@ export default function Contact() {
     <>
       {/* Hero Section */}
       <section 
-        className="relative w-full h-[35vh] md:h-[40vh] flex items-center justify-center"
+        className="relative w-full h-[60vh] md:h-[40vh] flex items-center justify-center"
         style={{
           backgroundImage: "url('/hero3.jpg')",
           backgroundSize: "cover",

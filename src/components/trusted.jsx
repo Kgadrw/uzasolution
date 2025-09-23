@@ -1,5 +1,5 @@
 'use client'
-
+import Link from 'next/link'
 import React from 'react'
 import { ArrowRight } from 'lucide-react'
 
@@ -14,10 +14,12 @@ export default function WhySection() {
           <p className="text-sm md:text-base lg:text-lg mb-8 max-w-2xl mx-auto text-gray-200">
             Join us in revolutionizing trade for African businesses and creating global opportunities.
           </p>
-          <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl">
-            Partner with us
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-          </button>
+          <Link href="/contact">
+      <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl">
+        Partner with us
+        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+      </button>
+    </Link>
         </div>
       </div>
     </section>
