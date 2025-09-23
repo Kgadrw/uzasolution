@@ -81,10 +81,10 @@ export default function Footer() {
       <div className="relative z-10 mt-10 pt-6 px-12  max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between text-sm">
         <div className="mb-4 md:mb-0">© 2025 UZA Solutions. All rights reserved</div>
         <div className="flex gap-3">
-          <a href="#" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaFacebookF className="w-4 h-4" /></a>
-          <a href="#" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaXTwitter className="w-4 h-4" /></a>
-          <a href="#" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaLinkedinIn className="w-4 h-4" /></a>
-          <a href="#" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaInstagram className="w-4 h-4" /></a>
+          <a href="https://www.facebook.com/uzasolutions" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaFacebookF className="w-4 h-4" /></a>
+          <a href="https://www.twitter.com/uzasolutions" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaXTwitter className="w-4 h-4" /></a>
+          <a href="https://www.linkedin.com/in/uza-solutions-aa5353362/" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaLinkedinIn className="w-4 h-4" /></a>
+          <a href="https://www.instagram.com/uza.solutions" className="bg-[#213348] rounded-full p-2 text-[#FBAF43] hover:bg-[#FBAF43] hover:text-[#213348] transition"><FaInstagram className="w-4 h-4" /></a>
         </div>
       </div>
     </footer>

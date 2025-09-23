@@ -9,19 +9,19 @@ const teamMembers = [
     name: 'GAHAMANYI BADIANE',
     role: 'Sales & Marketing Officer',
     image: '/badiane.jpeg',
-    linkedin: 'https://linkedin.com/',
+    linkedin: 'https://www.linkedin.com/in/gahamanyi-badiane-303b7919b',
   },
   {
     name: 'HABARUREMA HONORINE',
     role: 'Sales Representative',
     image: '/honorine.JPG',
-    linkedin: 'https://linkedin.com/',
+    linkedin: 'https://www.linkedin.com/in/habarurema-honorine-611509360/',
   },
   {
     name: 'GAD KALISA',
     role: 'Software Engineer',
     image: '/gad.jpeg',
-    linkedin: 'https://linkedin.com/',
+    linkedin: 'https://www.linkedin.com/in/gad-kalisa-521225339/',
   },
 ];
 
@@ -58,7 +58,13 @@ export default function AboutPage() {
             <p className="text-lg md:text-xl mb-4">
               Founded to create transparent trade for African businesses, UzaBulk connects companies directly to factories with no middlemen. The mission is to make trade fair, accessible, and affordable for all African businesses.
             </p>
-            <p className="font-semibold text-[#FBAF43]">Yves Nsengiyumva Iradukunda — CEO</p>
+            <p className="font-semibold text-[#FBAF43]">Yves N. Iradukunda — CEO</p>
+            <div className="flex space-x-8">
+          
+          <a href= "https://www.linkedin.com/in/iradukunda-yves-566194317/" target="_blank" rel="noreferrer">
+            <Linkedin className="w-5 h-5 text-gray-400 hover:text-blue-700  transition" />
+          </a>
+        </div>
           </motion.div>
 
           {/* CEO Image */}
@@ -75,6 +81,7 @@ export default function AboutPage() {
               className="object-cover"
               priority
             />
+            
           </motion.div>
         </div>
       </section>

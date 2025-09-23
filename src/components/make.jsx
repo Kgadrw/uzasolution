@@ -81,7 +81,7 @@ export default function GlobalImpactHero() {
 
           {/* CTA Button */}
           <Link
-            href="#"
+            href="/contact"
             className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-8 py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl"
           >
             Get in Touch
