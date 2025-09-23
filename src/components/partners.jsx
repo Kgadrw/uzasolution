@@ -69,12 +69,6 @@ export default function Partners() {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-gray-500 max-w-2xl mx-auto">
-            These partnerships enable us to provide comprehensive trade solutions, 
-            combining global expertise with local market knowledge to serve our clients better.
-          </p>
-        </div>
       </div>
     </section>
   )
