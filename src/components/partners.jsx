@@ -16,6 +16,11 @@ export default function Partners() {
       description: 'World\'s largest B2B marketplace'
     },
     {
+        name: 'Igihe',
+        logo: '/igihe.png', 
+        description: 'Igihe is a technology company that provides software solutions for businesses.'
+      },
+    {
       name: 'ICT Chamber',
       logo: '/ict-chamber.png', 
       description: 'Technology innovation partnership'
