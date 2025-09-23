@@ -69,20 +69,20 @@ export default function AboutPage() {
 
           {/* CEO Image */}
           <motion.div
-            className="relative w-48 h-48 md:w-60 md:h-60 mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1 }}
-          >
-            <Image
-              src="/yves.jpeg"
-              alt="Yves N. Iradukunda"
-              fill
-              className="object-cover"
-              priority
-            />
-            
-          </motion.div>
+  className="relative w-48 h-48 md:w-60 md:h-60 mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
+  initial={{ opacity: 0, scale: 0.85 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 1 }}
+>
+  <Image
+    src="/yves.jpeg"
+    alt="Yves N. Iradukunda"
+    fill
+    className="object-cover  object-top" 
+    priority
+  />
+</motion.div>
+
         </div>
       </section>
 
