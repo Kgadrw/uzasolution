@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Send, CheckCircle, AlertCircle, Loader2, Rocket } from 'lucide-react'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -15,6 +15,7 @@ export default function Contact() {
   const [isLoading, setIsLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success', 'error', or null
   const [errors, setErrors] = useState({})
+  const [showRocket, setShowRocket] = useState(false)
   const formRef = useRef(null)
 
   const handleInputChange = (e) => {
@@ -89,6 +90,7 @@ This message was sent from the UZA Solutions contact form.
       
       // Simulate success (since mailto doesn't provide feedback)
       setTimeout(() => {
+        setShowRocket(true)
         setSubmitStatus('success')
         setIsLoading(false)
         setFormData({
@@ -98,6 +100,11 @@ This message was sent from the UZA Solutions contact form.
           company: '',
           message: ''
         })
+        
+        // Hide rocket after animation
+        setTimeout(() => {
+          setShowRocket(false)
+        }, 2000)
       }, 1000)
 
     } catch (error) {
@@ -223,18 +230,7 @@ This message was sent from the UZA Solutions contact form.
                 )}
               </div>
 
-              {/* Status Messages */}
-              {submitStatus === 'success' && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 p-3 bg-green-100 text-green-800 rounded-xl border border-green-200"
-                >
-                  <CheckCircle className="w-5 h-5" />
-                  <span className="text-sm font-medium">Message sent successfully! Your default email client will open.</span>
-                </motion.div>
-              )}
-
+              {/* Error Message */}
               {submitStatus === 'error' && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -246,23 +242,89 @@ This message was sent from the UZA Solutions contact form.
                 </motion.div>
               )}
 
-              <button 
-                type="submit" 
-                disabled={isLoading}
-                className="w-full md:w-auto inline-flex justify-center items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] disabled:bg-gray-400 disabled:cursor-not-allowed text-gray-900 font-semibold px-6 py-3 rounded-xl shadow-lg transition-all duration-200"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    Send message
-                  </>
-                )}
-              </button>
+              <div className="relative">
+                <button 
+                  type="submit" 
+                  disabled={isLoading || submitStatus === 'success'}
+                  className={`w-full md:w-auto inline-flex justify-center items-center gap-2 font-semibold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 ${
+                    submitStatus === 'success' 
+                      ? 'bg-green-500 hover:bg-green-600 text-white' 
+                      : isLoading 
+                        ? 'bg-gray-400 cursor-not-allowed text-gray-600' 
+                        : 'bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900'
+                  }`}
+                >
+                  <AnimatePresence mode="wait">
+                    {isLoading ? (
+                      <motion.div
+                        key="loading"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sending...</span>
+                      </motion.div>
+                    ) : submitStatus === 'success' ? (
+                      <motion.div
+                        key="success"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="flex items-center gap-2"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Sent!</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="send"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="flex items-center gap-2"
+                      >
+                        <Send className="w-4 h-4" />
+                        <span>Send message</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </button>
+
+                {/* Flying Rocket Animation */}
+                <AnimatePresence>
+                  {showRocket && (
+                    <motion.div
+                      initial={{ 
+                        opacity: 0, 
+                        scale: 0.5,
+                        x: 0,
+                        y: 0
+                      }}
+                      animate={{ 
+                        opacity: 1, 
+                        scale: 1,
+                        x: [0, -20, -40, -60, -80, -100, -120, -140, -160, -180, -200],
+                        y: [0, -10, -20, -30, -40, -50, -60, -70, -80, -90, -100]
+                      }}
+                      exit={{ 
+                        opacity: 0, 
+                        scale: 0.5,
+                        x: -200,
+                        y: -100
+                      }}
+                      transition={{ 
+                        duration: 2,
+                        ease: "easeOut"
+                      }}
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10"
+                    >
+                      <Rocket className="w-6 h-6 text-[#FBAF43] drop-shadow-lg" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </form>
           </div>
         </div>
