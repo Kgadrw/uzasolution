@@ -54,7 +54,7 @@ export default function Partners() {
             >
               {/* Logo Container */}
               <div className="flex justify-center mb-6">
-                <div className="relative w-32 h-20 group-hover:scale-110 transition-transform duration-300">
+                <div className="relative w-48 h-28 group-hover:scale-110 transition-transform duration-300">
                   <Image
                     src={partner.logo}
                     alt={`${partner.name} logo`}
