@@ -13,14 +13,14 @@ const teamMembers = [
   },
   {
     name: 'HABARUREMA HONORINE',
-    role: 'Sales Representative',
+    role: 'Customer relations officer',
     image: '/honorine.JPG',
     linkedin: 'https://www.linkedin.com/in/habarurema-honorine-611509360/',
   },
   {
     name: 'GAD KALISA',
     role: 'Software Engineer',
-    image: '/gad.jpeg',
+    image: '/kalisa.jpeg',
     linkedin: 'https://www.linkedin.com/in/gad-kalisa-521225339/',
   },
 ];
@@ -28,21 +28,9 @@ const teamMembers = [
 export default function AboutPage() {
   return (
     <div className="w-full">
-      {/* Hero Banner */}
-      <section className="relative w-full h-[35vh] md:h-[40vh] flex items-center justify-center">
-        <Image
-          src="/hero2.jpg"
-          alt="Hero Background"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent"></div>
-        
-      </section>
 
       {/* Short UzaBulk Story with CEO */}
-      <section className="py-16 px-6 md:px-20 bg-white">
+      <section className="pt-32 pb-16 px-6 md:px-20 bg-white">
         
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           
@@ -69,13 +57,13 @@ export default function AboutPage() {
 
           {/* CEO Image */}
           <motion.div
-  className="relative w-48 h-48 md:w-60 md:h-60 mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
+  className="relative w-64 h-64 md:w-80 md:h-80 mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
   initial={{ opacity: 0, scale: 0.85 }}
   animate={{ opacity: 1, scale: 1 }}
   transition={{ duration: 1 }}
 >
   <Image
-    src="/yves.jpeg"
+    src="/ceo.jpeg"
     alt="Yves N. Iradukunda"
     fill
     className="object-cover  object-top" 
@@ -128,7 +116,7 @@ export default function AboutPage() {
     src={member.image}
     alt={member.name}
     fill
-    className="object-cover filter grayscale hover:grayscale-0 object-[center_20%] rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg"
+    className="object-cover filter grayscale  object-[center_20%] rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg"
     priority
   />
 </div>

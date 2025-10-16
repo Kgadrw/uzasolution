@@ -51,34 +51,40 @@ export default function Navbar({ initialSolid = false }) {
     return pathname.startsWith(href)
   }
 
-  const links = ['/', '/about', '/portfolio', '/campaigns', '/news', '/contact']
-  const linkNames = ['Home', 'About', 'Portfolio', 'Campaigns', 'News', 'Contact']
+  const links = ['/', '/about', '/portfolio', '/uzasempower', '/news', '/contact']
+  const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News', 'Contact']
 
   return (
-    <nav className="fixed top-4 left-1/2 transform -translate-x-1/2 z-30 w-full max-w-4xl">
+    <nav className="fixed top-0 left-0 right-0 z-30 w-full">
       <div
-        className={`flex justify-between items-center px-12 rounded-full shadow-lg transition-all duration-300 ${
+        className={`flex justify-between items-center px-32 py-5 shadow-xl border-b border-gray-100 transition-all duration-500 ${
           scrolled
-            ? 'bg-[#00142B] py-2 text-white'
-            : 'bg-white/4 backdrop-blur-sm py-3 text-white'
+            ? 'bg-white/95 backdrop-blur-md text-[#00142B]'
+            : 'bg-white/95 backdrop-blur-md text-[#00142B]'
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center mr-12">
-          <Image src="/logo.png" alt="Logo" width={100} height={50} className="object-contain" />
+        <Link href="/" className="flex items-center group transition-transform duration-300 hover:scale-105">
+          <Image src="/uza.png" alt="UZA Solutions Logo" width={120} height={60} className="object-contain filter drop-shadow-sm" />
         </Link>
 
         {/* Desktop Nav Links */}
-        <div className="hidden md:flex space-x-6 text-sm">
+        <div className="hidden md:flex space-x-8">
           {links.map((href, i) => (
             <Link
               key={i}
               href={href}
-              className={`hover:text-[#FBAF43] font-semibold ${
-                isActive(href) ? 'text-[#FBAF43]' : 'text-white'
+              className={`relative font-semibold text-sm tracking-wider uppercase transition-all duration-300 group font-quicksand ${
+                isActive(href) 
+                  ? 'text-[#FBAF43] font-bold' 
+                  : 'text-[#00142B] hover:text-[#FBAF43]'
               }`}
             >
-              {linkNames[i]}
+              <span className="relative z-10">{linkNames[i]}</span>
+              {isActive(href) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FBAF43] to-[#FFD700] rounded-full"></div>
+              )}
+              <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FBAF43] to-[#FFD700] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </Link>
           ))}
         </div>
@@ -88,18 +94,18 @@ export default function Navbar({ initialSolid = false }) {
           ref={hamburgerRef}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           aria-label="Toggle Menu"
-          className="md:hidden p-2 -mr-2 rounded-lg hover:bg-white/10 transition-colors duration-200 touch-manipulation"
+          className="md:hidden p-3 rounded-xl hover:bg-gray-100 transition-all duration-300 touch-manipulation group"
         >
           <div className="relative w-6 h-6">
             <Menu 
-              className={`absolute inset-0 w-6 h-6 transition-all duration-300 ${
-                showMobileMenu ? 'opacity-0 rotate-180' : 'opacity-100 rotate-0'
-              } ${scrolled ? 'text-white' : 'text-white'}`} 
+              className={`absolute inset-0 w-6 h-6 transition-all duration-500 ${
+                showMobileMenu ? 'opacity-0 rotate-180 scale-0' : 'opacity-100 rotate-0 scale-100'
+              } text-[#00142B] group-hover:text-[#FBAF43]`} 
             />
             <X 
-              className={`absolute inset-0 w-6 h-6 transition-all duration-300 ${
-                showMobileMenu ? 'opacity-100 rotate-0' : 'opacity-0 -rotate-180'
-              } ${scrolled ? 'text-white' : 'text-white'}`} 
+              className={`absolute inset-0 w-6 h-6 transition-all duration-500 ${
+                showMobileMenu ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-180 scale-0'
+              } text-[#00142B] group-hover:text-[#FBAF43]`} 
             />
           </div>
         </button>
@@ -108,15 +114,15 @@ export default function Navbar({ initialSolid = false }) {
       {/* Mobile Nav */}
       <div
         ref={mobileMenuRef}
-        className={`md:hidden absolute top-full left-0 right-0 mt-2 mx-4 transition-all duration-300 ease-in-out transform ${
+        className={`md:hidden absolute top-full left-6 right-6 mt-3 transition-all duration-500 ease-out transform ${
           showMobileMenu 
             ? 'opacity-100 translate-y-0 scale-100' 
-            : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
+            : 'opacity-0 -translate-y-6 scale-95 pointer-events-none'
         }`}
       >
         <div
-          className={`px-6 py-4 rounded-2xl flex flex-col space-y-1 shadow-xl backdrop-blur-md border border-white/20 ${
-            scrolled ? 'bg-[#00142B]/95 text-white' : 'bg-white/20 text-white'
+          className={`px-6 py-5 rounded-2xl flex flex-col space-y-2 shadow-2xl backdrop-blur-xl border border-gray-200/50 bg-white/95 ${
+            scrolled ? 'text-[#00142B]' : 'text-[#00142B]'
           }`}
         >
           {links.map((href, i) => (
@@ -124,11 +130,17 @@ export default function Navbar({ initialSolid = false }) {
               key={i}
               href={href}
               onClick={() => setShowMobileMenu(false)}
-              className={`block px-4 py-3 rounded-xl hover:bg-white/10 hover:text-[#FBAF43] font-semibold transition-all duration-200 touch-manipulation ${
-                isActive(href) ? 'text-[#FBAF43] bg-white/5' : 'text-white'
+              className={`block px-5 py-4 rounded-xl font-semibold text-sm tracking-wider uppercase transition-all duration-300 touch-manipulation group relative font-quicksand ${
+                isActive(href) 
+                  ? 'text-[#FBAF43] bg-gradient-to-r from-[#FBAF43]/10 to-[#FFD700]/10 font-bold' 
+                  : 'text-[#00142B] hover:text-[#FBAF43] hover:bg-gray-50'
               }`}
             >
-              {linkNames[i]}
+              <span className="relative z-10">{linkNames[i]}</span>
+              {isActive(href) && (
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#FBAF43] to-[#FFD700] rounded-r-full"></div>
+              )}
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#FBAF43] to-[#FFD700] rounded-r-full scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top"></div>
             </Link>
           ))}
         </div>
