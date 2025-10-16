@@ -27,31 +27,34 @@ export default function UZAEmpowerPage() {
 
   const stories = [
     {
-      name: "Marie Claire Uwimana",
+      name: "Claude Uwimana",
       location: "Kigali, Rwanda",
-      business: "Agro-processing Business",
-      quote: "UZA Empower gave me the equipment I needed to start my tomato processing business. In just 8 months, my income increased by 300%.",
+      business: "Fruit & Flower Farming",
+      quote: "UZA Empower gave me the equipment and training I needed to start my fruit and flower farming business. In just 8 months, my income increased by 300%.",
       image: "/story1.jpg",
-      story: "Former street vendor turned successful agro-processor",
-      category: "Success Story"
+      story: "Former street vendor turned successful fruit and flower farmer",
+      category: "Success Story",
+      borderColor: "border-t-[#E5243B]"
     },
     {
       name: "John Bosco Mwamba",
       location: "Rubavu, Rwanda",
-      business: "Construction Services",
-      quote: "The lease-to-own financing allowed me to purchase construction equipment. Now I employ 5 people and have steady contracts.",
+      business: "Agricultural Equipment Services",
+      quote: "The lease-to-own financing allowed me to purchase farming machinery. Now I provide agricultural equipment services to local farmers and employ 5 people.",
       image: "/story2.png",
-      story: "Construction worker who became a business owner",
-      category: "Entrepreneur"
+      story: "Farmer turned agricultural machinery service provider",
+      category: "Entrepreneur",
+      borderColor: "border-t-[#19486A]"
     },
     {
-      name: "Grace Mukamana",
+      name: "Emmanuel Mukamana",
       location: "Musanze, Rwanda",
-      business: "Tailoring & Fashion",
-      quote: "UZA Empower's training and equipment helped me grow from a small tailoring shop to a fashion business serving the whole community.",
+      business: "Maize Processing & Packaging",
+      quote: "UZA Empower's training and equipment helped me grow from a small maize trader to a commercial maize processing and packaging business serving the whole community.",
       image: "/story3.jpg",
-      story: "Local entrepreneur turned fashion business owner",
-      category: "Impact Story"
+      story: "Small trader turned commercial maize processor",
+      category: "Impact Story",
+      borderColor: "border-t-[#4C9F38]"
     }
   ]
 
@@ -541,7 +544,7 @@ export default function UZAEmpowerPage() {
                 
                 {/* Category Badge */}
                 <div className="absolute top-6 left-6">
-                  <span className="bg-[#FBAF43] text-[#00142B] px-4 py-2 rounded-full text-sm font-bold">
+                  <span className={`bg-white text-[#00142B] px-4 py-2 rounded-full text-sm font-bold ${stories[currentStoryIndex].borderColor} border-t-4`}>
                     {stories[currentStoryIndex].category}
                   </span>
               </div>
