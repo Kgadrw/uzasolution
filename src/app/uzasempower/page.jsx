@@ -142,7 +142,7 @@ export default function UZAEmpowerPage() {
       <Navbar />
       
       {/* Hero Section - Rotating Images with Text Overlays */}
-      <section className="relative h-[500px] sm:h-[600px] md:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[3rem] border-b-4 border-[#19486A]">
+      <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[2rem] sm:rounded-b-[3rem] border-b-2 sm:border-b-4 border-[#19486A]">
         {heroImages.map((imageData, index) => (
           <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'
@@ -160,10 +160,10 @@ export default function UZAEmpowerPage() {
             
             {/* Hero Text Overlay */}
             <div className="absolute inset-0 flex items-center">
-              <div className="max-w-6xl px-8 ml-8 md:ml-16">
+              <div className="max-w-6xl px-4 sm:px-6 md:px-8 ml-4 sm:ml-6 md:ml-8 lg:ml-16">
                 
                <motion.h1 
-                 className="text-6xl md:text-8xl text-gray-100 mb-8 leading-tight" 
+                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-gray-100 mb-4 sm:mb-6 md:mb-8 leading-tight" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 50 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -173,7 +173,7 @@ export default function UZAEmpowerPage() {
                </motion.h1>
                
                <motion.p 
-                 className="text-2xl md:text-3xl text-gray-100 mb-12 max-w-4xl leading-relaxed font-semibold" 
+                 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-100 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-4xl leading-relaxed font-semibold" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 30 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -183,18 +183,18 @@ export default function UZAEmpowerPage() {
                </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-8"
+                  className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
                   <motion.button 
-                    className="group px-6 py-4 rounded-4xl font-bold text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-3"
+                    className="group px-4 sm:px-5 md:px-6 py-3 sm:py-3 md:py-4 rounded-2xl sm:rounded-3xl md:rounded-4xl font-bold text-sm sm:text-base md:text-lg lg:text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <span>Join Our Mission</span>
-                    <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform" />
                   </motion.button>
                   </motion.div>
                 </div>
@@ -221,11 +221,11 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Program Introduction Slider */}
-      <section className="py-20 bg-gray-50 relative">
-        <div className="container mx-auto px-8">
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50 relative">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-6xl mx-auto relative">
             <motion.div 
-              className={`bg-white rounded-2xl border-t-4 p-8 md:p-12 ${
+              className={`bg-white rounded-xl sm:rounded-2xl border-t-2 sm:border-t-4 p-4 sm:p-6 md:p-8 lg:p-12 ${
                 introSlides[currentIntroSlide].id === 1 ? 'border-[#FBAF43]' :
                 introSlides[currentIntroSlide].id === 2 ? 'border-[#19486A]' :
                 'border-[#4C9F38]'
@@ -235,7 +235,7 @@ export default function UZAEmpowerPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 items-center">
                 {/* Left Column - Text Content */}
                 <motion.div
                   initial={{ opacity: 0, x: -30 }}
@@ -243,7 +243,7 @@ export default function UZAEmpowerPage() {
                   transition={{ duration: 0.6, delay: 0.2 }}
                 >
                   <motion.h2 
-                    className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6"
+                    className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
@@ -254,10 +254,10 @@ export default function UZAEmpowerPage() {
                   {/* Content based on slide type */}
                   {introSlides[currentIntroSlide].id === 1 && (
                     <>
-                      <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                      <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
                         {introSlides[currentIntroSlide].content[0]}
                       </p>
-                      <p className="text-base text-gray-600 leading-relaxed">
+                      <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">
                         {introSlides[currentIntroSlide].content[1]}
                       </p>
                     </>
@@ -265,16 +265,16 @@ export default function UZAEmpowerPage() {
 
                   {introSlides[currentIntroSlide].id === 2 && (
                     <>
-                      <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                      <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
                         {introSlides[currentIntroSlide].content[0]}
                       </p>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
                         {introSlides[currentIntroSlide].stats.map((stat, index) => (
                           <div key={index} className="text-center">
-                            <div className={`w-16 h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-2`}>
-                              <span className="text-white font-bold text-sm">{stat.number}</span>
+                            <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-1 sm:mb-2`}>
+                              <span className="text-white font-bold text-xs sm:text-sm">{stat.number}</span>
                   </div>
-                            <p className="text-xs text-gray-600 font-medium">{stat.label}</p>
+                            <p className="text-xs sm:text-xs md:text-xs text-gray-600 font-medium leading-tight">{stat.label}</p>
                 </div>
                         ))}
               </div>
@@ -283,18 +283,18 @@ export default function UZAEmpowerPage() {
 
                   {introSlides[currentIntroSlide].id === 3 && (
                     <>
-                      <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                      <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
                         {introSlides[currentIntroSlide].content[0]}
                       </p>
-                      <div className="space-y-4">
+                      <div className="space-y-3 sm:space-y-4">
                         {introSlides[currentIntroSlide].steps.map((step, index) => (
-                          <div key={index} className="flex items-start space-x-4">
-                            <div className={`w-10 h-10 ${step.color} rounded-full flex items-center justify-center flex-shrink-0`}>
-                              <span className="text-white font-bold text-sm">{step.number}</span>
+                          <div key={index} className="flex items-start space-x-2 sm:space-x-3 md:space-x-4">
+                            <div className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 ${step.color} rounded-full flex items-center justify-center flex-shrink-0`}>
+                              <span className="text-white font-bold text-xs sm:text-sm">{step.number}</span>
                   </div>
-                            <div>
-                              <h4 className="font-semibold text-[#00142B] mb-1">{step.title}</h4>
-                              <p className="text-sm text-gray-600">{step.description}</p>
+                            <div className="flex-1">
+                              <h4 className="font-semibold text-[#00142B] mb-1 text-sm sm:text-base">{step.title}</h4>
+                              <p className="text-xs sm:text-sm text-gray-600 leading-tight">{step.description}</p>
                   </div>
                 </div>
                         ))}
@@ -305,13 +305,13 @@ export default function UZAEmpowerPage() {
                   
                 {/* Right Column - Image */}
                 <motion.div 
-                  className="relative"
+                  className="relative hidden md:block"
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <motion.div 
-                    className="relative h-96 rounded-2xl overflow-hidden"
+                    className="relative h-64 sm:h-80 md:h-96 rounded-xl sm:rounded-2xl overflow-hidden mt-6 lg:mt-0"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
@@ -330,16 +330,16 @@ export default function UZAEmpowerPage() {
             {/* Navigation Arrows - Much further from content */}
             <button 
               onClick={prevIntroSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-4 border-[#19486A] p-3 shadow-lg transition-all duration-300 group z-10"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-8 sm:-translate-x-12 md:-translate-x-16 lg:-translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-2 sm:border-t-4 border-[#19486A] p-2 sm:p-3 shadow-lg transition-all duration-300 group z-10"
             >
-              <ChevronLeft className="w-6 h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
             </button>
             
             <button 
               onClick={nextIntroSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-4 border-[#19486A] p-3 shadow-lg transition-all duration-300 group z-10"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 sm:translate-x-12 md:translate-x-16 lg:translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-2 sm:border-t-4 border-[#19486A] p-2 sm:p-3 shadow-lg transition-all duration-300 group z-10"
             >
-              <ChevronRight className="w-6 h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
             </button>
 
             {/* Slide Indicators */}
@@ -361,21 +361,21 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Core Solutions - Inkomoko Inspired */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-8">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-8">
+            <div className="text-center mb-12 sm:mb-16 md:mb-20">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6 md:mb-8">
                 Our Solutions for Change
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                 Three integrated approaches that transform challenges into opportunities for lasting change in displacement-affected communities
               </p>
             </div>
 
             {/* Solutions Grid */}
-            <div className="grid lg:grid-cols-3 gap-10 mb-20">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mb-12 sm:mb-16 md:mb-20">
               {[
                 {
                   title: "No Poverty",
@@ -404,8 +404,8 @@ export default function UZAEmpowerPage() {
               ].map((solution, index) => {
                 const Icon = solution.icon
                   return (
-                  <div key={index} className="group relative">
-                <div className="rounded-3xl p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden relative" 
+                  <div key={index} className={`group relative ${index === 1 ? 'sm:col-span-2 lg:col-span-1' : ''}`}>
+                <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden relative h-full" 
                      style={{
                        backgroundImage: `url(${index === 0 ? '/negative.jpg' : index === 1 ? '/negative1.jpg' : '/negative.jpg'})`,
                        backgroundSize: 'cover',
@@ -413,15 +413,15 @@ export default function UZAEmpowerPage() {
                        backgroundRepeat: 'no-repeat'
                      }}>
                       <div className="absolute inset-0 bg-white/90"></div>
-                      <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${solution.color} rounded-t-3xl`}></div>
+                      <div className={`absolute top-0 left-0 w-full h-2 bg-gradient-to-r ${solution.color} rounded-t-2xl sm:rounded-t-3xl`}></div>
                   
-                      <div className="relative z-10">
-                        <div className={`w-16 h-16 bg-gradient-to-br ${solution.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                          <Icon className="w-8 h-8 text-white" />
+                      <div className="relative z-10 h-full flex flex-col">
+                        <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gradient-to-br ${solution.color} rounded-xl sm:rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                          <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
                         </div>
                         
-                        <h3 className="text-2xl font-bold mb-4 text-[#00689D]">{solution.title}</h3>
-                        <p className="text-[#19486A] leading-relaxed mb-6">
+                        <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-[#00689D]">{solution.title}</h3>
+                        <p className="text-[#19486A] leading-relaxed text-sm sm:text-base flex-grow">
                           {solution.description}
                         </p>
                         
@@ -437,18 +437,18 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Our Approach - Illustration */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-8">
+      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-4xl mx-auto">
             <motion.div 
-              className="text-center mb-12"
+              className="text-center mb-8 sm:mb-10 md:mb-12"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <motion.h2 
-                className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6"
+                className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -471,7 +471,7 @@ export default function UZAEmpowerPage() {
                 alt="UZA Empower Illustration"
                 width={800}
                 height={600}
-                className="w-full h-auto rounded-2xl"
+                className="w-full h-auto rounded-xl sm:rounded-2xl"
               />
             </motion.div>
           </div>
@@ -482,19 +482,19 @@ export default function UZAEmpowerPage() {
       <ImpactCardsSection />
 
       {/* Real Voices - Client Success Stories */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <motion.div 
-              className="text-center mb-16"
+              className="text-center mb-10 sm:mb-12 md:mb-16"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <motion.h2 
-                className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6" 
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6 px-4" 
                 style={{ fontFamily: 'Comfortaa, sans-serif' }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -504,7 +504,7 @@ export default function UZAEmpowerPage() {
                 Success Stories from Our Community
               </motion.h2>
               <motion.p 
-                className="text-xl text-gray-600 max-w-3xl mx-auto"
+                className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4"
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -523,7 +523,7 @@ export default function UZAEmpowerPage() {
               viewport={{ once: true }}
             >
               <motion.div 
-                className="relative h-[600px] md:h-[700px] rounded-3xl overflow-hidden shadow-2xl"
+                className="relative h-[500px] sm:h-[600px] md:h-[700px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
                 key={currentStoryIndex}
                 initial={{ opacity: 0, scale: 1.05 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -543,41 +543,41 @@ export default function UZAEmpowerPage() {
                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#E5243B]/20 via-[#19486A]/10 to-transparent"></div>
                 
                 {/* Category Badge */}
-                <div className="absolute top-6 left-6">
-                  <span className={`bg-white text-[#00142B] px-4 py-2 rounded-full text-sm font-bold ${stories[currentStoryIndex].borderColor} border-t-4`}>
+                <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
+                  <span className={`bg-white text-[#00142B] px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold ${stories[currentStoryIndex].borderColor} border-t-2 sm:border-t-4`}>
                     {stories[currentStoryIndex].category}
                   </span>
               </div>
               
                 {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
-                  <h3 className="text-3xl md:text-4xl font-bold mb-2 text-white" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 text-white">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 text-white" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
                     {stories[currentStoryIndex].name}
                   </h3>
-                  <div className="text-xl md:text-2xl text-[#FBAF43] font-semibold mb-2">{stories[currentStoryIndex].business}</div>
-                  <div className="text-lg text-gray-300 mb-6">{stories[currentStoryIndex].location}</div>
+                  <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#FBAF43] font-semibold mb-1 sm:mb-2">{stories[currentStoryIndex].business}</div>
+                  <div className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 md:mb-6">{stories[currentStoryIndex].location}</div>
 
-                  <p className="text-lg md:text-xl leading-relaxed mb-6 max-w-4xl" style={{ fontFamily: 'Quicksand, sans-serif' }}>
+                  <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-3 sm:mb-4 md:mb-6 max-w-4xl" style={{ fontFamily: 'Quicksand, sans-serif' }}>
                     "{stories[currentStoryIndex].quote}"
                   </p>
 
-                  <div className="text-sm text-gray-400">{stories[currentStoryIndex].story}</div>
+                  <div className="text-xs sm:text-sm text-gray-400">{stories[currentStoryIndex].story}</div>
                 </div>
             </motion.div>
 
               {/* Navigation Arrows */}
               <button 
                 onClick={prevStory}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group"
+                className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 group"
               >
-                <ChevronLeft className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
+                <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white group-hover:scale-110 transition-transform" />
               </button>
               
               <button 
                 onClick={nextStory}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group"
+                className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 group"
               >
-                <ChevronRight className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
+                <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white group-hover:scale-110 transition-transform" />
               </button>
               
               {/* Story Indicators */}

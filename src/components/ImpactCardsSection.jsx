@@ -55,7 +55,7 @@ export default function ImpactCardsSection() {
   }
 
   return (
-    <section className="py-12 bg-white relative overflow-hidden">
+    <section className="py-12 bg-white relative overflow-hidden hidden md:block">
       {/* Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-72 h-72 bg-[#FBAF43]/5 rounded-full blur-3xl"></div>
@@ -115,7 +115,7 @@ export default function ImpactCardsSection() {
             </div>
 
             {/* Right Side - CardSwap Container */}
-            <div style={{ height: '600px', position: 'relative', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <div className="hidden md:block" style={{ height: '600px', position: 'relative', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <CardSwap
               cardDistance={60}
               verticalDistance={70}
