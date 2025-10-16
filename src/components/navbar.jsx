@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Mail } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 export default function Navbar({ initialSolid = false }) {
@@ -51,13 +51,13 @@ export default function Navbar({ initialSolid = false }) {
     return pathname.startsWith(href)
   }
 
-  const links = ['/', '/about', '/portfolio', '/uzasempower', '/news', '/contact']
-  const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News', 'Contact']
+  const links = ['/', '/about', '/portfolio', '/uzasempower', '/news']
+  const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News']
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-30 w-full">
       <div
-        className={`flex justify-between items-center px-32 py-5 shadow-xl border-b border-gray-100 transition-all duration-500 ${
+        className={`flex justify-between items-center px-32 py-3 shadow-xl border-b border-gray-100 transition-all duration-500 ${
           scrolled
             ? 'bg-white/95 backdrop-blur-md text-[#00142B]'
             : 'bg-white/95 backdrop-blur-md text-[#00142B]'
@@ -68,7 +68,7 @@ export default function Navbar({ initialSolid = false }) {
           <Image src="/uza.png" alt="UZA Solutions Logo" width={120} height={60} className="object-contain filter drop-shadow-sm" />
         </Link>
 
-        {/* Desktop Nav Links */}
+        {/* Desktop Nav Links - Centered */}
         <div className="hidden md:flex space-x-8">
           {links.map((href, i) => (
             <Link
@@ -87,6 +87,22 @@ export default function Navbar({ initialSolid = false }) {
               <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#FBAF43] to-[#FFD700] rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
             </Link>
           ))}
+        </div>
+
+        {/* CTA Button */}
+        <div className="hidden md:block">
+          <Link
+            href="/contact"
+            className="group relative px-4 py-1.5 rounded-full font-bold text-xs tracking-wider uppercase transition-all duration-300 transform hover:scale-105 shadow-lg bg-[#FBAF43] hover:bg-[#00142B] text-white flex items-center justify-center space-x-2 overflow-hidden"
+          >
+            {/* Toggle switch effect background */}
+            <div className="absolute inset-0 bg-[#FBAF43] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+            <span className="relative z-10 group-hover:text-[#00142B] transition-colors duration-300">Contact Us</span>
+            {/* Contact icon in circular badge */}
+            <div className="relative z-10 w-6 h-6 bg-white rounded-full flex items-center justify-center border border-[#FBAF43] group-hover:border-[#DDA63A] transition-colors duration-300">
+              <Mail className="w-3 h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
+            </div>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}

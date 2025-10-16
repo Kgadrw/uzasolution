@@ -77,8 +77,8 @@ export default function ImpactCardsSection() {
                 </h3>
                 <p className="text-lg text-gray-600 leading-relaxed mb-6">
                   Our three strategic pillars work together to create lasting change in displacement-affected communities across Africa. Through innovative approaches and collaborative partnerships, we're building a more inclusive and prosperous future.
-                </p>
-              </div>
+            </p>
+          </div>
 
               <div className="space-y-4">
                 <div className="flex items-start space-x-4">
@@ -116,14 +116,14 @@ export default function ImpactCardsSection() {
 
             {/* Right Side - CardSwap Container */}
             <div style={{ height: '600px', position: 'relative', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-              <CardSwap
-                cardDistance={60}
-                verticalDistance={70}
-                delay={5000}
-                pauseOnHover={true}
+            <CardSwap
+              cardDistance={60}
+              verticalDistance={70}
+              delay={5000}
+              pauseOnHover={true}
                 width={450}
                 height={520}
-              >
+            >
               {impactCards.map((card) => (
                 <Card key={card.id} customClass="bg-white shadow-2xl border-gray-200">
                   <div className="h-full flex flex-col">
@@ -179,7 +179,7 @@ export default function ImpactCardsSection() {
                   </div>
                 </Card>
               ))}
-              </CardSwap>
+            </CardSwap>
             </div>
           </div>
 

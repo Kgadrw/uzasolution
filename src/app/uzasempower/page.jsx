@@ -138,7 +138,7 @@ export default function UZAEmpowerPage() {
       <Navbar />
       
       {/* Hero Section - Rotating Images with Text Overlays */}
-      <section className="relative h-[500px] sm:h-[600px] md:h-[700px] overflow-hidden flex items-center justify-center">
+      <section className="relative h-[500px] sm:h-[600px] md:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[3rem] border-b-4 border-[#19486A]">
         {heroImages.map((imageData, index) => (
           <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'
@@ -151,22 +151,18 @@ export default function UZAEmpowerPage() {
               priority={index === 0}
             />
             
-            {/* Color-coded overlay based on image type */}
-            <div className={`absolute inset-0 bg-gradient-to-r ${
-              imageData.type === 'challenge' 
-                ? 'from-[#C5192D]/80 via-[#C5192D]/80 to-transparent' 
-                : 'from-[#19486A]/80 via-[#19486A]/85 to-transparent'
-            }`}></div>
+            {/* Blue gradient overlay for all images */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#19486A]/80 via-[#19486A]/85 to-transparent"></div>
             
             {/* Hero Text Overlay */}
             <div className="absolute inset-0 flex items-center">
               <div className="max-w-6xl px-8 ml-8 md:ml-16">
                 
-               <h1 className="text-6xl md:text-8xl text-gray-100 mb-8 leading-tight" style={{ fontFamily: 'Permanent Marker, cursive' }}>
+               <h1 className="text-6xl md:text-8xl text-gray-100 mb-8 leading-tight" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
                  UZA <span className="text-[#FBAF43]">Empower</span>
                </h1>
                
-               <p className="text-2xl md:text-3xl text-gray-100 mb-12 max-w-4xl leading-relaxed font-semibold" style={{ fontFamily: 'Quicksand, sans-serif' }}>
+               <p className="text-2xl md:text-3xl text-gray-100 mb-12 max-w-4xl leading-relaxed font-semibold" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
                  Empowering displacement-affected communities across Africa with sustainable solutions for lasting change
                </p>
                 
@@ -203,15 +199,15 @@ export default function UZAEmpowerPage() {
       <section className="py-20 bg-gray-50 relative">
         <div className="container mx-auto px-8">
           <div className="max-w-6xl mx-auto relative">
-            <div className={`rounded-2xl border-2 p-8 md:p-12 ${
-              introSlides[currentIntroSlide].id === 1 ? 'bg-[#FBAF43]/10 border-[#FBAF43]' :
-              introSlides[currentIntroSlide].id === 2 ? 'bg-[#E5243B]/10 border-[#E5243B]' :
-              'bg-[#00689D]/10 border-[#00689D]'
+            <div className={`bg-white rounded-2xl border-t-4 p-8 md:p-12 ${
+              introSlides[currentIntroSlide].id === 1 ? 'border-[#FBAF43]' :
+              introSlides[currentIntroSlide].id === 2 ? 'border-[#19486A]' :
+              'border-[#4C9F38]'
             }`}>
               <div className="grid md:grid-cols-2 gap-12 items-center">
                 {/* Left Column - Text Content */}
                 <div>
-                  <h2 className="text-3xl md:text-4xl font-bold text-[#00142B] mb-6">
+                  <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6">
                     {introSlides[currentIntroSlide].title}
                   </h2>
                   
@@ -285,16 +281,16 @@ export default function UZAEmpowerPage() {
             {/* Navigation Arrows - Much further from content */}
             <button 
               onClick={prevIntroSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-20 bg-[#FBAF43]/90 hover:bg-[#FBAF43] backdrop-blur-sm rounded-full p-3 shadow-lg transition-all duration-300 group z-10"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-4 border-[#19486A] p-3 shadow-lg transition-all duration-300 group z-10"
             >
-              <ChevronLeft className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+              <ChevronLeft className="w-6 h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
             </button>
             
             <button 
               onClick={nextIntroSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-20 bg-[#FBAF43]/90 hover:bg-[#FBAF43] backdrop-blur-sm rounded-full p-3 shadow-lg transition-all duration-300 group z-10"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-4 border-[#19486A] p-3 shadow-lg transition-all duration-300 group z-10"
             >
-              <ChevronRight className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+              <ChevronRight className="w-6 h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
             </button>
 
             {/* Slide Indicators */}
@@ -399,9 +395,9 @@ export default function UZAEmpowerPage() {
               <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6">
                 Our Approach
               </h2>
-            </div>
-            
-            <div className="relative">
+                </div>
+
+                <div className="relative">
               <Image
                 src="/illustration.png"
                 alt="UZA Empower Illustration"
@@ -423,13 +419,13 @@ export default function UZAEmpowerPage() {
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6">
+              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-6" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
                 Success Stories from Our Community
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Hear from the entrepreneurs whose lives have been transformed through UZA Empower
               </p>
-                  </div>
+            </div>
 
             {/* Success Story Slider */}
             <div className="relative max-w-6xl mx-auto">
@@ -449,8 +445,8 @@ export default function UZAEmpowerPage() {
                   <span className="bg-[#FBAF43] text-[#00142B] px-4 py-2 rounded-full text-sm font-bold">
                     {stories[currentStoryIndex].category}
                   </span>
-                </div>
-
+              </div>
+              
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 text-white">
                   <h3 className="text-3xl md:text-4xl font-bold mb-2" style={{ fontFamily: 'Permanent Marker, cursive' }}>
@@ -464,8 +460,8 @@ export default function UZAEmpowerPage() {
                   </p>
 
                   <div className="text-sm text-gray-400">{stories[currentStoryIndex].story}</div>
-                  </div>
-                </div>
+              </div>
+            </div>
 
               {/* Navigation Arrows */}
               <button 
@@ -480,7 +476,7 @@ export default function UZAEmpowerPage() {
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-3 transition-all duration-300 group"
               >
                 <ChevronRight className="w-8 h-8 text-white group-hover:scale-110 transition-transform" />
-                </button>
+              </button>
               
               {/* Story Indicators */}
               <div className="flex justify-center mt-6 space-x-2">
@@ -495,8 +491,8 @@ export default function UZAEmpowerPage() {
                     }`}
                   />
                   ))}
-                </div>
               </div>
+            </div>
 
           </div>
         </div>

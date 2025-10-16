@@ -44,7 +44,7 @@
 }
 
 html, body {
-  font-family: 'Nata Sans', 'Open Sans', sans-serif;
+  font-family: 'Comfortaa', system-ui, sans-serif;
 }
 
 /* Define custom font families for easy use */
@@ -66,6 +66,10 @@ html, body {
 
 .font-quicksand {
   font-family: 'Quicksand', sans-serif;
+}
+
+.font-comfortaa {
+  font-family: 'Comfortaa', sans-serif;
 }
 /* Keyframe animations */
 @keyframes typing {
