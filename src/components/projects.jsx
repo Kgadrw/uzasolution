@@ -31,7 +31,7 @@ export default function WhoAreWe() {
             </div>
 
             {/* Main Heading */}
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight antialiased">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight antialiased">
               Your Trusted Partner in<br />
               <span className="text-[#FBAF43] antialiased">Transforming Africa's Trade</span>
             </h2>

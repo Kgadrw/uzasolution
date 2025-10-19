@@ -134,7 +134,7 @@ export default function Contact() {
               <span className="w-1 h-5 bg-[#FBAF43] rounded mr-3"></span>
               <p className="text-sm font-semibold text-[#FBAF43] uppercase tracking-wider">Contact</p>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">Let’s talk about your next order</h2>
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-4">Let's talk about your next order</h2>
             <p className="text-base md:text-lg text-gray-700 leading-relaxed">
               Reach out for sourcing, logistics, partnerships, or general inquiries. We’ll get back within 1 business day.
             </p>

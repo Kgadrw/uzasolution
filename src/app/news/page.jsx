@@ -33,7 +33,7 @@ export default function NewsPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
         <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
           <div className="max-w-2xl text-white">
-            <h1 className="text-3xl md:text-5xl font-extrabold">UZA Insights & News</h1>
+            <h1 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent">UZA Insights & News</h1>
             <p className="mt-3 text-gray-200">Stories and analysis shaping Africa’s trade revolution.</p>
           </div>
         </div>
