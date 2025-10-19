@@ -27,12 +27,12 @@ export default function UZAEmpowerPage() {
 
   const stories = [
     {
-      name: "Claude Uwimana",
+      name: "Claudine",
       location: "Kigali, Rwanda",
-      business: "Fruit & Flower Farming",
-      quote: "UZA Empower gave me the equipment and training I needed to start my fruit and flower farming business. In just 8 months, my income increased by 300%.",
+      business: "Soap Production Business",
+      quote: "I used to sell fruits by the roadside, never sure what tomorrow would bring. After joining UZA Empower, I learned soap production and received my first equipment. Today, I run my own small business, employ two people, and can finally send my children to school.",
       image: "/story1.jpg",
-      story: "Former street vendor turned successful fruit and flower farmer",
+      story: "Former roadside fruit vendor turned successful soap producer",
       category: "Success Story",
       borderColor: "border-t-[#E5243B]"
     },
@@ -85,42 +85,41 @@ export default function UZAEmpowerPage() {
       id: 1,
       title: "What is UZA Empower?",
       content: [
-        "UZA Empower is a social enterprise initiative by UZA Solutions Ltd, designed to unlock economic freedom for low-income earners across Africa through inclusive financing, business training, and access to productive tools.",
-        "We work with street vendors, construction workers, women entrepreneurs, youth, and smallholder farmers earning less than $5/day — helping them transition from survival to sustainable entrepreneurship."
+        "UZA Empower is a program by UZA Solutions that gives hardworking people a real chance to build their own future.",
+        "Many Africans live on less than five dollars a day, not because they lack ambition, but because they lack access. We step in where opportunity is missing, bringing together training, mentorship, and financial support so that people can start sustainable small businesses and regain control over their lives."
       ],
       image: "/story1.jpg",
       bgColor: "bg-[#FBAF43]"
     },
     {
       id: 2,
-      title: "Our Impact Goals",
+      title: "Impact You Can Feel",
       content: [
-        "Measurable results that demonstrate our commitment to transforming lives and communities across Africa.",
-        "Our targets include 1,000 individuals trained & equipped, 80% average income increase, 70% asset ownership rate, 50% women beneficiaries, and 2,500+ indirect jobs created."
+        "Behind every number is a life transformed. Through UZA Empower, ordinary people are becoming entrepreneurs, families are gaining stability, and communities are creating their own opportunities.",
+        "Each achievement begins with one person's courage and the support of those who believe in them."
       ],
       image: "/story2.png",
       bgColor: "bg-[#E5243B]",
       stats: [
-        { number: "1,000", label: "Individuals Trained & Equipped", color: "bg-[#E5243B]" },
-        { number: "80%", label: "Average Income Increase", color: "bg-[#DDA63A]" },
-        { number: "70%", label: "Asset Ownership Rate", color: "bg-[#4C9F38]" },
-        { number: "50%", label: "Women Beneficiaries", color: "bg-[#FF3A21]" },
-        { number: "2,500+", label: "Indirect Jobs Created", color: "bg-[#00689D]" }
+        { number: "312+", label: "Livelihoods Started", color: "bg-[#E5243B]" },
+        { number: "68%", label: "Average Income Growth in Six Months", color: "bg-[#DDA63A]" },
+        { number: "97%", label: "On-Time Repayment Rate", color: "bg-[#4C9F38]" },
+        { number: "2.3", label: "Jobs Created per Enterprise", color: "bg-[#FF3A21]" }
       ]
     },
     {
       id: 3,
-      title: "Sustainable Impact Model",
+      title: "Why It Matters",
       content: [
-        "UZA Empower operates through a revolving fund. Lease repayments finance new participants, while graduates become franchise owners and trainers, ensuring long-term sustainability.",
-        "This creates a self-sustaining ecosystem where success breeds success, allowing us to scale impact across Africa without constant external funding."
+        "Poverty isn't born from laziness; it's born from lack of access. UZA Empower exists to close that gap, giving people the training, tools, and financial support to create their own path.",
+        "We don't give handouts. We create owners. Because dignity grows when people can stand on their own. UZA Empower turns potential into progress, and progress into pride."
       ],
       image: "/story3.jpg",
       bgColor: "bg-[#00689D]",
       steps: [
-        { number: "1", title: "Initial Investment", description: "Fund initial participants with equipment and training", color: "bg-[#E5243B]" },
-        { number: "2", title: "Repayment Cycle", description: "Lease payments fund new participants", color: "bg-[#DDA63A]" },
-        { number: "3", title: "Graduate Network", description: "Successful participants become trainers and franchise owners", color: "bg-[#00689D]" }
+        { number: "1", title: "Identification & Enrollment", description: "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources", color: "bg-[#E5243B]" },
+        { number: "2", title: "Training & Capacity Building", description: "Each participant receives practical training in entrepreneurship, financial literacy, and small business management", color: "bg-[#DDA63A]" },
+        { number: "3", title: "Lease-to-Own Financing", description: "We provide equipment and materials through a flexible, affordable lease-to-own model where participants repay in small installments based on their income", color: "bg-[#00689D]" }
       ]
     }
   ]
@@ -163,37 +162,37 @@ export default function UZAEmpowerPage() {
               <div className="max-w-6xl px-4 sm:px-6 md:px-8 ml-4 sm:ml-6 md:ml-8 lg:ml-16">
                 
                <motion.h1 
-                 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-gray-100 mb-4 sm:mb-6 md:mb-8 leading-tight" 
+                 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-gray-100 mb-4 sm:mb-6 md:mb-8 leading-tight" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 50 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ duration: 0.8, delay: 0.2 }}
                >
-                 UZA <span className="text-[#FBAF43]">Empower</span>
+                 Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
                </motion.h1>
                
                <motion.p 
-                 className="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl text-gray-100 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-4xl leading-relaxed font-semibold" 
+                 className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-4xl leading-relaxed font-semibold" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 30 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ duration: 0.8, delay: 0.4 }}
                >
-                 Empowering displacement-affected communities across Africa with sustainable solutions for lasting change
+                 Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
                </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8"
+                  className="flex justify-start"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
                   <motion.button 
-                    className="group px-4 sm:px-5 md:px-6 py-3 sm:py-3 md:py-4 rounded-2xl sm:rounded-3xl md:rounded-4xl font-bold text-sm sm:text-base md:text-lg lg:text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3"
+                    className="group px-4 sm:px-5 md:px-6 py-2 sm:py-3 md:py-3 rounded-xl sm:rounded-2xl md:rounded-3xl font-bold text-sm sm:text-base md:text-lg lg:text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span>Join Our Mission</span>
+                    <span>Partner with Us</span>
                     <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform" />
                   </motion.button>
                   </motion.div>
@@ -361,16 +360,16 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Core Solutions - Inkomoko Inspired */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6 md:mb-8">
-                Our Solutions for Change
+                Join the Movement
               </h2>
               <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
-                Three integrated approaches that transform challenges into opportunities for lasting change in displacement-affected communities
+                For Organizations: Partner with us to reach more communities, fund new projects, and create lasting livelihoods. Together, we can transform small beginnings into large-scale impact.
               </p>
             </div>
 
@@ -378,27 +377,27 @@ export default function UZAEmpowerPage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mb-12 sm:mb-16 md:mb-20">
               {[
                 {
-                  title: "No Poverty",
-                  description: "Lease-to-own asset financing that provides productive equipment and tools to transform informal workers into successful entrepreneurs.",
+                  title: "Identification & Enrollment",
+                  description: "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources.",
                   icon: DollarSign,
                   color: "from-[#E5243B] to-[#C5192D]",
                   stats: "97% Repayment Rate",
                   details: "Low-interest financing, flexible payment terms, comprehensive support"
                 },
                 {
-                  title: "Partnerships for Goals", 
-                  description: "Connecting entrepreneurs to markets, suppliers, and customers through our extensive network and digital platforms.",
+                  title: "Training & Capacity Building", 
+                  description: "Each participant receives practical training in entrepreneurship, financial literacy, and small business management. They learn how to turn ideas into real, working enterprises.",
                     icon: Globe,
                   color: "from-[#19486A] to-[#00689D]",
-                  stats: "50% Revenue Growth",
+                  stats: "68% Income Growth",
                   details: "Supply chain integration, customer acquisition, market intelligence"
                 },
                 {
-                  title: "Peace & Justice",
-                  description: "Policy engagement and community mobilization to create enabling environments for displaced communities to thrive.",
+                  title: "Lease-to-Own Financing",
+                  description: "Once their business begins, we provide equipment and materials through a flexible, affordable lease-to-own model. Participants repay in small installments based on their income, and every repayment supports another new entrepreneur.",
                   icon: Users,
                   color: "from-[#00689D] to-[#19486A]",
-                  stats: "1.2M Lives Improved",
+                  stats: "312+ Livelihoods",
                   details: "Policy influence, community organizing, stakeholder engagement"
                 }
               ].map((solution, index) => {
@@ -456,6 +455,15 @@ export default function UZAEmpowerPage() {
               >
                 Our Approach
               </motion.h2>
+              <motion.p 
+                className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed mb-8 px-4"
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
+                We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources. Each participant receives practical training in entrepreneurship, financial literacy, and small business management. After training, we guide them to start income-generating activities such as soap-making, block manufacturing, or tomato paste production. Once their business begins, we provide equipment and materials through a flexible, affordable lease-to-own model where participants repay in small installments based on their income.
+              </motion.p>
                 </motion.div>
 
                 <motion.div 
@@ -501,7 +509,7 @@ export default function UZAEmpowerPage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                Success Stories from Our Community
+                Real Stories. Real Change.
               </motion.h2>
               <motion.p 
                 className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4"
@@ -510,7 +518,7 @@ export default function UZAEmpowerPage() {
                 transition={{ duration: 0.6, delay: 0.3 }}
                 viewport={{ once: true }}
               >
-                Hear from the entrepreneurs whose lives have been transformed through UZA Empower
+                Every person we work with carries a story of strength. UZA Empower doesn't just create businesses — it rebuilds lives, restores confidence, and brings hope back home.
               </motion.p>
             </motion.div>
 
@@ -522,16 +530,23 @@ export default function UZAEmpowerPage() {
               transition={{ duration: 0.8, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <motion.div 
-                className="relative h-[500px] sm:h-[600px] md:h-[700px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl"
-                key={currentStoryIndex}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-              >
+              <div className="relative h-[500px] sm:h-[600px] md:h-[700px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+                {stories.map((story, index) => (
+                  <motion.div
+                    key={index}
+                    className={`absolute inset-0 ${
+                      index === currentStoryIndex ? 'z-10' : 'z-0'
+                    }`}
+                    initial={{ x: index === 0 ? 0 : '100%' }}
+                    animate={{ 
+                      x: index === currentStoryIndex ? 0 : index < currentStoryIndex ? '-100%' : '100%',
+                      opacity: index === currentStoryIndex ? 1 : 0
+                    }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                  >
                 <Image
-                  src={stories[currentStoryIndex].image}
-                  alt={stories[currentStoryIndex].name}
+                  src={story.image}
+                  alt={story.name}
                   fill
                   className="object-cover"
                 />
@@ -544,26 +559,28 @@ export default function UZAEmpowerPage() {
                 
                 {/* Category Badge */}
                 <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
-                  <span className={`bg-white text-[#00142B] px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold ${stories[currentStoryIndex].borderColor} border-t-2 sm:border-t-4`}>
-                    {stories[currentStoryIndex].category}
+                  <span className={`bg-white text-[#00142B] px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold ${story.borderColor} border-t-2 sm:border-t-4`}>
+                    {story.category}
                   </span>
-              </div>
-              
+                </div>
+
                 {/* Content */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 text-white">
                   <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 text-white" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
-                    {stories[currentStoryIndex].name}
+                    {story.name}
                   </h3>
-                  <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#FBAF43] font-semibold mb-1 sm:mb-2">{stories[currentStoryIndex].business}</div>
-                  <div className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 md:mb-6">{stories[currentStoryIndex].location}</div>
+                  <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#FBAF43] font-semibold mb-1 sm:mb-2">{story.business}</div>
+                  <div className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 md:mb-6">{story.location}</div>
 
                   <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-3 sm:mb-4 md:mb-6 max-w-4xl" style={{ fontFamily: 'Quicksand, sans-serif' }}>
-                    "{stories[currentStoryIndex].quote}"
+                    "{story.quote}"
                   </p>
 
-                  <div className="text-xs sm:text-sm text-gray-400">{stories[currentStoryIndex].story}</div>
+                  <div className="text-xs sm:text-sm text-gray-400">{story.story}</div>
+                        </div>
+                  </motion.div>
+                  ))}
                 </div>
-            </motion.div>
 
               {/* Navigation Arrows */}
               <button 
@@ -571,7 +588,7 @@ export default function UZAEmpowerPage() {
                 className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 group"
               >
                 <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white group-hover:scale-110 transition-transform" />
-              </button>
+                  </button>
               
               <button 
                 onClick={nextStory}
@@ -593,15 +610,16 @@ export default function UZAEmpowerPage() {
                     }`}
                   />
                   ))}
-            </div>
+                        </div>
             </motion.div>
 
           </div>
         </div>
       </section>
 
+
       <Footer />
-    </div>
-    
+            </div>
+
   )
 }
