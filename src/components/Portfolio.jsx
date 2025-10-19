@@ -107,7 +107,7 @@ export default function Portfolio() {
 
       {/* Recent Work */}
       <div className="py-16 px-8 md:px-16 lg:px-24">
-        <h2 className="text-4xl md:text-5xl lg:text-5xl font-extrabold text-[#213348] text-center mb-12">
+        <h2 className="text-4xl md:text-5xl lg:text-5xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent text-center mb-12">
           Recent Work
         </h2>
 
@@ -137,7 +137,7 @@ export default function Portfolio() {
 
       {/* FAQ Section */}
       <div className="py-16 px-6 md:px-12 lg:px-20 bg-white">
-        <h2 className="text-3xl md:text-5xl font-extrabold text-[#213348] text-center mb-12">
+        <h2 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent text-center mb-12">
           FAQs
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
@@ -163,7 +163,7 @@ export default function Portfolio() {
       <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#213348] mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
               Our Story in Motion
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

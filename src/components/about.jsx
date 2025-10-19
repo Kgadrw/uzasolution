@@ -13,7 +13,7 @@ export default function AboutUs() {
         <div className="mb-20">
           <div className="text-center mb-12">
             
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-4">
               Discover Our Tech-Driven Solutions
             </h2>
             <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
@@ -64,7 +64,7 @@ export default function AboutUs() {
                 Our Solutions
               </p>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
               Tech-Driven Platforms to Power Africa's Digital Trade Future
             </h2>
           </div>

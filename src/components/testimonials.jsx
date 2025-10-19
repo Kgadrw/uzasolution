@@ -47,7 +47,7 @@ export default function Testimonials() {
   return (
     <section className="py-6 px-6 md:px-12 lg:px-24 bg-[#F8FAFC] font-sans overflow-hidden">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#FBAF43] mb-12">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-12">
           Trusted by Industry Leaders
         </h2>
 

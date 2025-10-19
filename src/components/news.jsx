@@ -45,7 +45,7 @@ export default function InsightsSection() {
                 Insights
               </span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-[#213348] leading-snug">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-snug">
               News & Blogs
             </h2>
           </div>
