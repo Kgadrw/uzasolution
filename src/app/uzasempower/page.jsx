@@ -141,7 +141,7 @@ export default function UZAEmpowerPage() {
       <Navbar />
       
       {/* Hero Section - Rotating Images with Text Overlays */}
-      <section className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[2rem] sm:rounded-b-[3rem] border-b-2 sm:border-b-4 border-[#19486A]">
+      <section className="relative h-[500px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[2rem] sm:rounded-b-[3rem] border-b-2 sm:border-b-4 border-[#19486A]">
         {heroImages.map((imageData, index) => (
           <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'
@@ -154,15 +154,15 @@ export default function UZAEmpowerPage() {
               priority={index === 0}
             />
             
-            {/* Blue gradient overlay for all images */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#19486A]/80 via-[#19486A]/85 to-transparent"></div>
+            {/* Blue gradient overlay for all images - Enhanced for mobile */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#19486A]/85 via-[#19486A]/90 to-[#19486A]/60"></div>
             
             {/* Hero Text Overlay */}
             <div className="absolute inset-0 flex items-center">
-              <div className="max-w-6xl px-4 sm:px-6 md:px-8 ml-4 sm:ml-6 md:ml-8 lg:ml-16">
+              <div className="max-w-6xl px-6 sm:px-6 md:px-8 ml-4 sm:ml-6 md:ml-8 lg:ml-16">
                 
                <motion.h1 
-                 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-gray-100 mb-4 sm:mb-6 md:mb-8 leading-tight" 
+                 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-white mb-4 sm:mb-5 md:mb-6 leading-tight font-bold" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 50 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -172,7 +172,7 @@ export default function UZAEmpowerPage() {
                </motion.h1>
                
                <motion.p 
-                 className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-4xl leading-relaxed font-semibold" 
+                 className="text-sm sm:text-base md:text-lg lg:text-2xl text-white mb-6 sm:mb-6 md:mb-8 lg:mb-12 max-w-4xl leading-relaxed font-medium" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 30 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -188,7 +188,7 @@ export default function UZAEmpowerPage() {
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
                   <motion.button 
-                    className="group px-4 sm:px-5 md:px-6 py-2 sm:py-3 md:py-3 rounded-xl sm:rounded-2xl md:rounded-3xl font-bold text-sm sm:text-base md:text-lg lg:text-xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3"
+                    className="group px-4 sm:px-5 md:px-6 py-2 sm:py-3 md:py-3 rounded-xl sm:rounded-2xl md:rounded-3xl font-bold text-sm sm:text-base md:text-lg lg:text-2xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
