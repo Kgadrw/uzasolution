@@ -14,9 +14,10 @@ export default function Portfolio() {
     { name: "Maersk", logo: "/maersk.png" },
   ];
     const videos = [
-    { src: "https://www.youtube.com/embed/xVJa3Lypjww", title: "Main Story" },
-    { src: "https://www.youtube.com/embed/2FCvn0r4EUs", title: "Short Intro" },
-    { src: "https://www.youtube.com/embed/Prs33Sr-HKs", title: "Vision" },
+    { src: "https://www.youtube.com/embed/xVJa3Lypjww", title: "Main Story", type: "youtube" },
+    { src: "https://www.youtube.com/embed/2FCvn0r4EUs", title: "Short Intro", type: "youtube" },
+    { src: "https://www.youtube.com/embed/Prs33Sr-HKs", title: "Vision", type: "youtube" },
+    { src: "/testimonial.mp4", title: "Testimonial", type: "video" },
   ];
 
   const [currentVideo, setCurrentVideo] = useState(0);
@@ -172,7 +173,7 @@ export default function Portfolio() {
         </div>
 
           {/* Video Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {videos.map((video, index) => (
               <div
                 key={index}
@@ -189,14 +190,26 @@ export default function Portfolio() {
                     ? 'ring-4 ring-[#FBAF43] shadow-2xl' 
                     : 'group-hover:shadow-xl'
                 }`}>
-                  <iframe
-                    className="w-full h-full"
-                    src={video.src}
-                    title={video.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  ></iframe>
+                  {video.type === "youtube" ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={video.src}
+                      title={video.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <video
+                      className="w-full h-full object-cover"
+                      src={video.src}
+                      title={video.title}
+                      controls
+                      playsInline
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
       </div>
 
             </div>

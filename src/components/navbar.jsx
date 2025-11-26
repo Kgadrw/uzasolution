@@ -57,7 +57,7 @@ export default function Navbar({ initialSolid = false }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-30 w-full">
       <div
-        className={`flex justify-between items-center px-32 py-3 shadow-xl border-b border-gray-100 transition-all duration-500 ${
+        className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 sm:py-2.5 md:py-3 shadow-xl border-b border-gray-100 transition-all duration-500 ${
           scrolled
             ? 'bg-white/95 backdrop-blur-md text-[#00142B]'
             : 'bg-white/95 backdrop-blur-md text-[#00142B]'
@@ -65,16 +65,22 @@ export default function Navbar({ initialSolid = false }) {
       >
         {/* Logo */}
         <Link href="/" className="flex items-center group transition-transform duration-300 hover:scale-105">
-          <Image src="/uza.png" alt="UZA Solutions Logo" width={120} height={60} className="object-contain filter drop-shadow-sm" />
+          <Image 
+            src="/uza.png" 
+            alt="UZA Solutions Logo" 
+            width={120} 
+            height={60} 
+            className="object-contain filter drop-shadow-sm w-20 h-10 sm:w-24 sm:h-12 md:w-28 md:h-14 lg:w-32 lg:h-16 xl:w-[120px] xl:h-[60px]" 
+          />
         </Link>
 
         {/* Desktop Nav Links - Centered */}
-        <div className="hidden md:flex space-x-8">
+        <div className="hidden lg:flex space-x-6 xl:space-x-8">
           {links.map((href, i) => (
             <Link
               key={i}
               href={href}
-              className={`relative font-semibold text-sm tracking-wider uppercase transition-all duration-300 group font-quicksand ${
+              className={`relative font-semibold text-xs xl:text-sm tracking-wider uppercase transition-all duration-300 group font-quicksand ${
                 isActive(href) 
                   ? 'text-[#FBAF43] font-bold' 
                   : 'text-[#00142B] hover:text-[#FBAF43]'
@@ -89,18 +95,18 @@ export default function Navbar({ initialSolid = false }) {
           ))}
         </div>
 
-        {/* CTA Button */}
-        <div className="hidden md:block">
+        {/* CTA Button - Desktop */}
+        <div className="hidden lg:block">
           <Link
             href="/contact"
-            className="group relative px-4 py-1.5 rounded-full font-bold text-xs tracking-wider uppercase transition-all duration-300 transform hover:scale-105 shadow-lg bg-[#FBAF43] hover:bg-[#00142B] text-white flex items-center justify-center space-x-2 overflow-hidden"
+            className="group relative px-3 xl:px-4 py-1.5 rounded-full font-bold text-[10px] xl:text-xs tracking-wider uppercase transition-all duration-300 transform hover:scale-105 shadow-lg bg-[#FBAF43] hover:bg-[#00142B] text-white flex items-center justify-center space-x-2 overflow-hidden"
           >
             {/* Toggle switch effect background */}
             <div className="absolute inset-0 bg-[#FBAF43] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
-            <span className="relative z-10 group-hover:text-[#00142B] transition-colors duration-300">Contact Us</span>
+            <span className="relative z-10 group-hover:text-[#00142B] transition-colors duration-300 whitespace-nowrap">Contact Us</span>
             {/* Contact icon in circular badge */}
-            <div className="relative z-10 w-6 h-6 bg-white rounded-full flex items-center justify-center border border-[#FBAF43] group-hover:border-[#DDA63A] transition-colors duration-300">
-              <Mail className="w-3 h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
+            <div className="relative z-10 w-5 h-5 xl:w-6 xl:h-6 bg-white rounded-full flex items-center justify-center border border-[#FBAF43] group-hover:border-[#DDA63A] transition-colors duration-300">
+              <Mail className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
             </div>
           </Link>
         </div>
@@ -110,7 +116,8 @@ export default function Navbar({ initialSolid = false }) {
           ref={hamburgerRef}
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           aria-label="Toggle Menu"
-          className="md:hidden p-3 rounded-xl hover:bg-gray-100 transition-all duration-300 touch-manipulation group"
+          aria-expanded={showMobileMenu}
+          className="lg:hidden p-2.5 sm:p-3 rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-all duration-300 touch-manipulation group min-w-[44px] min-h-[44px] flex items-center justify-center"
         >
           <div className="relative w-6 h-6">
             <Menu 
@@ -130,14 +137,14 @@ export default function Navbar({ initialSolid = false }) {
       {/* Mobile Nav */}
       <div
         ref={mobileMenuRef}
-        className={`md:hidden absolute top-full left-6 right-6 mt-3 transition-all duration-500 ease-out transform ${
+        className={`lg:hidden absolute top-full left-4 right-4 sm:left-6 sm:right-6 mt-2 sm:mt-3 transition-all duration-500 ease-out transform ${
           showMobileMenu 
             ? 'opacity-100 translate-y-0 scale-100' 
             : 'opacity-0 -translate-y-6 scale-95 pointer-events-none'
         }`}
       >
         <div
-          className={`px-6 py-5 rounded-2xl flex flex-col space-y-2 shadow-2xl backdrop-blur-xl border border-gray-200/50 bg-white/95 ${
+          className={`px-4 sm:px-6 py-4 sm:py-5 rounded-xl sm:rounded-2xl flex flex-col space-y-2 shadow-2xl backdrop-blur-xl border border-gray-200/50 bg-white/95 max-h-[calc(100vh-100px)] overflow-y-auto ${
             scrolled ? 'text-[#00142B]' : 'text-[#00142B]'
           }`}
         >
@@ -146,10 +153,10 @@ export default function Navbar({ initialSolid = false }) {
               key={i}
               href={href}
               onClick={() => setShowMobileMenu(false)}
-              className={`block px-5 py-4 rounded-xl font-semibold text-sm tracking-wider uppercase transition-all duration-300 touch-manipulation group relative font-quicksand ${
+              className={`block px-4 sm:px-5 py-3.5 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-sm tracking-wider uppercase transition-all duration-300 touch-manipulation group relative font-quicksand min-h-[48px] flex items-center ${
                 isActive(href) 
                   ? 'text-[#FBAF43] bg-gradient-to-r from-[#FBAF43]/10 to-[#FFD700]/10 font-bold' 
-                  : 'text-[#00142B] hover:text-[#FBAF43] hover:bg-gray-50'
+                  : 'text-[#00142B] hover:text-[#FBAF43] active:bg-gray-50 hover:bg-gray-50'
               }`}
             >
               <span className="relative z-10">{linkNames[i]}</span>
@@ -159,6 +166,18 @@ export default function Navbar({ initialSolid = false }) {
               <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#FBAF43] to-[#FFD700] rounded-r-full scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top"></div>
             </Link>
           ))}
+          
+          {/* Contact Button in Mobile Menu */}
+          <Link
+            href="/contact"
+            onClick={() => setShowMobileMenu(false)}
+            className="mt-2 group relative px-5 py-3.5 sm:py-4 rounded-lg sm:rounded-xl font-bold text-sm tracking-wider uppercase transition-all duration-300 transform active:scale-95 shadow-lg bg-[#FBAF43] hover:bg-[#00142B] text-white flex items-center justify-center space-x-2 overflow-hidden touch-manipulation min-h-[48px]"
+          >
+            <span className="relative z-10">Contact Us</span>
+            <div className="relative z-10 w-5 h-5 bg-white rounded-full flex items-center justify-center border border-white/20">
+              <Mail className="w-3 h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
+            </div>
+          </Link>
         </div>
       </div>
     </nav>

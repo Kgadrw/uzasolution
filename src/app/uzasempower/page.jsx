@@ -141,7 +141,7 @@ export default function UZAEmpowerPage() {
       <Navbar />
       
       {/* Hero Section - Rotating Images with Text Overlays */}
-      <section className="relative h-[500px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[2rem] sm:rounded-b-[3rem] border-b-2 sm:border-b-4 border-[#19486A]">
+      <section className="relative h-[450px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[1.5rem] sm:rounded-b-[2rem] md:rounded-b-[3rem] border-b-2 sm:border-b-4 border-[#19486A]">
         {heroImages.map((imageData, index) => (
           <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'
@@ -159,10 +159,10 @@ export default function UZAEmpowerPage() {
             
             {/* Hero Text Overlay */}
             <div className="absolute inset-0 flex items-center">
-              <div className="max-w-6xl px-6 sm:px-6 md:px-8 ml-4 sm:ml-6 md:ml-8 lg:ml-16">
+              <div className="max-w-6xl px-4 sm:px-6 md:px-8 lg:px-16">
                 
                <motion.h1 
-                 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-white mb-4 sm:mb-5 md:mb-6 leading-tight font-bold" 
+                 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl text-white mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight font-bold" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 50 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -172,7 +172,7 @@ export default function UZAEmpowerPage() {
                </motion.h1>
                
                <motion.p 
-                 className="text-sm sm:text-base md:text-lg lg:text-2xl text-white mb-6 sm:mb-6 md:mb-8 lg:mb-12 max-w-4xl leading-relaxed font-medium" 
+                 className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl text-white mb-4 sm:mb-5 md:mb-6 lg:mb-8 xl:mb-12 max-w-4xl leading-relaxed font-medium" 
                  style={{ fontFamily: 'Comfortaa, sans-serif' }}
                  initial={{ opacity: 0, y: 30 }}
                  animate={{ opacity: 1, y: 0 }}
@@ -188,12 +188,12 @@ export default function UZAEmpowerPage() {
                   transition={{ duration: 0.8, delay: 0.6 }}
                 >
                   <motion.button 
-                    className="group px-4 sm:px-5 md:px-6 py-2 sm:py-3 md:py-3 rounded-xl sm:rounded-2xl md:rounded-3xl font-bold text-sm sm:text-base md:text-lg lg:text-2xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3"
+                    className="group px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-3xl font-bold text-xs sm:text-sm md:text-base lg:text-lg xl:text-2xl transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3 touch-manipulation min-h-[44px] sm:min-h-[48px]"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <span>Partner with Us</span>
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 group-hover:translate-x-2 transition-transform" />
+                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 group-hover:translate-x-2 transition-transform" />
                   </motion.button>
                   </motion.div>
                 </div>
@@ -203,24 +203,26 @@ export default function UZAEmpowerPage() {
         ))}
         
         {/* Image indicator dots */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
           {heroImages.map((imageData, index) => (
-            <div
+            <button
               key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              onClick={() => setCurrentImageIndex(index)}
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 touch-manipulation ${
                 index === currentImageIndex 
                   ? imageData.type === 'challenge'
                     ? 'bg-[#FF3A21] scale-125'
                     : 'bg-[#DDA63A] scale-125'
                   : 'bg-white/50 hover:bg-white/80'
               }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
                   </div>
       </section>
 
       {/* Program Introduction Slider */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-50 relative">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50 relative">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-6xl mx-auto relative">
             <motion.div 
@@ -267,13 +269,13 @@ export default function UZAEmpowerPage() {
                       <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
                         {introSlides[currentIntroSlide].content[0]}
                       </p>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
                         {introSlides[currentIntroSlide].stats.map((stat, index) => (
                           <div key={index} className="text-center">
-                            <div className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-1 sm:mb-2`}>
-                              <span className="text-white font-bold text-xs sm:text-sm">{stat.number}</span>
+                            <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-2`}>
+                              <span className="text-white font-bold text-xs sm:text-sm md:text-base">{stat.number}</span>
                   </div>
-                            <p className="text-xs sm:text-xs md:text-xs text-gray-600 font-medium leading-tight">{stat.label}</p>
+                            <p className="text-[10px] sm:text-xs md:text-xs text-gray-600 font-medium leading-tight px-1">{stat.label}</p>
                 </div>
                         ))}
               </div>
@@ -304,13 +306,13 @@ export default function UZAEmpowerPage() {
                   
                 {/* Right Column - Image */}
                 <motion.div 
-                  className="relative hidden md:block"
+                  className="relative block md:block"
                   initial={{ opacity: 0, x: 30 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <motion.div 
-                    className="relative h-64 sm:h-80 md:h-96 rounded-xl sm:rounded-2xl overflow-hidden mt-6 lg:mt-0"
+                    className="relative h-48 sm:h-64 md:h-80 lg:h-96 rounded-xl sm:rounded-2xl overflow-hidden mt-6 lg:mt-0"
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.3 }}
                   >
@@ -326,32 +328,35 @@ export default function UZAEmpowerPage() {
               </div>
             </motion.div>
 
-            {/* Navigation Arrows - Much further from content */}
+            {/* Navigation Arrows - Mobile responsive positioning */}
             <button 
               onClick={prevIntroSlide}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-8 sm:-translate-x-12 md:-translate-x-16 lg:-translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-2 sm:border-t-4 border-[#19486A] p-2 sm:p-3 shadow-lg transition-all duration-300 group z-10"
+              className="absolute left-2 sm:left-4 md:left-0 top-1/2 transform -translate-y-1/2 md:-translate-x-8 lg:-translate-x-12 xl:-translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-2 sm:border-t-4 border-[#19486A] p-2 sm:p-3 shadow-lg transition-all duration-300 group z-10 touch-manipulation"
+              aria-label="Previous slide"
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
             </button>
             
             <button 
               onClick={nextIntroSlide}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 sm:translate-x-12 md:translate-x-16 lg:translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-2 sm:border-t-4 border-[#19486A] p-2 sm:p-3 shadow-lg transition-all duration-300 group z-10"
+              className="absolute right-2 sm:right-4 md:right-0 top-1/2 transform -translate-y-1/2 md:translate-x-8 lg:translate-x-12 xl:translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-2 sm:border-t-4 border-[#19486A] p-2 sm:p-3 shadow-lg transition-all duration-300 group z-10 touch-manipulation"
+              aria-label="Next slide"
             >
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
             </button>
 
             {/* Slide Indicators */}
-            <div className="flex justify-center mt-6 space-x-2">
+            <div className="flex justify-center mt-4 sm:mt-6 space-x-2">
               {introSlides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentIntroSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 touch-manipulation ${
                     index === currentIntroSlide 
                       ? 'bg-[#FBAF43] scale-125' 
                       : 'bg-gray-400 hover:bg-gray-300'
                   }`}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
@@ -360,21 +365,21 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Core Solutions - Inkomoko Inspired */}
-      <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white relative">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-white relative">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
-            <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6 md:mb-8">
+            <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 lg:mb-8 px-2">
                 Join the Movement
               </h2>
-              <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                 For Organizations: Partner with us to reach more communities, fund new projects, and create lasting livelihoods. Together, we can transform small beginnings into large-scale impact.
               </p>
             </div>
 
             {/* Solutions Grid */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 md:gap-10 mb-12 sm:mb-16 md:mb-20">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-8 sm:mb-12 md:mb-16 lg:mb-20">
               {[
                 {
                   title: "Identification & Enrollment",
@@ -403,8 +408,8 @@ export default function UZAEmpowerPage() {
               ].map((solution, index) => {
                 const Icon = solution.icon
                   return (
-                  <div key={index} className={`group relative ${index === 1 ? 'sm:col-span-2 lg:col-span-1' : ''}`}>
-                <div className="rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden relative h-full" 
+                  <div key={index} className={`group relative`}>
+                <div className="rounded-xl sm:rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 lg:p-10 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden relative h-full" 
                      style={{
                        backgroundImage: `url(${index === 0 ? '/negative.jpg' : index === 1 ? '/negative1.jpg' : '/negative.jpg'})`,
                        backgroundSize: 'cover',
@@ -419,8 +424,8 @@ export default function UZAEmpowerPage() {
                           <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white" />
                         </div>
                         
-                        <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-[#00689D]">{solution.title}</h3>
-                        <p className="text-[#19486A] leading-relaxed text-sm sm:text-base flex-grow">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-3 sm:mb-4 text-[#00689D]">{solution.title}</h3>
+                        <p className="text-[#19486A] leading-relaxed text-sm sm:text-base md:text-base flex-grow">
                           {solution.description}
                         </p>
                         
@@ -436,7 +441,7 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Our Approach - Illustration */}
-      <section className="py-12 sm:py-16 md:py-20 bg-gray-50">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-4xl mx-auto">
             <motion.div 
@@ -490,19 +495,19 @@ export default function UZAEmpowerPage() {
       <ImpactCardsSection />
 
       {/* Real Voices - Client Success Stories */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <motion.div 
-              className="text-center mb-10 sm:mb-12 md:mb-16"
+              className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <motion.h2 
-                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6 px-4" 
+                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 px-4" 
                 style={{ fontFamily: 'Comfortaa, sans-serif' }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -512,7 +517,7 @@ export default function UZAEmpowerPage() {
                 Real Stories. Real Change.
               </motion.h2>
               <motion.p 
-                className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto px-4"
+                className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4"
                 initial={{ opacity: 0, y: 15 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -530,7 +535,7 @@ export default function UZAEmpowerPage() {
               transition={{ duration: 0.8, delay: 0.4 }}
               viewport={{ once: true }}
             >
-              <div className="relative h-[500px] sm:h-[600px] md:h-[700px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl">
+              <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
                 {stories.map((story, index) => (
                   <motion.div
                     key={index}
@@ -558,25 +563,25 @@ export default function UZAEmpowerPage() {
                 <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#E5243B]/20 via-[#19486A]/10 to-transparent"></div>
                 
                 {/* Category Badge */}
-                <div className="absolute top-4 sm:top-6 left-4 sm:left-6">
-                  <span className={`bg-white text-[#00142B] px-3 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-sm font-bold ${story.borderColor} border-t-2 sm:border-t-4`}>
+                <div className="absolute top-3 sm:top-4 md:top-6 left-3 sm:left-4 md:left-6">
+                  <span className={`bg-white text-[#00142B] px-2 sm:px-3 md:px-4 py-1 sm:py-2 rounded-full text-[10px] sm:text-xs md:text-sm font-bold ${story.borderColor} border-t-2 sm:border-t-4`}>
                     {story.category}
                   </span>
                 </div>
 
                 {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 md:p-8 lg:p-12 text-white">
-                  <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 text-white" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 lg:p-8 xl:p-12 text-white">
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 sm:mb-2 text-white" style={{ fontFamily: 'Comfortaa, sans-serif' }}>
                     {story.name}
                   </h3>
-                  <div className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#FBAF43] font-semibold mb-1 sm:mb-2">{story.business}</div>
-                  <div className="text-sm sm:text-base md:text-lg text-gray-300 mb-3 sm:mb-4 md:mb-6">{story.location}</div>
+                  <div className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-[#FBAF43] font-semibold mb-1 sm:mb-2">{story.business}</div>
+                  <div className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-300 mb-2 sm:mb-3 md:mb-4 lg:mb-6">{story.location}</div>
 
-                  <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed mb-3 sm:mb-4 md:mb-6 max-w-4xl" style={{ fontFamily: 'Quicksand, sans-serif' }}>
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl leading-relaxed mb-2 sm:mb-3 md:mb-4 lg:mb-6 max-w-4xl" style={{ fontFamily: 'Quicksand, sans-serif' }}>
                     "{story.quote}"
                   </p>
 
-                  <div className="text-xs sm:text-sm text-gray-400">{story.story}</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-400">{story.story}</div>
                         </div>
                   </motion.div>
                   ))}
@@ -585,29 +590,32 @@ export default function UZAEmpowerPage() {
               {/* Navigation Arrows */}
               <button 
                 onClick={prevStory}
-                className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 group"
+                className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 md:p-3 transition-all duration-300 group touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Previous story"
               >
-                <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white group-hover:scale-110 transition-transform" />
+                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white group-hover:scale-110 transition-transform" />
                   </button>
               
               <button 
                 onClick={nextStory}
-                className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 transition-all duration-300 group"
+                className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full p-2 sm:p-3 md:p-3 transition-all duration-300 group touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label="Next story"
               >
-                <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 text-white group-hover:scale-110 transition-transform" />
+                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white group-hover:scale-110 transition-transform" />
               </button>
               
               {/* Story Indicators */}
-              <div className="flex justify-center mt-6 space-x-2">
+              <div className="flex justify-center mt-4 sm:mt-6 space-x-2">
                 {stories.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentStoryIndex(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 touch-manipulation ${
                       index === currentStoryIndex 
                         ? 'bg-[#FBAF43] scale-125' 
                         : 'bg-gray-400 hover:bg-gray-300'
                     }`}
+                    aria-label={`Go to story ${index + 1}`}
                   />
                   ))}
                         </div>
