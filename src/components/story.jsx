@@ -34,9 +34,25 @@ export default function AboutPage() {
         
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           
-          {/* Story Text */}
+          {/* CEO Image - Top on mobile, right on desktop */}
           <motion.div
-            className="text-gray-800"
+            className="relative w-64 h-64 md:w-80 md:h-80 mx-auto order-1 md:order-2 rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1 }}
+          >
+            <Image
+              src="/ceo.jpeg"
+              alt="Yves N. Iradukunda"
+              fill
+              className="object-cover  object-top" 
+              priority
+            />
+          </motion.div>
+
+          {/* Story Text - Below image on mobile, left on desktop */}
+          <motion.div
+            className="text-gray-800 order-2 md:order-1"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
@@ -54,22 +70,6 @@ export default function AboutPage() {
           </a>
         </div>
           </motion.div>
-
-          {/* CEO Image */}
-          <motion.div
-  className="relative w-64 h-64 md:w-80 md:h-80 mx-auto rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
-  initial={{ opacity: 0, scale: 0.85 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 1 }}
->
-  <Image
-    src="/ceo.jpeg"
-    alt="Yves N. Iradukunda"
-    fill
-    className="object-cover  object-top" 
-    priority
-  />
-</motion.div>
 
         </div>
       </section>

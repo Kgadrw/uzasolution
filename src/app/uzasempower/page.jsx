@@ -175,7 +175,7 @@ export default function UZAEmpowerPage() {
       <Navbar />
       
       {/* Hero Section - Rotating Images with Text Overlays */}
-      <section className="relative h-[450px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[1.5rem] sm:rounded-b-[2rem] md:rounded-b-[3rem] border-b-2 sm:border-b-4 border-[#19486A]">
+      <section className="relative h-[450px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[1.5rem] sm:rounded-b-[2rem] md:rounded-b-[3rem] border-b-0 sm:border-b-4 border-[#19486A]">
         {heroImages.map((imageData, index) => (
           <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'

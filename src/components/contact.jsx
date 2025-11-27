@@ -113,7 +113,7 @@ export default function Contact() {
   return (
     <>
       {/* Contact Form Section */}
-      <section id="contact" className="py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white">
+      <section id="contact" className="pt-32 pb-20 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-start">
           {/* Contact Info */}
           <div>
