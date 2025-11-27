@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Users, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
@@ -10,6 +11,7 @@ const Navbar = dynamic(() => import('../../../../components/navbar'))
 const Footer = dynamic(() => import('../../../../components/footer'))
 
 export default function BeneficiaryLogin() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -64,8 +66,8 @@ export default function BeneficiaryLogin() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      // Show coming soon message
-      alert('Dashboard coming soon! We\'re working hard to bring you the beneficiary dashboard. You\'ll be able to access training materials, track your progress, and manage your business soon.')
+      // Redirect to dashboard
+      router.push('/uzasempower/login/beneficiary/dashboard')
     }, 1000)
   }
 
@@ -202,12 +204,6 @@ export default function BeneficiaryLogin() {
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </button>
 
-              {/* Coming Soon Notice */}
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <p className="text-sm text-blue-800 text-center">
-                  <strong>Note:</strong> The beneficiary dashboard is coming soon! After login, you'll be able to access training materials, track your progress, and manage your business.
-                </p>
-              </div>
             </form>
 
             {/* Sign Up Link */}

@@ -223,7 +223,7 @@ export default function UZAEmpowerPage() {
                 >
                   <Link href="/uzasempower/login">
                     <motion.button 
-                      className="group px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-3xl font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3 touch-manipulation min-h-[44px] sm:min-h-[48px]"
+                      className="group px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-3xl font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3 touch-manipulation min-h-[44px] sm:min-h-[48px] cursor-pointer"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >

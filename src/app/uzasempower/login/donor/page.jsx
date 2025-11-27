@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { ArrowLeft, Heart, Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import dynamic from 'next/dynamic'
 
@@ -10,6 +11,7 @@ const Navbar = dynamic(() => import('../../../../components/navbar'))
 const Footer = dynamic(() => import('../../../../components/footer'))
 
 export default function DonorLogin() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -64,8 +66,19 @@ export default function DonorLogin() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      // Show coming soon message
-      alert('Dashboard coming soon! We\'re working hard to bring you the donor dashboard. You\'ll be able to fund projects, track your impact, and support entrepreneurs soon.')
+      
+      // Check for admin credentials
+      // Admin can login with: admin@uzasolutions.com or admin@example.com
+      const adminEmails = ['admin@uzasolutions.com', 'admin@example.com', 'admin@uza.com']
+      const isAdmin = adminEmails.includes(formData.email.toLowerCase())
+      
+      if (isAdmin) {
+        // Redirect to admin dashboard
+        router.push('/uzasempower/login/admin/dashboard')
+      } else {
+        // Redirect to donor dashboard
+        router.push('/uzasempower/login/donor/dashboard')
+      }
     }, 1000)
   }
 
@@ -202,12 +215,6 @@ export default function DonorLogin() {
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </button>
 
-              {/* Coming Soon Notice */}
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                <p className="text-sm text-blue-800 text-center">
-                  <strong>Note:</strong> The donor dashboard is coming soon! After login, you'll be able to fund projects, track your impact, and support entrepreneurs.
-                </p>
-              </div>
             </form>
 
             {/* Sign Up Link */}
