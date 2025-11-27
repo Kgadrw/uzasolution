@@ -54,7 +54,7 @@ export default function Testimonials() {
         {/* -------- First Row -------- */}
         <div className="relative w-full overflow-hidden py-4">
           <motion.div
-            className="flex gap-6"
+            className="flex gap-3"
             animate={{ x: ['0%', '-100%'] }}
             transition={{
               repeat: Infinity,
@@ -65,13 +65,13 @@ export default function Testimonials() {
             {loopedTestimonials.map((t, i) => (
               <div
                 key={i}
-                className="min-w-[300px] max-w-sm bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-200/50"
+                className="min-w-[180px] max-w-[200px] bg-white/80 backdrop-blur rounded-xl shadow-lg p-3 flex flex-col justify-between border border-gray-200/50"
               >
-                <Quote className="w-6 h-6 text-[#FBAF43] mb-3 opacity-70" />
-                <p className="text-gray-700 text-base leading-relaxed mb-4">
-                  “{t.comment}”
+                <Quote className="w-4 h-4 text-[#FBAF43] mb-2 opacity-70" />
+                <p className="text-gray-700 text-xs leading-relaxed mb-2">
+                  "{t.comment}"
                 </p>
-                <h4 className="font-semibold text-gray-900 text-sm mt-auto">
+                <h4 className="font-semibold text-gray-900 text-xs mt-auto">
                   {t.name}
                 </h4>
               </div>
@@ -82,7 +82,7 @@ export default function Testimonials() {
         {/* -------- Second Row (Opposite Direction) -------- */}
         <div className="relative w-full overflow-hidden py-4 mt-8">
           <motion.div
-            className="flex gap-6"
+            className="flex gap-3"
             animate={{ x: ['-100%', '0%'] }} // reverse direction
             transition={{
               repeat: Infinity,
@@ -93,13 +93,13 @@ export default function Testimonials() {
             {loopedTestimonials.map((t, i) => (
               <div
                 key={i + loopedTestimonials.length} // unique key
-                className="min-w-[300px] max-w-sm bg-white/80 backdrop-blur rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-200/50"
+                className="min-w-[180px] max-w-[200px] bg-white/80 backdrop-blur rounded-xl shadow-lg p-3 flex flex-col justify-between border border-gray-200/50"
               >
-                <Quote className="w-6 h-6 text-[#FBAF43] mb-3 opacity-70" />
-                <p className="text-gray-700 text-base leading-relaxed mb-4">
-                  “{t.comment}”
+                <Quote className="w-4 h-4 text-[#FBAF43] mb-2 opacity-70" />
+                <p className="text-gray-700 text-xs leading-relaxed mb-2">
+                  "{t.comment}"
                 </p>
-                <h4 className="font-semibold text-gray-900 text-sm mt-auto">
+                <h4 className="font-semibold text-gray-900 text-xs mt-auto">
                   {t.name}
                 </h4>
               </div>
