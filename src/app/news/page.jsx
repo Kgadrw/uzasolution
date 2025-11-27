@@ -1,7 +1,6 @@
 'use client'
 
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
 import { FileText } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -12,18 +11,6 @@ export default function NewsPage() {
   return (
     <div>
       <Navbar initialSolid />
-      {/* Hero */}
-      <section className="relative h-[320px] md:h-[420px] w-full">
-        <Image src="/hero2.jpg" alt="News hero" fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/75 to-transparent" />
-        <div className="relative z-10 h-full px-8 md:px-16 lg:px-24 flex items-center">
-          <div className="max-w-2xl text-white">
-            <h1 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent">UZA Insights & News</h1>
-            <p className="mt-3 text-gray-200">Stories and analysis shaping Africa's trade revolution.</p>
-          </div>
-        </div>
-      </section>
-
       {/* No News Available Section */}
       <section className="py-16 md:py-20 lg:py-24 px-8 md:px-16 lg:px-24 bg-white">
         <motion.div 

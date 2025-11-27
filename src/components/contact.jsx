@@ -112,19 +112,6 @@ export default function Contact() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section 
-        className="relative w-full h-[60vh] md:h-[40vh] flex items-center justify-center"
-        style={{
-          backgroundImage: "url('/hero3.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/30"></div>
-      </section>
-
       {/* Contact Form Section */}
       <section id="contact" className="py-20 px-6 md:px-12 lg:px-24 bg-gradient-to-b from-[#F8FAFC] to-white">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-start">

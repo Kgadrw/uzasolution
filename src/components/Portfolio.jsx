@@ -2,6 +2,7 @@
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import React, { useState } from 'react'
 import Image from 'next/image'
+import { motion } from 'framer-motion'
 
 export default function Portfolio() {
   const clients = [
@@ -17,7 +18,6 @@ export default function Portfolio() {
     { src: "https://www.youtube.com/embed/xVJa3Lypjww", title: "Main Story", type: "youtube" },
     { src: "https://www.youtube.com/embed/2FCvn0r4EUs", title: "Short Intro", type: "youtube" },
     { src: "https://www.youtube.com/embed/Prs33Sr-HKs", title: "Vision", type: "youtube" },
-    { src: "/testimonial.mp4", title: "Testimonial", type: "video" },
   ];
 
   const [currentVideo, setCurrentVideo] = useState(0);
@@ -101,10 +101,26 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Video Section */}
-            {/* Video Section - Company Story */}
-      
-
+      {/* Testimonial Video Section */}
+      <div className="py-16 px-8 md:px-16 lg:px-24 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative w-full rounded-2xl overflow-hidden shadow-2xl" style={{ minHeight: '500px' }}>
+            <video
+              className="w-full h-full object-cover"
+              src="/testimonial.mp4"
+              title="Testimonial"
+              controls
+              playsInline
+              autoPlay
+              muted
+              loop
+              style={{ minHeight: '500px' }}
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
 
       {/* Recent Work */}
       <div className="py-16 px-8 md:px-16 lg:px-24">
@@ -159,24 +175,29 @@ export default function Portfolio() {
             </div>
           ))}
         </div>
-          </div>
+      </div>
+
       {/* Video Section - Interactive Video Selection */}
       <div className="py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
               Our Story in Motion
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Choose a video to learn more about UZA Solutions and our mission to transform Africa's supply chain.
             </p>
-        </div>
+          </div>
 
           {/* Video Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {videos.map((video, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
                 className={`group cursor-pointer transition-all duration-300 ${
                   currentVideo === index 
                     ? 'transform scale-105' 
@@ -210,15 +231,12 @@ export default function Portfolio() {
                       Your browser does not support the video tag.
                     </video>
                   )}
-      </div>
-
-            </div>
-          ))}
-      </div>
-
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
-
 
       {/* CTA Section */}
       

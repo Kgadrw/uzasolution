@@ -1,8 +1,8 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { ArrowRight, DollarSign, Globe, Building2 } from 'lucide-react'
-import CardSwap, { Card } from './CardSwap'
 
 export default function ImpactCardsSection() {
   const impactCards = [
@@ -40,6 +40,16 @@ export default function ImpactCardsSection() {
       bgColor: 'bg-[#00689D]'
     }
   ]
+
+  const [currentCardIndex, setCurrentCardIndex] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentCardIndex((prevIndex) => (prevIndex + 1) % impactCards.length)
+    }, 5000) // Change every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [impactCards.length])
 
   const getIcon = (iconName) => {
     switch (iconName) {
@@ -114,124 +124,83 @@ export default function ImpactCardsSection() {
 
             </div>
 
-            {/* Right Side - CardSwap Container */}
-            <div className="hidden md:block" style={{ height: '600px', position: 'relative', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <CardSwap
-              cardDistance={60}
-              verticalDistance={70}
-              delay={5000}
-              pauseOnHover={true}
-                width={450}
-                height={520}
-            >
-              {impactCards.map((card) => (
-                <Card key={card.id} customClass="bg-white shadow-2xl border-gray-200">
-                  <div className="h-full flex flex-col">
-                    {/* Image Section */}
-                    <div className="relative h-64 overflow-hidden rounded-t-xl">
-                      <Image
-                        src={card.image}
-                        alt={card.title}
-                        fill
-                        className="object-cover"
-                      />
-                      {/* Image Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      
-                      {/* Floating Badge */}
-                      <div className="absolute top-4 left-4">
-                        <div className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold text-white ${card.bgColor} shadow-lg`}>
-                          {getIcon(card.badge.icon)}
-                          <span className="ml-2">{card.badge.text}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-5 flex-1 flex flex-col justify-between">
-                      {/* Title */}
-                      <h3 className="text-xl font-bold text-[#00142B] mb-4 leading-tight">
-                        {card.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-gray-600 leading-relaxed mb-6 text-sm flex-1 min-h-[80px]">
-                        {card.id === 1 && "Providing accessible financial solutions and investment opportunities that enable individuals and communities to build sustainable economic foundations."}
-                        {card.id === 2 && "Connecting local producers with global markets through innovative platforms and partnerships that accelerate economic growth and development."}
-                        {card.id === 3 && "Advocating for policies and frameworks that promote inclusive growth, social equity, and sustainable development across the region."}
-                      </p>
-
-                      {/* Action Button */}
-                      <div className="flex items-center justify-between">
-                        <button className="flex items-center text-[#FBAF43] font-semibold hover:text-[#E09A2F] transition-colors duration-300 text-sm">
-                          <span>Learn More</span>
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </button>
+            {/* Right Side - Carousel */}
+            <div className="relative h-[500px] md:h-[600px]">
+              {impactCards.map((card, index) => (
+                <div
+                  key={card.id}
+                  className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+                    index === currentCardIndex
+                      ? 'opacity-100 z-10 scale-100'
+                      : index < currentCardIndex
+                      ? 'opacity-0 z-0 scale-95 -translate-x-full'
+                      : 'opacity-0 z-0 scale-95 translate-x-full'
+                  }`}
+                >
+                  <div className="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden h-full">
+                    <div className="h-full flex flex-col">
+                      {/* Image Section */}
+                      <div className="relative h-64 md:h-80 overflow-hidden">
+                        <Image
+                          src={card.image}
+                          alt={card.title}
+                          fill
+                          className="object-cover"
+                        />
+                        {/* Image Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                         
-                        {/* Progress Indicator */}
-                        <div className="flex space-x-1">
-                          <div className={`w-2 h-2 rounded-full ${card.id === 1 ? 'bg-[#FBAF43]' : 'bg-gray-300'}`}></div>
-                          <div className={`w-2 h-2 rounded-full ${card.id === 2 ? 'bg-[#FBAF43]' : 'bg-gray-300'}`}></div>
-                          <div className={`w-2 h-2 rounded-full ${card.id === 3 ? 'bg-[#FBAF43]' : 'bg-gray-300'}`}></div>
+                        {/* Floating Badge */}
+                        <div className="absolute top-4 left-4">
+                          <div className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold text-white ${card.bgColor} shadow-lg`}>
+                            {getIcon(card.badge.icon)}
+                            <span className="ml-2">{card.badge.text}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </CardSwap>
-            </div>
-            
-            {/* Mobile Card Stack - Simple vertical layout for mobile */}
-            <div className="md:hidden space-y-4 mt-6">
-              {impactCards.map((card) => (
-                <div key={card.id} className="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
-                  <div className="h-full flex flex-col">
-                    {/* Image Section */}
-                    <div className="relative h-48 overflow-hidden">
-                      <Image
-                        src={card.image}
-                        alt={card.title}
-                        fill
-                        className="object-cover"
-                      />
-                      {/* Image Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                      
-                      {/* Floating Badge */}
-                      <div className="absolute top-4 left-4">
-                        <div className={`inline-flex items-center px-3 py-1 rounded-lg text-xs font-bold text-white ${card.bgColor} shadow-lg`}>
-                          {getIcon(card.badge.icon)}
-                          <span className="ml-2">{card.badge.text}</span>
+
+                      {/* Content Section */}
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        {/* Title */}
+                        <h3 className="text-lg font-bold text-[#00142B] mb-3 leading-tight">
+                          {card.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-gray-600 leading-relaxed mb-4 text-sm">
+                          {card.id === 1 && "Providing accessible financial solutions and investment opportunities that enable individuals and communities to build sustainable economic foundations."}
+                          {card.id === 2 && "Connecting local producers with global markets through innovative platforms and partnerships that accelerate economic growth and development."}
+                          {card.id === 3 && "Advocating for policies and frameworks that promote inclusive growth, social equity, and sustainable development across the region."}
+                        </p>
+
+                        {/* Action Button */}
+                        <div className="flex items-center justify-between">
+                          <button className="flex items-center text-[#FBAF43] font-semibold hover:text-[#E09A2F] transition-colors duration-300 text-sm">
+                            <span>Learn More</span>
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </button>
                         </div>
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-4 flex-1 flex flex-col justify-between">
-                      {/* Title */}
-                      <h3 className="text-lg font-bold text-[#00142B] mb-3 leading-tight">
-                        {card.title}
-                      </h3>
-
-                      {/* Description */}
-                      <p className="text-gray-600 leading-relaxed mb-4 text-sm">
-                        {card.id === 1 && "Providing accessible financial solutions and investment opportunities that enable individuals and communities to build sustainable economic foundations."}
-                        {card.id === 2 && "Connecting local producers with global markets through innovative platforms and partnerships that accelerate economic growth and development."}
-                        {card.id === 3 && "Advocating for policies and frameworks that promote inclusive growth, social equity, and sustainable development across the region."}
-                      </p>
-
-                      {/* Action Button */}
-                      <div className="flex items-center justify-between">
-                        <button className="flex items-center text-[#FBAF43] font-semibold hover:text-[#E09A2F] transition-colors duration-300 text-sm">
-                          <span>Learn More</span>
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
               ))}
+              
+              {/* Indicator Dots */}
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 flex space-x-2">
+                {impactCards.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentCardIndex(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentCardIndex
+                        ? 'bg-[#FBAF43] w-8'
+                        : 'bg-gray-300 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 

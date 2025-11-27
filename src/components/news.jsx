@@ -1,37 +1,15 @@
 'use client';
-import React, { useState, useRef } from 'react';
-import Link from 'next/link';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 export default function InsightsSection() {
-  const articles = [
-    {
-      type: 'video',
-      videoId: 'Prs33Sr-HKs', // just the YouTube ID
-      title: 'UZA Short: Quick Insights on Africa’s Trade',
-    },
-    {
-      type: 'image',
-      image: '/news2.jpg',
-      title: 'Partnerships with Global Giants: The UZA Approach',
-    },
-    {
-      type: 'image',
-      image: '/news3.jpg',
-      title: 'Logistics Innovation: Speeding Up Africa’s Supply Chains',
-    },
+  const videos = [
+    { src: "https://www.youtube.com/embed/xVJa3Lypjww", title: "Main Story", type: "youtube" },
+    { src: "https://www.youtube.com/embed/2FCvn0r4EUs", title: "Short Intro", type: "youtube" },
+    { src: "https://www.youtube.com/embed/Prs33Sr-HKs", title: "Vision", type: "youtube" },
   ];
 
-  const [playVideo, setPlayVideo] = useState(null);
-  const videoRefs = useRef({});
-
-  const handlePlay = (id) => {
-    setPlayVideo(id);
-    const iframe = videoRefs.current[id];
-    if (iframe) {
-      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&controls=1`;
-    }
-  };
+  const [currentVideo, setCurrentVideo] = useState(0);
 
   return (
     <section className="py-16 px-6 md:px-12 lg:px-24 bg-white font-sans">
@@ -51,55 +29,77 @@ export default function InsightsSection() {
           </div>
         </div>
 
-        {/* Articles Grid */}
-        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article) => (
-            <motion.article
-              key={article.type === 'video' ? article.videoId : article.title}
-              whileHover={{ y: -4 }}
-              className="bg-white/70 backdrop-blur rounded-lg overflow-hidden border border-white/40 transition-shadow duration-300 shadow-sm"
-            >
-              {article.type === 'video' ? (
-                <div className="relative">
-                  <iframe
-                    ref={(el) => (videoRefs.current[article.videoId] = el)}
-                    className="w-full h-64"
-                    src={
-                      playVideo === article.videoId
-                        ? `https://www.youtube.com/embed/${article.videoId}?autoplay=1&controls=1`
-                        : `https://www.youtube.com/embed/${article.videoId}?controls=0`
-                    }
-                    title={article.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    onClick={() => handlePlay(article.videoId)}
-                  ></iframe>
-                </div>
-              ) : (
-                <Link href={`/news`}>
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-64 object-cover"
-                  />
-                </Link>
-              )}
-
-              {/* Article Body */}
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {article.title}
-                </h3>
-                <p className="mt-2 text-sm text-gray-600">
-                  {article.type === 'video'
-                    ? 'Watch our short video insight on Africa’s trade.'
-                    : 'Read more about this story shaping Africa’s trade landscape.'}
-                </p>
-              </div>
-            </motion.article>
-          ))}
+        {/* Message */}
+        <motion.div 
+          initial={{ opacity: 0, y: 12 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }} 
+          transition={{ duration: 0.6 }} 
+          className="text-center py-8 mb-12"
+        >
+          <p className="text-lg md:text-xl text-gray-600">
+            Stay updated with latest news
+          </p>
         </motion.div>
+
+        {/* Our Story in Motion Videos */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
+              Our Story in Motion
+            </h3>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Choose a video to learn more about UZA Solutions and our mission to transform Africa's supply chain.
+            </p>
+          </div>
+
+          {/* Video Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {videos.map((video, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className={`group cursor-pointer transition-all duration-300 ${
+                  currentVideo === index 
+                    ? 'transform scale-105' 
+                    : 'hover:transform hover:scale-102'
+                }`}
+                onClick={() => setCurrentVideo(index)}
+              >
+                {/* Video Thumbnail/Preview */}
+                <div className={`relative aspect-video rounded-2xl overflow-hidden shadow-lg transition-all duration-300 ${
+                  currentVideo === index 
+                    ? 'ring-4 ring-[#FBAF43] shadow-2xl' 
+                    : 'group-hover:shadow-xl'
+                }`}>
+                  {video.type === "youtube" ? (
+                    <iframe
+                      className="w-full h-full"
+                      src={video.src}
+                      title={video.title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    ></iframe>
+                  ) : (
+                    <video
+                      className="w-full h-full object-cover"
+                      src={video.src}
+                      title={video.title}
+                      controls
+                      playsInline
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
