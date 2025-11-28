@@ -66,8 +66,7 @@ export default function BeneficiaryLogin() {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
-      // Redirect to dashboard
-      router.push('/uzasempower/login/beneficiary/dashboard')
+      // Login successful - dashboard routing removed
     }, 1000)
   }
 

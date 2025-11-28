@@ -67,18 +67,7 @@ export default function DonorLogin() {
     setTimeout(() => {
       setIsLoading(false)
       
-      // Check for admin credentials
-      // Admin can login with: admin@uzasolutions.com or admin@example.com
-      const adminEmails = ['admin@uzasolutions.com', 'admin@example.com', 'admin@uza.com']
-      const isAdmin = adminEmails.includes(formData.email.toLowerCase())
-      
-      if (isAdmin) {
-        // Redirect to admin dashboard
-        router.push('/uzasempower/login/admin/dashboard')
-      } else {
-        // Redirect to donor dashboard
-        router.push('/uzasempower/login/donor/dashboard')
-      }
+      // Login successful - dashboard routing removed
     }, 1000)
   }
 
