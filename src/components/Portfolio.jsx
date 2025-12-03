@@ -76,10 +76,34 @@ export default function Portfolio() {
   return (
     <section className="w-full bg-white text-gray-900 pt-24">
       {/* Recent Work */}
-      <div className="py-16 px-8 md:px-16 lg:px-24 bg-white">
-        <h2 className="text-2xl md:text-3xl lg:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent text-center mb-12">
-          Recent Work
-        </h2>
+      <div className="relative py-16 px-8 md:px-16 lg:px-24 bg-white">
+        {/* Decorative Vertical Lines */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300/30 to-transparent"></div>
+          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300/30 to-transparent"></div>
+        </div>
+        <div className="max-w-6xl mx-auto relative z-10">
+        {/* Portfolio Description */}
+        <div className="mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div>
+              <p className="text-base md:text-lg text-gray-700 leading-relaxed mb-4">
+                We've partnered with leading businesses across Africa to deliver comprehensive supply chain solutions, from sourcing and procurement to logistics and delivery. Our portfolio showcases successful collaborations with companies in water management, healthcare, food services, construction, and global logistics.
+              </p>
+              <p className="text-sm md:text-base text-gray-600 leading-relaxed">
+                Each partnership represents our commitment to simplifying trade, reducing costs, and enabling African businesses to scale globally with confidence.
+              </p>
+            </div>
+            <div className="relative w-full h-64 md:h-80 overflow-hidden">
+              <Image
+                src="/portfolio.jpg"
+                alt="Portfolio"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+        </div>
 
         <div className="overflow-hidden pb-4">
           <motion.div 
@@ -99,8 +123,8 @@ export default function Portfolio() {
             {/* Duplicate clients for seamless loop */}
             {[...clients, ...clients].map((client, index) => (
               <div key={`${client.name}-${index}`} className="flex-shrink-0 w-48 group cursor-pointer">
-                <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden transition-all duration-300 hover:border-[#FBAF43] hover:shadow-lg">
-                  <div className="relative w-full h-48 bg-gray-50 flex items-center justify-center p-6">
+                <div className="rounded-2xl overflow-hidden transition-all duration-300">
+                  <div className="relative w-full h-48 flex items-center justify-center p-6">
                     <Image
                       src={client.logo}
                       alt={client.name}
@@ -109,15 +133,11 @@ export default function Portfolio() {
                       className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
                     />
                   </div>
-                  <div className="px-4 py-3 bg-white">
-                    <p className="font-semibold text-gray-900 text-sm text-center truncate">
-                      {client.name}
-                    </p>
-                  </div>
                 </div>
               </div>
             ))}
           </motion.div>
+        </div>
         </div>
       </div>
 
