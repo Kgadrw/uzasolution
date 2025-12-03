@@ -30,19 +30,25 @@ export default function AboutPage() {
     <div className="w-full">
 
       {/* Short UzaBulk Story with CEO */}
-      <section className="pt-32 pb-16 px-6 md:px-20 bg-white">
+      <section className="relative pt-32 pb-16 px-6 md:px-20 bg-gray-50">
+        {/* Decorative Lines */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Vertical Lines */}
+          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/30 to-transparent"></div>
+          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/30 to-transparent"></div>
+        </div>
         
-        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
           
           {/* CEO Image - Top on mobile, right on desktop */}
           <motion.div
-            className="relative w-64 h-64 md:w-80 md:h-80 mx-auto order-1 md:order-2 rounded-xl overflow-hidden shadow-2xl border-4 border-gray-300"
+            className="relative w-64 h-64 md:w-80 md:h-80 mx-auto order-1 md:order-2 rounded-xl overflow-hidden border-4 border-gray-300"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
           >
             <Image
-              src="/ceo.jpeg"
+              src="/yves.jpeg"
               alt="Yves N. Iradukunda"
               fill
               className="object-cover  object-top" 
@@ -59,7 +65,7 @@ export default function AboutPage() {
           >
             
             <h2 className="text-3xl md:text-4xl text-[#FBAF43] font-extrabold mb-4">The UzaBulk Story</h2>
-            <p className="text-lg md:text-xl mb-4">
+            <p className="text-sm md:text-base mb-4">
               Founded to create transparent trade for African businesses, UzaBulk connects companies directly to factories with no middlemen. The mission is to make trade fair, accessible, and affordable for all African businesses.
             </p>
             <p className="font-semibold text-[#FBAF43]">Yves N. Iradukunda — CEO</p>
@@ -116,7 +122,7 @@ export default function AboutPage() {
     src={member.image}
     alt={member.name}
     fill
-    className="object-cover filter grayscale  object-[center_20%] rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300 shadow-lg"
+    className="object-cover filter grayscale  object-[center_20%] rounded-lg cursor-pointer hover:scale-105 transition-transform duration-300"
     priority
   />
 </div>

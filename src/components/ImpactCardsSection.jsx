@@ -137,7 +137,7 @@ export default function ImpactCardsSection() {
                       : 'opacity-0 z-0 scale-95 translate-x-full'
                   }`}
                 >
-                  <div className="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden h-full">
+                  <div className="bg-white border border-gray-200 rounded-xl overflow-hidden h-full">
                     <div className="h-full flex flex-col">
                       {/* Image Section */}
                       <div className="relative h-64 md:h-80 overflow-hidden">

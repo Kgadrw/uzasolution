@@ -2,169 +2,281 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Heart, Users, ArrowLeft } from 'lucide-react'
-import dynamic from 'next/dynamic'
-
-const Navbar = dynamic(() => import('../../../components/navbar'))
-const Footer = dynamic(() => import('../../../components/footer'))
+import { useRouter } from 'next/navigation'
+import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
 
 export default function UZAEmpowerLogin() {
-  const [selectedRole, setSelectedRole] = useState(null)
+  const router = useRouter()
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  })
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [focusedField, setFocusedField] = useState(null)
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }))
+    }
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required'
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address'
+    }
+    
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required'
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+
+    setIsLoading(true)
+    
+    // Simulate loading
+    setTimeout(() => {
+      // Determine role based on email
+      const email = formData.email.toLowerCase()
+      let role = null
+      
+      if (email.includes('admin')) {
+        role = 'admin'
+      } else if (email.includes('donor')) {
+        role = 'donor'
+      } else if (email.includes('beneficiary')) {
+        role = 'beneficiary'
+      }
+
+      // Store user data in localStorage
+      const userData = {
+        email: formData.email,
+        role: role || 'beneficiary',
+        name: formData.email.split('@')[0]
+      }
+      localStorage.setItem('user', JSON.stringify(userData))
+
+      // Redirect based on role
+      if (role === 'admin') {
+        router.push('/uzasempower/login/admin/dashboard')
+      } else if (role === 'donor') {
+        router.push('/uzasempower/login/donor/dashboard')
+      } else if (role === 'beneficiary') {
+        router.push('/uzasempower/login/beneficiary/dashboard')
+      } else {
+        // Default to beneficiary if role can't be determined
+        router.push('/uzasempower/login/beneficiary/dashboard')
+      }
+    }, 500)
+  }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-      
-      <section className="py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Back Button */}
-          <Link 
-            href="/uzasempower"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-[#FBAF43] transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to UZA Empower</span>
-          </Link>
+    <div className="h-screen bg-white flex items-center justify-center p-4 relative" style={{ overflow: 'hidden', height: '100vh' }}>
 
-          {/* Header */}
           <motion.div
-            className="text-center mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-          >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
-              Partner with UZA Empower
-            </h1>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
-              Choose how you'd like to get involved in transforming lives across Africa
-            </p>
+        className="w-full max-w-md relative z-10"
+      >
+        {/* Login Form */}
+            <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-white p-6 sm:p-8 border border-gray-200"
+        >
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* General Error */}
+            {errors.general && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm"
+              >
+                {errors.general}
           </motion.div>
+            )}
 
-          {/* Role Selection Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-12">
-            {/* Donor Card */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className={`relative bg-white rounded-xl p-4 sm:p-5 md:p-6 border-2 transition-all duration-300 cursor-pointer ${
-                selectedRole === 'donor'
-                  ? 'border-[#FBAF43] shadow-xl scale-105'
-                  : 'border-gray-200 hover:border-[#FBAF43] hover:shadow-lg'
-              }`}
-              onClick={() => setSelectedRole('donor')}
-            >
-              <div className="flex flex-col items-center text-center h-full">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#E5243B] to-[#C5192D] rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                  <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            {/* Email Field */}
+            <div>
+              <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
+                  focusedField === 'email' ? 'text-[#FBAF43]' : 'text-gray-400'
+                }`}>
+                  <Mail className="h-4 w-4" />
                 </div>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#00142B] mb-2 sm:mb-3">
-                  I'm a Donor
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 leading-relaxed">
-                  Fund projects, support entrepreneurs, and create lasting impact in communities across Africa. Your contribution helps transform lives and build sustainable businesses.
-                </p>
-                <ul className="text-left text-xs sm:text-sm text-gray-600 space-y-1 sm:space-y-2 mb-3 sm:mb-4 flex-grow">
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#FBAF43] mt-1">✓</span>
-                    <span>Fund new projects and initiatives</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#FBAF43] mt-1">✓</span>
-                    <span>Support entrepreneurs directly</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#FBAF43] mt-1">✓</span>
-                    <span>Track your impact in real-time</span>
-                  </li>
-                </ul>
-                <div className="w-full">
-                  <Link
-                    href="/uzasempower/login/donor"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base rounded-lg sm:rounded-full transition-all duration-300"
-                  >
-                    Continue as Donor
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </Link>
-                </div>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                    errors.email 
+                      ? 'border-red-400 focus:border-red-500' 
+                      : focusedField === 'email'
+                      ? 'border-[#FBAF43] bg-white'
+                      : 'border-gray-300'
+                  }`}
+                  placeholder="you@example.com"
+                />
               </div>
-            </motion.div>
+              {errors.email && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1.5 text-xs text-red-500 font-medium"
+                >
+                  {errors.email}
+                </motion.p>
+              )}
+            </div>
 
-            {/* Beneficiary Card */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className={`relative bg-white rounded-xl p-4 sm:p-5 md:p-6 border-2 transition-all duration-300 cursor-pointer ${
-                selectedRole === 'beneficiary'
-                  ? 'border-[#FBAF43] shadow-xl scale-105'
-                  : 'border-gray-200 hover:border-[#FBAF43] hover:shadow-lg'
-              }`}
-              onClick={() => setSelectedRole('beneficiary')}
-            >
-              <div className="flex flex-col items-center text-center h-full">
-                <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-[#19486A] to-[#00689D] rounded-full flex items-center justify-center mb-3 sm:mb-4">
-                  <Users className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+            {/* Password Field */}
+            <div>
+              <label htmlFor="password" className="block text-xs font-semibold text-gray-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
+                  focusedField === 'password' ? 'text-[#FBAF43]' : 'text-gray-400'
+                }`}>
+                  <Lock className="h-4 w-4" />
                 </div>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-[#00142B] mb-2 sm:mb-3">
-                  I Want to Be Empowered
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4 leading-relaxed">
-                  Join UZA Empower to receive training, equipment, and support to start your own business. Turn your ambition into a sustainable livelihood.
-                </p>
-                <ul className="text-left text-xs sm:text-sm text-gray-600 space-y-1 sm:space-y-2 mb-3 sm:mb-4 flex-grow">
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#FBAF43] mt-1">✓</span>
-                    <span>Free entrepreneurship training</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#FBAF43] mt-1">✓</span>
-                    <span>Lease-to-own equipment financing</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#FBAF43] mt-1">✓</span>
-                    <span>Ongoing mentorship and support</span>
-                  </li>
-                </ul>
-                <div className="w-full">
-                  <Link
-                    href="/uzasempower/login/beneficiary"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base rounded-lg sm:rounded-full transition-all duration-300"
-                  >
-                    Continue as Beneficiary
-                    <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </Link>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField(null)}
+                  className={`block w-full pl-10 pr-10 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                    errors.password 
+                      ? 'border-red-400 focus:border-red-500' 
+                      : focusedField === 'password'
+                      ? 'border-[#FBAF43] bg-white'
+                      : 'border-gray-300'
+                  }`}
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
                 </div>
+              {errors.password && (
+                <motion.p
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-1.5 text-xs text-red-500 font-medium"
+                >
+                  {errors.password}
+                </motion.p>
+              )}
               </div>
-            </motion.div>
+
+            {/* Forgot Password & Remember Me */}
+            <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center group cursor-pointer">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-[#FBAF43] focus:ring-[#FBAF43] border-gray-300 rounded cursor-pointer transition-all"
+                />
+                <label htmlFor="remember-me" className="ml-2 block text-xs text-gray-700 font-medium cursor-pointer">
+                  Remember me
+                </label>
+                </div>
+                  <Link
+                href="#" 
+                className="text-xs font-semibold text-[#FBAF43]"
+                  >
+                Forgot password?
+                  </Link>
           </div>
 
-          {/* Info Section */}
-          <motion.div
-            className="bg-gray-50 rounded-2xl p-6 sm:p-8 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <p className="text-gray-600 mb-4">
-              Have questions? We're here to help.
-            </p>
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 text-[#FBAF43] hover:text-[#e59e3b] font-semibold transition-colors"
+            {/* Submit Button */}
+            <motion.button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full bg-[#FBAF43] text-white font-semibold py-2.5 px-4 text-sm flex items-center justify-center gap-2 ${
+                isLoading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Contact Us
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </motion.div>
-        </div>
-      </section>
+              {isLoading ? (
+                <>
+          <motion.div
+                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" />
+                  Sign In
+                </>
+              )}
+            </motion.button>
 
-      <Footer />
+          </form>
+
+          {/* Sign Up Link */}
+          <div className="mt-6 pt-5 border-t border-gray-200 text-center">
+            <p className="text-xs text-gray-600">
+              Don't have an account?{' '}
+            <Link
+                href="/uzasempower/signup" 
+                className="text-[#FBAF43] font-semibold"
+            >
+                Create an account
+            </Link>
+            </p>
+          </div>
+        </motion.div>
+          </motion.div>
     </div>
   )
 }
-

@@ -34,7 +34,7 @@ export default function AboutUs() {
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ y: -8, scale: 1.02 }}
-                className="group relative rounded-2xl overflow-hidden border border-white/20 shadow-xl hover:shadow-2xl block transition-all duration-300"
+                className="group relative rounded-2xl overflow-hidden border border-white/20 block transition-all duration-300"
               >
                 <div className="relative h-64">
                   <Image src={item.img} alt={item.title} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -89,7 +89,7 @@ export default function AboutUs() {
           {/* Feature card */}
             <motion.div
             whileHover={{ y: -4 }}
-            className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden shadow-lg md:col-span-2 md:row-span-2 border border-white/10"
+            className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden md:col-span-2 md:row-span-2 border border-white/10"
           >
             <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
               Integrations & AI
@@ -108,7 +108,7 @@ export default function AboutUs() {
           </motion.div>
 
           {/* Secure workspace */}
-          <motion.div whileHover={{ y: -4 }} className="relative bg-white/80 backdrop-blur rounded-2xl p-6 shadow-md border border-gray-200/50">
+          <motion.div whileHover={{ y: -4 }} className="relative bg-white/80 backdrop-blur rounded-2xl p-6 border border-gray-200/50">
             <span className="inline-block text-[10px] uppercase tracking-widest text-[#213348] bg-[#F8FAFC] border border-gray-200/60 rounded-full px-3 py-1">
               Secure workspace
             </span>
@@ -120,7 +120,7 @@ export default function AboutUs() {
           </motion.div>
 
           {/* Adoption */}
-          <motion.div whileHover={{ y: -4 }} className="relative bg-[#0E1A28] text-white rounded-2xl p-6 shadow-md border border-white/10">
+          <motion.div whileHover={{ y: -4 }} className="relative bg-[#0E1A28] text-white rounded-2xl p-6 border border-white/10">
             <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
               Successful adoption
             </span>

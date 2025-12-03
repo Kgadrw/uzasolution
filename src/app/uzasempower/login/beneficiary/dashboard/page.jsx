@@ -5,10 +5,10 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { 
-  Wallet, Calendar, CheckCircle, AlertCircle, Bell, 
+  Wallet, Calendar, CheckCircle, AlertCircle, 
   TrendingUp, DollarSign, FileText, Upload, Plus,
   MapPin, Image as ImageIcon, Download, Settings,
-  LogOut, Eye, X, Camera, MapPin as MapPinIcon
+  LogOut, Eye, X, Camera, MapPin as MapPinIcon, LayoutDashboard, Menu
 } from 'lucide-react'
 
 export default function BeneficiaryDashboard() {
@@ -17,16 +17,20 @@ export default function BeneficiaryDashboard() {
   const [showAddTransaction, setShowAddTransaction] = useState(false)
   const [showRequestFunds, setShowRequestFunds] = useState(false)
   const [selectedMilestone, setSelectedMilestone] = useState(null)
-  const [unreadNotifications, setUnreadNotifications] = useState(3)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const handleLogout = () => {
-    // Clear any session data if needed
-    // localStorage.removeItem('token')
-    // sessionStorage.clear()
-    
-    // Redirect to login page
-    router.push('/uzasempower/login/beneficiary')
+    localStorage.removeItem('user')
+    router.push('/uzasempower/login')
   }
+
+  const menuItems = [
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'transactions', label: 'Transactions', icon: DollarSign },
+    { id: 'milestones', label: 'Milestones', icon: CheckCircle },
+    { id: 'request-funds', label: 'Request Funds', icon: Plus },
+    { id: 'profile', label: 'Profile', icon: Settings },
+  ]
 
   // Mock data
   const summaryData = {
@@ -69,12 +73,6 @@ export default function BeneficiaryDashboard() {
     { id: 4, name: 'First Harvest', description: 'Complete first harvest cycle', targetDate: '2024-03-30', status: 'Not started', evidenceCount: 0, lastUpdated: null, trancheLinked: 1250000, adminComment: null },
   ]
 
-  const notifications = [
-    { id: 1, type: 'Tranche released', message: 'Tranche 2 of 1,000,000 RWF has been released to your account', project: 'Vegetable Farming Project', date: '2024-01-15 10:30', status: 'Read' },
-    { id: 2, type: 'Milestone approved', message: 'Land Preparation milestone has been approved', project: 'Vegetable Farming Project', date: '2024-01-05 14:20', status: 'Read' },
-    { id: 3, type: 'Anomaly query', message: 'Please review and provide additional documentation for Labour expense on 2024-01-10', project: 'Vegetable Farming Project', date: '2024-01-12 09:15', status: 'Unread' },
-    { id: 4, type: 'Top-up decision', message: 'Your top-up request for 500,000 RWF is under review', project: 'Vegetable Farming Project', date: '2024-01-22 16:45', status: 'Unread' },
-  ]
 
   const getStatusColor = (status) => {
     const colors = {
@@ -95,99 +93,67 @@ export default function BeneficiaryDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="pt-8 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
+      {/* Sidebar */}
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30 overflow-y-auto`}>
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          {sidebarOpen && (
+            <h2 className="text-xl font-bold text-[#FBAF43]">My Dashboard</h2>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <nav className="p-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                  activeTab === item.id
+                    ? 'bg-[#FBAF43] text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                title={!sidebarOpen ? item.label : ''}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
+              </button>
+            )
+          })}
+        </nav>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            title={!sidebarOpen ? 'Logout' : ''}
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} h-full overflow-y-scroll custom-scrollbar`}>
+        <div className="pt-8 pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Top Summary Bar */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-gradient-to-r from-[#19486A] to-[#00689D] rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 text-white shadow-xl"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="bg-white/20 rounded-lg p-2 sm:p-3">
-                  <Wallet className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm opacity-90">Cash Balance</p>
-                  <p className="text-lg sm:text-xl font-bold break-words">{formatCurrency(summaryData.cashBalance)}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="bg-white/20 rounded-lg p-2 sm:p-3">
-                  <Calendar className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs sm:text-sm opacity-90">Next Milestone</p>
-                  <p className="text-sm sm:text-lg font-semibold truncate">{summaryData.nextMilestone}</p>
-                  <p className="text-xs opacity-75">{summaryData.nextMilestoneDate}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="bg-white/20 rounded-lg p-2 sm:p-3">
-                  <AlertCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm opacity-90">Pending Decisions</p>
-                  <p className="text-lg sm:text-xl font-bold">{summaryData.pendingDecisions}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="bg-white/20 rounded-lg p-2 sm:p-3">
-                    <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm opacity-90">Project Health</p>
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${getStatusColor(summaryData.projectHealth)}`}>
-                      {summaryData.projectHealth}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <Link href="#notifications" className="relative flex-shrink-0">
-                    <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
-                    {unreadNotifications > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
-                        {unreadNotifications}
-                      </span>
-                    )}
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-1 sm:gap-2 text-white hover:text-gray-200 transition-colors px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg hover:bg-white/10"
-                    title="Logout"
-                  >
-                    <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span className="text-xs sm:text-sm font-medium hidden sm:inline">Logout</span>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <div></div>
           </motion.div>
 
-          {/* Tabs */}
-          <div className="sticky top-0 z-10 bg-gray-50 pt-2 sm:pt-4 pb-2 mb-4 sm:mb-6 border-b border-gray-200 -mx-4 sm:mx-0 px-4 sm:px-0">
-            <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
-              {['overview', 'transactions', 'milestones', 'request-funds', 'notifications', 'profile'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm capitalize transition-colors whitespace-nowrap flex-shrink-0 ${
-                    activeTab === tab
-                      ? 'text-[#FBAF43] border-b-2 border-[#FBAF43]'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tab.replace('-', ' ')}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Overview Tab */}
           {activeTab === 'overview' && (
@@ -300,7 +266,7 @@ export default function BeneficiaryDashboard() {
                   </div>
                 </div>
                 
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="-mx-4 sm:mx-0">
                   <table className="w-full text-xs sm:text-sm min-w-[600px]">
                     <thead className="bg-gray-50">
                       <tr>
@@ -368,7 +334,7 @@ export default function BeneficiaryDashboard() {
                 </button>
               </div>
               
-              <div className="overflow-x-auto">
+              <div>
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50">
                     <tr>
@@ -585,43 +551,6 @@ export default function BeneficiaryDashboard() {
             </motion.div>
           )}
 
-          {/* Notifications Tab */}
-          {activeTab === 'notifications' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
-            >
-              {notifications.map((notif) => (
-                <div
-                  key={notif.id}
-                  className={`bg-white rounded-xl shadow-lg p-6 border-l-4 ${
-                    notif.status === 'Unread' ? 'border-[#FBAF43] bg-yellow-50' : 'border-gray-300'
-                  }`}
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="text-sm font-semibold text-gray-900">{notif.type}</span>
-                        {notif.status === 'Unread' && (
-                          <span className="bg-[#FBAF43] text-white text-xs px-2 py-1 rounded-full">New</span>
-                        )}
-                      </div>
-                      <p className="text-gray-700 mb-2">{notif.message}</p>
-                      <div className="flex items-center gap-4 text-xs text-gray-500">
-                        <span>{notif.project}</span>
-                        <span>{notif.date}</span>
-                      </div>
-                    </div>
-                    <button className="text-[#FBAF43] hover:text-[#e59e3b] font-semibold text-sm">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          )}
-
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <motion.div
@@ -706,7 +635,7 @@ export default function BeneficiaryDashboard() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
+                className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh]"
               >
                 <div className="p-6 border-b border-gray-200 flex justify-between items-center">
                   <h3 className="text-xl font-bold text-gray-900">Add Transaction</h3>
@@ -809,6 +738,7 @@ export default function BeneficiaryDashboard() {
               </motion.div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>

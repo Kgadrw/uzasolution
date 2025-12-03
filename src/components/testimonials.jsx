@@ -65,7 +65,7 @@ export default function Testimonials() {
             {loopedTestimonials.map((t, i) => (
               <div
                 key={i}
-                className="min-w-[180px] max-w-[200px] bg-white/80 backdrop-blur rounded-xl shadow-lg p-3 flex flex-col justify-between border border-gray-200/50"
+                className="min-w-[180px] max-w-[200px] bg-white/80 backdrop-blur rounded-xl p-3 flex flex-col justify-between border border-gray-200/50"
               >
                 <Quote className="w-4 h-4 text-[#FBAF43] mb-2 opacity-70" />
                 <p className="text-gray-700 text-xs leading-relaxed mb-2">
@@ -93,7 +93,7 @@ export default function Testimonials() {
             {loopedTestimonials.map((t, i) => (
               <div
                 key={i + loopedTestimonials.length} // unique key
-                className="min-w-[180px] max-w-[200px] bg-white/80 backdrop-blur rounded-xl shadow-lg p-3 flex flex-col justify-between border border-gray-200/50"
+                className="min-w-[180px] max-w-[200px] bg-white/80 backdrop-blur rounded-xl p-3 flex flex-col justify-between border border-gray-200/50"
               >
                 <Quote className="w-4 h-4 text-[#FBAF43] mb-2 opacity-70" />
                 <p className="text-gray-700 text-xs leading-relaxed mb-2">

@@ -69,7 +69,7 @@ export default function WhoAreWe() {
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className={`group relative overflow-hidden rounded-2xl bg-white/40 backdrop-blur border border-white/40 shadow-lg hover:shadow-xl transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${image.className}`}
+                  className={`group relative overflow-hidden rounded-2xl bg-white/40 backdrop-blur border border-white/40 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${image.className}`}
                 >
                   {image.hasVideo ? (
                     <video

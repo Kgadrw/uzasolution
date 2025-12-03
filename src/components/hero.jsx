@@ -40,7 +40,7 @@ export default function HeroSection() {
       <Navbar initialSolid={false} />
 
       {/* -------- Hero Section -------- */}
-      <div className="relative h-[500px] sm:h-[600px] md:h-[700px] w-full overflow-hidden group rounded-l-[3rem] border-l-4 border-[#19486A]">
+      <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full overflow-hidden group rounded-l-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
         {/* Background Image */}
         <motion.div
           key={currentIndex}

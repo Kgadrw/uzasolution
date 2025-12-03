@@ -8,7 +8,7 @@ import {
   Shield, Users, FileCheck, DollarSign, AlertTriangle, 
   CheckCircle, XCircle, Clock, TrendingUp, BarChart3,
   Search, Filter, Download, Eye, LogOut, Bell, Settings,
-  UserCheck, FileText, Calendar, MapPin, Star
+  UserCheck, FileText, Calendar, MapPin, Star, LayoutDashboard, Menu
 } from 'lucide-react'
 
 export default function AdminDashboard() {
@@ -17,10 +17,22 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [unreadAlerts, setUnreadAlerts] = useState(12)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const handleLogout = () => {
-    router.push('/uzasempower/login/donor')
+    localStorage.removeItem('user')
+    router.push('/uzasempower/login')
   }
+
+  const menuItems = [
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'projects', label: 'Projects', icon: FileCheck },
+    { id: 'milestones', label: 'Milestones', icon: CheckCircle },
+    { id: 'tranches', label: 'Tranches', icon: DollarSign },
+    { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
+    { id: 'kyc', label: 'KYC Review', icon: UserCheck },
+    { id: 'reports', label: 'Reports', icon: BarChart3 },
+  ]
 
   // Mock data
   const summaryData = {
@@ -161,14 +173,63 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="pt-8 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
+      {/* Sidebar */}
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
+        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+          {sidebarOpen && (
+            <h2 className="text-xl font-bold text-[#FBAF43]">Admin Panel</h2>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:bg-gray-100"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
+        
+        <nav className="p-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
+                  activeTab === item.id
+                    ? 'bg-[#FBAF43] text-white'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+                title={!sidebarOpen ? item.label : ''}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
+              </button>
+            )
+          })}
+        </nav>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+            title={!sidebarOpen ? 'Logout' : ''}
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
+        <div className="h-full overflow-y-auto pt-8 pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Top Summary Bar */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-[#E5243B] to-[#19486A] rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 text-white shadow-xl"
+            className="bg-gradient-to-r from-[#E5243B] to-[#19486A] p-4 sm:p-6 mb-6 text-white shadow-xl"
           >
             <div className="flex justify-between items-start mb-4">
               <div>
@@ -179,19 +240,11 @@ export default function AdminDashboard() {
                 <Link href="#alerts" className="relative flex-shrink-0">
                   <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
                   {unreadAlerts > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center text-[10px] sm:text-xs">
                       {unreadAlerts}
                     </span>
                   )}
                 </Link>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-1 sm:gap-2 text-white hover:text-gray-200 transition-colors px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg hover:bg-white/10"
-                  title="Logout"
-                >
-                  <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-xs sm:text-sm font-medium hidden sm:inline">Logout</span>
-                </button>
               </div>
             </div>
 
@@ -231,24 +284,6 @@ export default function AdminDashboard() {
             </div>
           </motion.div>
 
-          {/* Tabs */}
-          <div className="sticky top-0 z-10 bg-gray-50 pt-2 sm:pt-4 pb-2 mb-4 sm:mb-6 border-b border-gray-200 -mx-4 sm:mx-0 px-4 sm:px-0">
-            <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide">
-              {['overview', 'projects', 'milestones', 'tranches', 'alerts', 'kyc', 'reports'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-2 sm:px-4 py-2 font-medium text-xs sm:text-sm capitalize transition-colors whitespace-nowrap flex-shrink-0 ${
-                    activeTab === tab
-                      ? 'text-[#FBAF43] border-b-2 border-[#FBAF43]'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tab.replace('-', ' ')}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Overview Tab */}
           {activeTab === 'overview' && (
@@ -258,26 +293,26 @@ export default function AdminDashboard() {
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
+                  className="bg-white shadow-lg p-4 sm:p-6"
                 >
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Quick Actions</h2>
                   <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <button className="flex flex-col items-center gap-2 p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                    <button className="flex flex-col items-center gap-2 p-4 bg-blue-50 hover:bg-blue-100 transition-colors">
                       <FileCheck className="w-8 h-8 text-blue-600" />
                       <span className="text-sm font-semibold text-gray-900">Review Projects</span>
                       <span className="text-xs text-gray-600">{summaryData.pendingReview} pending</span>
                     </button>
-                    <button className="flex flex-col items-center gap-2 p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                    <button className="flex flex-col items-center gap-2 p-4 bg-green-50 hover:bg-green-100 transition-colors">
                       <CheckCircle className="w-8 h-8 text-green-600" />
                       <span className="text-sm font-semibold text-gray-900">Review Milestones</span>
                       <span className="text-xs text-gray-600">3 pending</span>
                     </button>
-                    <button className="flex flex-col items-center gap-2 p-4 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors">
+                    <button className="flex flex-col items-center gap-2 p-4 bg-yellow-50 hover:bg-yellow-100 transition-colors">
                       <DollarSign className="w-8 h-8 text-yellow-600" />
                       <span className="text-sm font-semibold text-gray-900">Release Tranches</span>
                       <span className="text-xs text-gray-600">{summaryData.pendingTranches} pending</span>
                     </button>
-                    <button className="flex flex-col items-center gap-2 p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                    <button className="flex flex-col items-center gap-2 p-4 bg-purple-50 hover:bg-purple-100 transition-colors">
                       <UserCheck className="w-8 h-8 text-purple-600" />
                       <span className="text-sm font-semibold text-gray-900">KYC Review</span>
                       <span className="text-xs text-gray-600">{summaryData.kycPending} pending</span>
@@ -290,12 +325,12 @@ export default function AdminDashboard() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
+                  className="bg-white shadow-lg p-4 sm:p-6"
                 >
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Recent Alerts</h2>
                   <div className="space-y-3">
                     {alerts.slice(0, 3).map((alert) => (
-                      <div key={alert.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                      <div key={alert.id} className="flex items-start gap-3 p-3 bg-gray-50">
                         <AlertTriangle className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
                           alert.severity === 'High' ? 'text-red-500' :
                           alert.severity === 'Medium' ? 'text-yellow-500' :
@@ -306,7 +341,7 @@ export default function AdminDashboard() {
                           <p className="text-xs text-gray-600 truncate">{alert.project}</p>
                           <p className="text-xs text-gray-500">{alert.date}</p>
                         </div>
-                        <span className={`px-2 py-1 rounded text-xs font-semibold flex-shrink-0 ${getStatusColor(alert.status)}`}>
+                        <span className={`px-2 py-1 text-xs font-semibold flex-shrink-0 ${getStatusColor(alert.status)}`}>
                           {alert.status}
                         </span>
                       </div>
@@ -326,21 +361,21 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
+                className="bg-white  shadow-lg p-4 sm:p-6"
               >
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">System Health</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="bg-green-50 p-4">
                     <p className="text-xs sm:text-sm text-gray-600 mb-1">Projects On Track</p>
                     <p className="text-2xl font-bold text-green-700">28</p>
                     <p className="text-xs text-gray-500 mt-1">62% of active</p>
                   </div>
-                  <div className="bg-yellow-50 p-4 rounded-lg">
+                  <div className="bg-yellow-50 p-4">
                     <p className="text-xs sm:text-sm text-gray-600 mb-1">Projects At Risk</p>
                     <p className="text-2xl font-bold text-yellow-700">4</p>
                     <p className="text-xs text-gray-500 mt-1">9% of active</p>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="bg-blue-50 p-4">
                     <p className="text-xs sm:text-sm text-gray-600 mb-1">Avg. Response Time</p>
                     <p className="text-2xl font-bold text-blue-700">2.3 days</p>
                     <p className="text-xs text-gray-500 mt-1">Below target</p>
@@ -358,7 +393,7 @@ export default function AdminDashboard() {
               className="space-y-6"
             >
               {/* Filters */}
-              <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+              <div className="bg-white  shadow-lg p-4 sm:p-6">
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -367,20 +402,20 @@ export default function AdminDashboard() {
                       placeholder="Search projects..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent text-sm"
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent text-sm"
                     />
                   </div>
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent text-sm"
+                    className="px-4 py-2 border border-gray-300  focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent text-sm"
                   >
                     <option value="all">All Status</option>
                     <option value="Pending Review">Pending Review</option>
                     <option value="Active">Active</option>
                     <option value="At Risk">At Risk</option>
                   </select>
-                  <button className="flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                  <button className="flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2  transition-colors text-sm">
                     <Download className="w-4 h-4" />
                     Export
                   </button>
@@ -388,8 +423,8 @@ export default function AdminDashboard() {
               </div>
 
               {/* Projects Table */}
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <div className="bg-white  shadow-lg">
+                <div className="-mx-4 sm:mx-0">
                   <table className="w-full text-xs sm:text-sm min-w-[800px]">
                     <thead className="bg-gray-50">
                       <tr>
@@ -412,13 +447,13 @@ export default function AdminDashboard() {
                           <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-700">{project.beneficiary}</td>
                           <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-700">{project.location}</td>
                           <td className="px-2 sm:px-4 py-2 sm:py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(project.status)}`}>
+                            <span className={`px-2 py-1  text-xs font-medium ${getStatusColor(project.status)}`}>
                               {project.status}
                             </span>
                           </td>
                           <td className="px-2 sm:px-4 py-2 sm:py-3 text-right font-semibold text-gray-900">{formatCurrency(project.requestedAmount)}</td>
                           <td className="px-2 sm:px-4 py-2 sm:py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(project.kycStatus)}`}>
+                            <span className={`px-2 py-1  text-xs font-medium ${getStatusColor(project.kycStatus)}`}>
                               {project.kycStatus}
                             </span>
                           </td>
@@ -456,7 +491,7 @@ export default function AdminDashboard() {
               className="space-y-4"
             >
               {milestones.map((milestone) => (
-                <div key={milestone.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+                <div key={milestone.id} className="bg-white  shadow-lg p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{milestone.milestone}</h3>
@@ -470,23 +505,23 @@ export default function AdminDashboard() {
                         </span>
                       </div>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${getStatusColor(milestone.status)}`}>
+                    <span className={`px-3 py-1  text-xs sm:text-sm font-semibold ${getStatusColor(milestone.status)}`}>
                       {milestone.status}
                     </span>
                   </div>
                   
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <button className="flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                    <button className="flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2  transition-colors text-sm">
                       <Eye className="w-4 h-4" />
                       Review Evidence
                     </button>
                     {milestone.status === 'Evidence Submitted' && (
                       <>
-                        <button className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                        <button className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2  transition-colors text-sm">
                           <CheckCircle className="w-4 h-4" />
                           Approve
                         </button>
-                        <button className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                        <button className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2  transition-colors text-sm">
                           <XCircle className="w-4 h-4" />
                           Reject
                         </button>
@@ -503,7 +538,7 @@ export default function AdminDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
+              className="bg-white  shadow-lg p-4 sm:p-6"
             >
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">Pending Tranche Releases</h2>
               <div className="space-y-4">
@@ -512,18 +547,18 @@ export default function AdminDashboard() {
                   { project: 'Poultry Farming Initiative', milestone: 'Coop Setup', amount: 750000, status: 'Ready' },
                   { project: 'Fish Farming Project', milestone: 'Pond Setup', amount: 500000, status: 'Pending Approval' },
                 ].map((tranche, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50 ">
                     <div>
                       <p className="font-semibold text-gray-900">{tranche.project}</p>
                       <p className="text-sm text-gray-600">{tranche.milestone}</p>
                       <p className="text-lg font-bold text-[#FBAF43] mt-1">{formatCurrency(tranche.amount)}</p>
                     </div>
                     <div className="flex gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(tranche.status)}`}>
+                      <span className={`px-3 py-1  text-xs font-semibold ${getStatusColor(tranche.status)}`}>
                         {tranche.status}
                       </span>
                       {tranche.status === 'Ready' && (
-                        <button className="bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                        <button className="bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2  transition-colors text-sm">
                           Release Tranche
                         </button>
                       )}
@@ -542,7 +577,7 @@ export default function AdminDashboard() {
               className="space-y-4"
             >
               {alerts.map((alert) => (
-                <div key={alert.id} className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border-l-4 border-red-500">
+                <div key={alert.id} className="bg-white  shadow-lg p-4 sm:p-6 border-l-4 border-red-500">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -552,7 +587,7 @@ export default function AdminDashboard() {
                           'text-blue-500'
                         }`} />
                         <span className="text-sm font-semibold text-gray-900">{alert.type}</span>
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(alert.severity)}`}>
+                        <span className={`px-2 py-1  text-xs font-semibold ${getStatusColor(alert.severity)}`}>
                           {alert.severity}
                         </span>
                       </div>
@@ -563,11 +598,11 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(alert.status)}`}>
+                      <span className={`px-3 py-1  text-xs font-semibold ${getStatusColor(alert.status)}`}>
                         {alert.status}
                       </span>
                       {alert.status === 'Open' && (
-                        <button className="bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                        <button className="bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2  transition-colors text-sm">
                           Resolve
                         </button>
                       )}
@@ -583,7 +618,7 @@ export default function AdminDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
+              className="bg-white  shadow-lg p-4 sm:p-6"
             >
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">KYC Verification Queue</h2>
               <div className="space-y-4">
@@ -592,17 +627,17 @@ export default function AdminDashboard() {
                   { name: 'Jane Smith', project: 'Poultry Farming Initiative', submitted: '2024-01-18', status: 'Under Review' },
                   { name: 'Bob Johnson', project: 'Beekeeping Project', submitted: '2024-01-15', status: 'Pending' },
                 ].map((kyc, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50 ">
                     <div>
                       <p className="font-semibold text-gray-900">{kyc.name}</p>
                       <p className="text-sm text-gray-600">{kyc.project}</p>
                       <p className="text-xs text-gray-500 mt-1">Submitted: {kyc.submitted}</p>
                     </div>
                     <div className="flex gap-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(kyc.status)}`}>
+                      <span className={`px-3 py-1  text-xs font-semibold ${getStatusColor(kyc.status)}`}>
                         {kyc.status}
                       </span>
-                      <button className="flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors text-sm">
+                      <button className="flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2  transition-colors text-sm">
                         <Eye className="w-4 h-4" />
                         Review
                       </button>
@@ -618,11 +653,11 @@ export default function AdminDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
+              className="bg-white  shadow-lg p-4 sm:p-6"
             >
               <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6">System Reports</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100  transition-colors">
                   <BarChart3 className="w-8 h-8 text-[#FBAF43]" />
                   <div className="text-left">
                     <p className="font-semibold text-gray-900">Project Performance Report</p>
@@ -630,7 +665,7 @@ export default function AdminDashboard() {
                   </div>
                   <Download className="w-5 h-5 text-gray-400 ml-auto" />
                 </button>
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100  transition-colors">
                   <TrendingUp className="w-8 h-8 text-[#FBAF43]" />
                   <div className="text-left">
                     <p className="font-semibold text-gray-900">Financial Summary</p>
@@ -638,7 +673,7 @@ export default function AdminDashboard() {
                   </div>
                   <Download className="w-5 h-5 text-gray-400 ml-auto" />
                 </button>
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100  transition-colors">
                   <Users className="w-8 h-8 text-[#FBAF43]" />
                   <div className="text-left">
                     <p className="font-semibold text-gray-900">User Activity Report</p>
@@ -646,7 +681,7 @@ export default function AdminDashboard() {
                   </div>
                   <Download className="w-5 h-5 text-gray-400 ml-auto" />
                 </button>
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100  transition-colors">
                   <AlertTriangle className="w-8 h-8 text-[#FBAF43]" />
                   <div className="text-left">
                     <p className="font-semibold text-gray-900">Alert & Risk Report</p>
@@ -657,6 +692,7 @@ export default function AdminDashboard() {
               </div>
             </motion.div>
           )}
+          </div>
         </div>
       </div>
     </div>

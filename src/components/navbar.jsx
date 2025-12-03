@@ -55,9 +55,9 @@ export default function Navbar({ initialSolid = false }) {
   const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News']
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 w-full">
+    <nav className="fixed top-0 left-0 z-30" style={{ right: '14px', width: 'calc(100% - 14px)' }}>
       <div
-        className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 sm:py-2.5 md:py-3 shadow-xl border-b border-gray-100 transition-all duration-500 ${
+        className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 sm:py-2.5 md:py-3 border-b border-gray-100 transition-all duration-500 ${
           scrolled
             ? 'bg-white/95 backdrop-blur-md text-[#00142B]'
             : 'bg-white/95 backdrop-blur-md text-[#00142B]'
