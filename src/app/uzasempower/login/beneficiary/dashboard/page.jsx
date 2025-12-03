@@ -8,12 +8,12 @@ import {
   Wallet, Calendar, CheckCircle, AlertCircle, 
   TrendingUp, DollarSign, FileText, Upload, Plus,
   MapPin, Image as ImageIcon, Download, Settings,
-  LogOut, Eye, X, Camera, MapPin as MapPinIcon, LayoutDashboard, Menu
+  LogOut, Eye, X, Camera, MapPin as MapPinIcon, LayoutDashboard, Menu, ArrowRight
 } from 'lucide-react'
 
 export default function BeneficiaryDashboard() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState('overview')
+  const [activeTab, setActiveTab] = useState('profile-project')
   const [showAddTransaction, setShowAddTransaction] = useState(false)
   const [showRequestFunds, setShowRequestFunds] = useState(false)
   const [selectedMilestone, setSelectedMilestone] = useState(null)
@@ -25,11 +25,11 @@ export default function BeneficiaryDashboard() {
   }
 
   const menuItems = [
-    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-    { id: 'transactions', label: 'Transactions', icon: DollarSign },
-    { id: 'milestones', label: 'Milestones', icon: CheckCircle },
-    { id: 'request-funds', label: 'Request Funds', icon: Plus },
-    { id: 'profile', label: 'Profile', icon: Settings },
+    { id: 'profile-project', label: 'Profile & Project', icon: Settings },
+    { id: 'funding-request', label: 'Funding Request', icon: Plus },
+    { id: 'transactions', label: 'Record Transaction', icon: DollarSign },
+    { id: 'milestones', label: 'Submit Evidence', icon: CheckCircle },
+    { id: 'tranches', label: 'Tranches', icon: TrendingUp },
   ]
 
   // Mock data
@@ -95,14 +95,14 @@ export default function BeneficiaryDashboard() {
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30 overflow-y-auto`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           {sidebarOpen && (
             <h2 className="text-xl font-bold text-[#FBAF43]">My Dashboard</h2>
           )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg"
+            className="p-2 hover:bg-gray-100 "
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -115,7 +115,7 @@ export default function BeneficiaryDashboard() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
                   activeTab === item.id
                     ? 'bg-[#FBAF43] text-white'
                     : 'text-gray-700 hover:bg-gray-100'
@@ -132,7 +132,7 @@ export default function BeneficiaryDashboard() {
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
             title={!sidebarOpen ? 'Logout' : ''}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
@@ -142,492 +142,389 @@ export default function BeneficiaryDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} h-full overflow-y-scroll custom-scrollbar`}>
-        <div className="pt-8 pb-8">
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
+        <div className="h-full overflow-y-auto custom-scrollbar pt-8 pb-8">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          {/* Top Summary Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-gradient-to-r from-[#19486A] to-[#00689D] rounded-xl sm:rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 text-white shadow-xl"
-          >
-            <div></div>
-          </motion.div>
 
 
-          {/* Overview Tab */}
-          {activeTab === 'overview' && (
-            <div className="space-y-6">
-              {/* Project Overview Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
-              >
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Project Overview</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          {/* Profile & Project Tab */}
+          {activeTab === 'profile-project' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              {/* Profile Section */}
+              <div className="bg-white shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Profile & Project Information</h2>
+                
+                <div className="space-y-6">
+                  {/* Personal Profile */}
                   <div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">{projectData.title}</h3>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">ID: {projectData.projectId}</p>
-                    <div className="space-y-2 text-xs sm:text-sm">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-700">{projectData.location}</span>
-                      </div>
-                      <p className="text-gray-700"><strong>Category:</strong> {projectData.category}</p>
-                      <p className="text-gray-700"><strong>Stage:</strong> {projectData.stage}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between text-xs sm:text-sm mb-1">
-                        <span className="text-gray-600">Budget Progress</span>
-                        <span className="font-semibold">{Math.round((projectData.totalDisbursed / projectData.totalBudget) * 100)}%</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2 sm:h-3">
-                        <div 
-                          className="bg-[#FBAF43] h-2 sm:h-3 rounded-full"
-                          style={{ width: `${(projectData.totalDisbursed / projectData.totalBudget) * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal Profile</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <p className="text-gray-600">Total Budget</p>
-                        <p className="font-bold text-sm sm:text-lg break-words">{formatCurrency(projectData.totalBudget)}</p>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Full Name</label>
+                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="John Doe" />
                       </div>
                       <div>
-                        <p className="text-gray-600">Disbursed</p>
-                        <p className="font-bold text-sm sm:text-lg break-words">{formatCurrency(projectData.totalDisbursed)}</p>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Business Name</label>
+                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Doe Farming Cooperative" />
                       </div>
                       <div>
-                        <p className="text-gray-600">Spent</p>
-                        <p className="font-bold text-sm sm:text-lg break-words">{formatCurrency(projectData.totalSpent)}</p>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Phone Number</label>
+                        <input type="tel" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="+250 788 123 456" />
                       </div>
                       <div>
-                        <p className="text-gray-600">Revenue</p>
-                        <p className="font-bold text-sm sm:text-lg text-green-600 break-words">{formatCurrency(projectData.totalRevenue)}</p>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Email</label>
+                        <input type="email" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="john.doe@example.com" />
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Location</label>
+                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Kicukiro District, Kigali Sector, Rwanda" />
                       </div>
                     </div>
                   </div>
-                </div>
-                
-                {/* KPI Chips */}
-                <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
-                  <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">Key Performance Indicators</h4>
-                  <div className="flex flex-wrap gap-2 sm:gap-3">
-                    <div className="bg-blue-50 px-3 sm:px-4 py-2 rounded-lg">
-                      <p className="text-xs text-gray-600">Margin %</p>
-                      <p className="text-base sm:text-lg font-bold text-blue-700">{projectData.margin}%</p>
-                    </div>
-                    <div className="bg-green-50 px-3 sm:px-4 py-2 rounded-lg">
-                      <p className="text-xs text-gray-600">Runway</p>
-                      <p className="text-base sm:text-lg font-bold text-green-700">{projectData.runway} days</p>
-                    </div>
-                    <div className="bg-purple-50 px-3 sm:px-4 py-2 rounded-lg">
-                      <p className="text-xs text-gray-600">Reporting</p>
-                      <p className="text-xs sm:text-sm font-semibold text-purple-700">{projectData.reportingConsistency}</p>
-                    </div>
-                    <div className="bg-red-50 px-3 sm:px-4 py-2 rounded-lg">
-                      <p className="text-xs text-gray-600">Anomalies</p>
-                      <p className="text-base sm:text-lg font-bold text-red-700">{projectData.anomalyCount}</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
 
-              {/* Recent Transactions Preview */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="bg-white rounded-xl shadow-lg p-4 sm:p-6"
-              >
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-2 mb-4">
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Recent Transactions</h2>
-                  <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                    <button
-                      onClick={() => { setShowAddTransaction(true); setActiveTab('transactions') }}
-                      className="flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm"
-                    >
-                      <Plus className="w-4 h-4" />
-                      Add Transaction
+                  {/* Project Information */}
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Project Details</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Title</label>
+                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="What is your project?" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Location</label>
+                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Where is your project located?" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Description</label>
+                        <textarea rows={3} className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Describe your project..." />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Total Budget Required (RWF)</label>
+                        <input type="number" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="How much do you need?" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <button className="flex-1 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 text-sm transition-colors">
+                      Save Profile & Project
                     </button>
-                    <Link
-                      href="#transactions"
-                      onClick={() => setActiveTab('transactions')}
-                      className="flex items-center justify-center gap-2 text-[#FBAF43] hover:text-[#e59e3b] font-semibold px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm"
-                    >
-                      View All
-                      <FileText className="w-4 h-4" />
-                    </Link>
                   </div>
                 </div>
-                
-                <div className="-mx-4 sm:mx-0">
-                  <table className="w-full text-xs sm:text-sm min-w-[600px]">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-600">Date</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-600">Type</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-600">Category</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-600">Description</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-right text-xs font-semibold text-gray-600">Amount</th>
-                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-xs font-semibold text-gray-600">Proof</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {transactions.slice(0, 5).map((tx) => (
-                        <tr key={tx.id} className="hover:bg-gray-50">
-                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-700 whitespace-nowrap">{new Date(tx.date).toLocaleDateString()}</td>
-                          <td className="px-2 sm:px-4 py-2 sm:py-3">
-                            <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-medium ${
-                              tx.type === 'Revenue' ? 'bg-green-100 text-green-800' :
-                              tx.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
-                              'bg-red-100 text-red-800'
-                            }`}>
-                              {tx.type}
-                            </span>
-                          </td>
-                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-700">{tx.category}</td>
-                          <td className="px-2 sm:px-4 py-2 sm:py-3 text-gray-700 max-w-[150px] truncate">{tx.description}</td>
-                          <td className={`px-2 sm:px-4 py-2 sm:py-3 text-right font-semibold text-xs sm:text-sm whitespace-nowrap ${
-                            tx.amount > 0 ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
-                          </td>
-                          <td className="px-2 sm:px-4 py-2 sm:py-3">
-                            <span className={`px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs ${
-                              tx.proofStatus === 'Uploaded' ? 'bg-green-100 text-green-800' :
-                              tx.proofStatus === 'Missing' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {tx.proofStatus}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </motion.div>
-            </div>
+              </div>
+            </motion.div>
           )}
 
-          {/* Transactions Tab */}
+          {/* Record Transaction Tab */}
           {activeTab === 'transactions' && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg p-6"
+              className="space-y-6"
             >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Transaction Ledger</h2>
-                <button
-                  onClick={() => setShowAddTransaction(true)}
-                  className="flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  Add Transaction
-                </button>
+              {/* Quick Record Form */}
+              <div className="bg-white shadow-lg p-6 max-w-2xl mx-auto">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Record Transaction</h2>
+                <p className="text-sm text-gray-600 mb-6">Record every spend or sale with photo proof</p>
+                
+                <form className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Transaction Type</label>
+                      <select className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent">
+                        <option>Select type...</option>
+                        <option>Expense (Spend)</option>
+                        <option>Revenue (Sale)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Date</label>
+                      <input type="date" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Amount (RWF)</label>
+                    <input type="number" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Enter amount" />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Description</label>
+                    <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="What was this transaction for?" />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Category</label>
+                    <select className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent">
+                      <option>Select category...</option>
+                      <option>Seed</option>
+                      <option>Fertilizer</option>
+                      <option>Labour</option>
+                      <option>Equipment</option>
+                      <option>Transport</option>
+                      <option>Sales</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Photo Proof (Required)</label>
+                    <div className="border-2 border-dashed border-gray-300 p-4 text-center hover:border-[#FBAF43] transition-colors cursor-pointer">
+                      <Camera className="w-6 h-6 mx-auto text-gray-400 mb-2" />
+                      <p className="text-xs text-gray-600">Click to upload photo</p>
+                      <p className="text-[10px] text-gray-500 mt-0.5">JPG, PNG up to 5MB</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <input type="checkbox" id="gps" className="rounded" defaultChecked />
+                    <label htmlFor="gps" className="text-xs text-gray-700">Auto-capture GPS location</label>
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    className="w-full bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 text-sm transition-colors"
+                  >
+                    Record Transaction
+                  </button>
+                </form>
               </div>
-              
-              <div>
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Date</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Type</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Category</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Description</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600">Amount</th>
-                      <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600">Balance</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Proof</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Location</th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {transactions.map((tx) => (
-                      <tr key={tx.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 text-gray-700">{new Date(tx.date).toLocaleDateString()}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            tx.type === 'Revenue' ? 'bg-green-100 text-green-800' :
-                            tx.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
-                            {tx.type}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">{tx.category}</td>
-                        <td className="px-4 py-3 text-gray-700">{tx.description}</td>
-                        <td className={`px-4 py-3 text-right font-semibold ${
+
+              {/* Recent Transactions */}
+              <div className="bg-white shadow-lg p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Transactions</h3>
+                <div className="space-y-2">
+                  {transactions.slice(0, 5).map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between p-3 border border-gray-200 hover:bg-gray-50">
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-1 text-xs font-medium ${
+                          tx.type === 'Revenue' ? 'bg-green-100 text-green-800' :
+                          tx.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {tx.type}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">{tx.description}</p>
+                          <p className="text-xs text-gray-500">{new Date(tx.date).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-sm font-semibold ${
                           tx.amount > 0 ? 'text-green-600' : 'text-red-600'
                         }`}>
                           {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
-                        </td>
-                        <td className="px-4 py-3 text-right font-semibold text-gray-700">{formatCurrency(tx.balance)}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            tx.proofStatus === 'Uploaded' ? 'bg-green-100 text-green-800' :
-                            tx.proofStatus === 'Missing' ? 'bg-red-100 text-red-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {tx.proofStatus}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">
-                          {tx.location && (
-                            <div className="flex items-center gap-1">
-                              <MapPinIcon className="w-3 h-3" />
-                              {tx.location}
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">
-                          {tx.hasEvidence && (
-                            <button className="text-[#FBAF43] hover:text-[#e59e3b]">
-                              <Eye className="w-4 h-4" />
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </p>
+                        <span className={`text-[10px] ${
+                          tx.proofStatus === 'Uploaded' ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {tx.proofStatus}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}
 
-          {/* Milestones Tab */}
+          {/* Submit Evidence Tab */}
           {activeTab === 'milestones' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
-            >
-              {milestones.map((milestone) => (
-                <div key={milestone.id} className="bg-white rounded-xl shadow-lg p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{milestone.name}</h3>
-                      <p className="text-sm text-gray-600 mb-2">{milestone.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <span>Target: {new Date(milestone.targetDate).toLocaleDateString()}</span>
-                        <span>Evidence: {milestone.evidenceCount} items</span>
-                        {milestone.trancheLinked && (
-                          <span className="font-semibold text-[#FBAF43]">
-                            Tranche: {formatCurrency(milestone.trancheLinked)}
-                          </span>
-                        )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {milestones.map((milestone, index) => (
+                <motion.div
+                  key={milestone.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => setSelectedMilestone(milestone)}
+                  className="bg-white shadow-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border border-gray-200 hover:border-[#FBAF43] group"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-br from-[#FBAF43] to-[#e59e3b] text-white flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-bold text-gray-900 group-hover:text-[#FBAF43] transition-colors truncate">{milestone.name}</h3>
+                        <span className={`inline-block mt-1 px-1.5 py-0.5 text-[10px] font-semibold ${getStatusColor(milestone.status)}`}>
+                          {milestone.status}
+                        </span>
                       </div>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(milestone.status)}`}>
-                      {milestone.status}
-                    </span>
+                    <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-colors ${
+                      milestone.status === 'Approved' ? 'text-green-500' : 'text-gray-300'
+                    }`} />
+                  </div>
+                  
+                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{milestone.description}</p>
+                  
+                  <div className="space-y-1.5 mb-3">
+                    <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <Calendar className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      <span className="truncate">{new Date(milestone.targetDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs text-gray-600">
+                      <FileText className="w-3 h-3 text-gray-400 flex-shrink-0" />
+                      <span>{milestone.evidenceCount} items</span>
+                    </div>
+                    {milestone.trancheLinked && (
+                      <div className="flex items-center gap-1.5 text-xs">
+                        <DollarSign className="w-3 h-3 text-[#FBAF43] flex-shrink-0" />
+                        <span className="font-semibold text-[#FBAF43] truncate">
+                          {formatCurrency(milestone.trancheLinked)}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   
                   {milestone.adminComment && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                      <p className="text-sm text-blue-800"><strong>Admin:</strong> {milestone.adminComment}</p>
+                    <div className="bg-blue-50 border-l-2 border-blue-400 p-2 mb-3">
+                      <p className="text-[10px] text-blue-800 line-clamp-2"><strong>Admin:</strong> {milestone.adminComment}</p>
                     </div>
                   )}
                   
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setSelectedMilestone(milestone)}
-                      className="flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 rounded-lg transition-colors"
-                    >
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                    <span className="text-[10px] text-gray-500 truncate">
+                      {milestone.lastUpdated ? new Date(milestone.lastUpdated).toLocaleDateString() : 'Not started'}
+                    </span>
+                    <div className="flex items-center gap-1 text-[#FBAF43] group-hover:gap-1.5 transition-all flex-shrink-0">
                       {milestone.status === 'Not started' || milestone.status === 'In progress' ? (
                         <>
-                          <Upload className="w-4 h-4" />
-                          Upload Evidence
+                          <Upload className="w-3 h-3" />
+                          <span className="text-[10px] font-semibold">Submit</span>
                         </>
                       ) : (
                         <>
-                          <Eye className="w-4 h-4" />
-                          View Details
+                          <Eye className="w-3 h-3" />
+                          <span className="text-[10px] font-semibold">View</span>
                         </>
                       )}
-                    </button>
+                    </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </motion.div>
+            </div>
           )}
 
-          {/* Request Funds Tab */}
-          {activeTab === 'request-funds' && (
+          {/* Tranches Tab */}
+          {activeTab === 'tranches' && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg p-6"
+              className="space-y-6"
             >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Request Additional Funds</h2>
+              <div className="bg-white shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">Tranche Status</h2>
+                
+                <div className="space-y-4">
+                  {[
+                    { id: 1, name: 'Tranche 1', amount: 2500000, status: 'Received', date: '2024-01-10', description: 'Initial funding upon approval' },
+                    { id: 2, name: 'Tranche 2', amount: 1500000, status: 'Pending', date: null, description: 'Release after milestone completion' },
+                    { id: 3, name: 'Tranche 3', amount: 1000000, status: 'Locked', date: null, description: 'Release after final milestone' },
+                  ].map((tranche) => (
+                    <div key={tranche.id} className="border border-gray-200 p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h3 className="text-lg font-bold text-gray-900">{tranche.name}</h3>
+                          <p className="text-sm text-gray-600">{tranche.description}</p>
+                        </div>
+                        <span className={`px-3 py-1 text-sm font-semibold ${
+                          tranche.status === 'Received' ? 'bg-green-100 text-green-800' :
+                          tranche.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {tranche.status}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-xs text-gray-600">Amount</p>
+                          <p className="text-lg font-bold text-gray-900">{formatCurrency(tranche.amount)}</p>
+                        </div>
+                        {tranche.date && (
+                          <div className="text-right">
+                            <p className="text-xs text-gray-600">Received Date</p>
+                            <p className="text-sm font-semibold text-gray-900">{new Date(tranche.date).toLocaleDateString()}</p>
+                          </div>
+                        )}
+                        {tranche.status === 'Pending' && (
+                          <div className="text-right">
+                            <p className="text-xs text-gray-600">Status</p>
+                            <p className="text-sm font-semibold text-yellow-600">Awaiting milestone completion</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Funding Request Tab */}
+          {activeTab === 'funding-request' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white shadow-lg p-6 max-w-3xl mx-auto"
+            >
+              <div className="mb-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Submit Funding Request</h2>
+                <p className="text-sm text-gray-600">Submit funding request with budget breakdown</p>
+              </div>
               
-              <form className="space-y-6">
+              <form className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Requested Amount (RWF)</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Requested Amount (RWF)</label>
                   <input
                     type="number"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                    placeholder="Enter amount"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                    placeholder="Enter total amount needed"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Purpose / What You Need the Money For</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Budget Breakdown</label>
                   <textarea
                     rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                    placeholder="Describe what you need the funds for..."
+                    className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                    placeholder="Break down your budget:&#10;• Seeds: 500,000 RWF&#10;• Fertilizer: 300,000 RWF&#10;• Labour: 200,000 RWF&#10;• Equipment: 1,000,000 RWF"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Which Milestone / Stage This Supports</label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent">
-                    <option>Select milestone...</option>
-                    {milestones.map((m) => (
-                      <option key={m.id} value={m.id}>{m.name}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Expected Revenue (RWF)</label>
-                    <input
-                      type="number"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                      placeholder="Expected revenue"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Expected Timeline</label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                      placeholder="e.g., 8 weeks"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Supporting Notes / Justification</label>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Description</label>
                   <textarea
                     rows={3}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                    placeholder="Additional justification..."
+                    className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                    placeholder="What is your project? Where? How much?"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Attach Supporting Files (optional)</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-                    <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Supporting Documents</label>
+                  <div className="border-2 border-dashed border-gray-300 p-4 text-center hover:border-[#FBAF43] transition-colors cursor-pointer">
+                    <Upload className="w-5 h-5 mx-auto text-gray-400 mb-1" />
+                    <p className="text-xs text-gray-600">Click to upload budget breakdown</p>
+                    <p className="text-[10px] text-gray-500 mt-0.5">PDF, JPG, PNG up to 10MB</p>
                   </div>
-                </div>
-                
-                <div className="bg-gray-50 rounded-lg p-4 space-y-2 text-sm">
-                  <p><strong>Current Margin:</strong> {projectData.margin}%</p>
-                  <p><strong>Milestones Completed:</strong> {milestones.filter(m => m.status === 'Approved').length} / {milestones.length}</p>
-                  <p><strong>Anomaly Count:</strong> {projectData.anomalyCount}</p>
-                  <p><strong>Reporting Consistency:</strong> {projectData.reportingConsistency}</p>
                 </div>
                 
                 <button
                   type="submit"
-                  className="w-full bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-3 px-6 rounded-lg transition-colors"
+                  className="w-full bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 text-sm transition-colors"
                 >
-                  Submit Request
+                  Submit Funding Request
                 </button>
               </form>
             </motion.div>
           )}
 
-          {/* Profile Tab */}
-          {activeTab === 'profile' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow-lg p-6"
-            >
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Profile & KYC Status</h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-center gap-6">
-                  <div className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
-                    <span className="text-2xl font-bold text-gray-400">JD</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">John Doe</h3>
-                    <p className="text-sm text-gray-600">Business Name: Doe Farming Cooperative</p>
-                    <span className="inline-block mt-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                      KYC Verified
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ID Type</label>
-                    <p className="text-gray-900">National ID</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ID Number</label>
-                    <p className="text-gray-900">119**********1234</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                    <p className="text-gray-900">+250 788 123 456</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <p className="text-gray-900">john.doe@example.com</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">MoMo Number</label>
-                    <p className="text-gray-900">0788***456</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Bank Account</label>
-                    <p className="text-gray-900">****1234</p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                    <p className="text-gray-900">Kicukiro District, Kigali Sector, Rwanda</p>
-                  </div>
-                </div>
-                
-                <div className="border-t border-gray-200 pt-6">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" className="rounded" defaultChecked />
-                    <span className="text-sm text-gray-700">Allow my project photos to appear publicly</span>
-                  </label>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                  <button className="flex items-center justify-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 sm:px-6 py-2 rounded-lg transition-colors">
-                    <Settings className="w-4 h-4" />
-                    Edit Profile
-                  </button>
-                  <button 
-                    onClick={handleLogout}
-                    className="flex items-center justify-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold px-4 sm:px-6 py-2 rounded-lg transition-colors"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
 
           {/* Add Transaction Modal */}
           {showAddTransaction && (
