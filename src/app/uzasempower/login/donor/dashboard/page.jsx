@@ -8,6 +8,9 @@ import {
   Search, Download, MapPin, Heart, Settings, LogOut, 
   LayoutDashboard, Menu, Info, Wallet, Activity, Target, X
 } from 'lucide-react'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import * as XLSX from 'xlsx'
 
 export default function DonorDashboard() {
   const router = useRouter()
@@ -15,6 +18,7 @@ export default function DonorDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
+  const [exportDropdowns, setExportDropdowns] = useState({})
   
   // Close notification dropdown when clicking outside
   useEffect(() => {
@@ -32,6 +36,23 @@ export default function DonorDashboard() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [showNotificationDropdown])
+
+  // Close export dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.export-dropdown-container')) {
+        setExportDropdowns({})
+      }
+    }
+
+    if (Object.keys(exportDropdowns).length > 0) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [exportDropdowns])
   
   // Overview filters
   const [overviewSearchQuery, setOverviewSearchQuery] = useState('')
@@ -340,6 +361,202 @@ export default function DonorDashboard() {
     return colors[status] || 'bg-gray-100 text-gray-800'
   }
 
+  // Export functions
+  const exportToCSV = (data, filename, headers) => {
+    const ws = XLSX.utils.json_to_sheet(data, { header: headers || Object.keys(data[0] || {}) })
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    XLSX.writeFile(wb, `${filename}.csv`)
+  }
+
+  const exportToPDF = (title, data, headers, filename) => {
+    const doc = new jsPDF()
+    
+    // Add header
+    doc.setFillColor(16, 185, 129) // Green color
+    doc.rect(0, 0, 210, 20, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(18)
+    doc.setFont('helvetica', 'bold')
+    doc.text('UZAEMPOWER', 105, 12, { align: 'center' })
+    
+    // Reset text color for content
+    doc.setTextColor(0, 0, 0)
+    doc.setFontSize(16)
+    doc.setFont('helvetica', 'normal')
+    doc.text(title, 14, 35)
+    
+    const tableData = data.map(row => 
+      headers.map(header => {
+        const value = row[header.key] || row[header] || ''
+        return typeof value === 'object' ? JSON.stringify(value) : String(value)
+      })
+    )
+
+    const tableHeaders = headers.map(h => typeof h === 'string' ? h : h.label || h.key)
+
+    autoTable(doc, {
+      head: [tableHeaders],
+      body: tableData,
+      startY: 45,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [16, 185, 129] },
+      didDrawPage: function (data) {
+        // Add footer on each page
+        doc.setFontSize(8)
+        doc.setTextColor(128, 128, 128)
+        doc.setFont('helvetica', 'italic')
+        const pageCount = doc.internal.getNumberOfPages()
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i)
+          doc.text('Powered by UZAEMPOWER', 105, doc.internal.pageSize.height - 10, { align: 'center' })
+        }
+        doc.setTextColor(0, 0, 0)
+        doc.setFont('helvetica', 'normal')
+      }
+    })
+
+    // Add footer to last page if not already added
+    const pageCount = doc.internal.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      doc.setFontSize(8)
+      doc.setTextColor(128, 128, 128)
+      doc.setFont('helvetica', 'italic')
+      doc.text('Powered by UZAEMPOWER', 105, doc.internal.pageSize.height - 10, { align: 'center' })
+    }
+
+    doc.save(`${filename}.pdf`)
+  }
+
+  const toggleExportDropdown = (id) => {
+    setExportDropdowns(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
+
+  // Export handlers for different data types
+  const exportOverviewProjects = (format) => {
+    const data = filteredOverviewProjects.map(p => ({
+      'Project Name': p.title,
+      'Owner (Beneficiary)': p.beneficiary,
+      'Location': p.location,
+      'Category': p.category,
+      'Pledge': formatCurrency(p.pledgeAmount),
+      'Funding Status': p.fundingStatus
+    }))
+    if (format === 'csv') {
+      exportToCSV(data, 'investing-projects')
+    } else {
+      exportToPDF(
+        'Your Investing Projects',
+        filteredOverviewProjects.map(p => ({
+          'Project Name': p.title,
+          'Owner (Beneficiary)': p.beneficiary,
+          'Location': p.location,
+          'Category': p.category,
+          'Pledge': formatCurrency(p.pledgeAmount),
+          'Funding Status': p.fundingStatus
+        })),
+        ['Project Name', 'Owner (Beneficiary)', 'Location', 'Category', 'Pledge', 'Funding Status'],
+        'investing-projects'
+      )
+    }
+  }
+
+  const exportProjects = (format) => {
+    const data = filteredProjects.map(p => ({
+      'Project Name': p.title,
+      'Beneficiary': p.beneficiary,
+      'Location': p.location,
+      'Category': p.category,
+      'Pledge': formatCurrency(p.pledgeAmount),
+      'Funding Status': p.fundingStatus,
+      'Status': p.status,
+      'Date': p.date
+    }))
+    if (format === 'csv') {
+      exportToCSV(data, 'projects')
+    } else {
+      exportToPDF(
+        'Projects',
+        filteredProjects.map(p => ({
+          'Project Name': p.title,
+          'Beneficiary': p.beneficiary,
+          'Location': p.location,
+          'Category': p.category,
+          'Pledge': formatCurrency(p.pledgeAmount),
+          'Funding Status': p.fundingStatus,
+          'Status': p.status,
+          'Date': p.date
+        })),
+        ['Project Name', 'Beneficiary', 'Location', 'Category', 'Pledge', 'Funding Status', 'Status', 'Date'],
+        'projects'
+      )
+    }
+  }
+
+  const exportMilestones = (format) => {
+    const data = filteredMilestones.map(m => ({
+      'Project': m.projectName,
+      'Milestone': m.milestoneName,
+      'Description': m.description,
+      'Target Date': m.targetDate,
+      'Status': m.status,
+      'Tranche Amount': formatCurrency(m.trancheAmount),
+      'Evidence Count': m.evidenceCount
+    }))
+    if (format === 'csv') {
+      exportToCSV(data, 'milestones')
+    } else {
+      exportToPDF(
+        'Milestones',
+        filteredMilestones.map(m => ({
+          'Project': m.projectName,
+          'Milestone': m.milestoneName,
+          'Description': m.description,
+          'Target Date': m.targetDate,
+          'Status': m.status,
+          'Tranche Amount': formatCurrency(m.trancheAmount),
+          'Evidence Count': m.evidenceCount
+        })),
+        ['Project', 'Milestone', 'Description', 'Target Date', 'Status', 'Tranche Amount', 'Evidence Count'],
+        'milestones'
+      )
+    }
+  }
+
+  const exportLedger = (format) => {
+    const data = filteredTransactions.map(t => ({
+      'Date': t.date,
+      'Type': t.type,
+      'Category': t.category,
+      'Description': t.description,
+      'Amount': formatCurrency(t.amount),
+      'Balance': formatCurrency(t.balance),
+      'Project': t.project
+    }))
+    if (format === 'csv') {
+      exportToCSV(data, 'transaction-history')
+    } else {
+      exportToPDF(
+        'Transaction History',
+        filteredTransactions.map(t => ({
+          'Date': t.date,
+          'Type': t.type,
+          'Category': t.category,
+          'Description': t.description,
+          'Amount': formatCurrency(t.amount),
+          'Balance': formatCurrency(t.balance),
+          'Project': t.project
+        })),
+        ['Date', 'Type', 'Category', 'Description', 'Amount', 'Balance', 'Project'],
+        'transaction-history'
+      )
+    }
+  }
+
   // Filter functions
   const filteredOverviewProjects = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
@@ -605,13 +822,31 @@ export default function DonorDashboard() {
                             className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
                     />
                   </div>
-                        <button 
-                          onClick={() => showNotification('Data exported successfully', 'success')}
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
-                        >
-                          <Download className="w-4 h-4" />
-                          Export
-                        </button>
+                        <div className="relative export-dropdown-container">
+                          <button 
+                            onClick={() => toggleExportDropdown('overview')}
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                          >
+                            <Download className="w-4 h-4" />
+                            Export
+                          </button>
+                          {exportDropdowns['overview'] && (
+                            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                              <button
+                                onClick={() => { exportOverviewProjects('csv'); setExportDropdowns({}); showNotification('Data exported as CSV successfully', 'success') }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                Export as CSV
+                              </button>
+                              <button
+                                onClick={() => { exportOverviewProjects('pdf'); setExportDropdowns({}); showNotification('Data exported as PDF successfully', 'success') }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                Export as PDF
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                 </div>
               </div>
@@ -689,10 +924,31 @@ export default function DonorDashboard() {
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl  text-gray-900">Projects</h2>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors">
-                        <Download className="w-4 h-4" />
-                        Export
-                      </button>
+                      <div className="relative export-dropdown-container">
+                        <button 
+                          onClick={() => toggleExportDropdown('projects')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        >
+                          <Download className="w-4 h-4" />
+                          Export
+                        </button>
+                        {exportDropdowns['projects'] && (
+                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                            <button
+                              onClick={() => { exportProjects('csv'); setExportDropdowns({}); showNotification('Data exported as CSV successfully', 'success') }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Export as CSV
+                            </button>
+                            <button
+                              onClick={() => { exportProjects('pdf'); setExportDropdowns({}); showNotification('Data exported as PDF successfully', 'success') }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Export as PDF
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     
                     {/* Filters */}
@@ -827,10 +1083,31 @@ export default function DonorDashboard() {
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl  text-gray-900">Milestones</h2>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors">
-                        <Download className="w-4 h-4" />
-                        Export
-                      </button>
+                      <div className="relative export-dropdown-container">
+                        <button 
+                          onClick={() => toggleExportDropdown('milestones')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        >
+                          <Download className="w-4 h-4" />
+                          Export
+                        </button>
+                        {exportDropdowns['milestones'] && (
+                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                            <button
+                              onClick={() => { exportMilestones('csv'); setExportDropdowns({}); showNotification('Data exported as CSV successfully', 'success') }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Export as CSV
+                            </button>
+                            <button
+                              onClick={() => { exportMilestones('pdf'); setExportDropdowns({}); showNotification('Data exported as PDF successfully', 'success') }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Export as PDF
+                            </button>
+                          </div>
+                        )}
+                      </div>
                       </div>
                     
                     {/* Filters */}
@@ -945,10 +1222,31 @@ export default function DonorDashboard() {
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl  text-gray-900">Transaction History</h2>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors">
-                    <Download className="w-4 h-4" />
-                    Export
-                  </button>
+                      <div className="relative export-dropdown-container">
+                        <button 
+                          onClick={() => toggleExportDropdown('ledger')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        >
+                          <Download className="w-4 h-4" />
+                          Export
+                        </button>
+                        {exportDropdowns['ledger'] && (
+                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                            <button
+                              onClick={() => { exportLedger('csv'); setExportDropdowns({}); showNotification('Data exported as CSV successfully', 'success') }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Export as CSV
+                            </button>
+                            <button
+                              onClick={() => { exportLedger('pdf'); setExportDropdowns({}); showNotification('Data exported as PDF successfully', 'success') }}
+                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              Export as PDF
+                            </button>
+                          </div>
+                        )}
+                      </div>
               </div>
               
                     {/* Filters */}
