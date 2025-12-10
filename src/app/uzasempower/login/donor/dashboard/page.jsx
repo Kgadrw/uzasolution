@@ -411,7 +411,7 @@ export default function DonorDashboard() {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Pledges Summary */}
-                  <div className="bg-white shadow-lg p-6 border border-gray-100">
+                  <div className="bg-white  p-6 border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-gray-600">Pledges Summary</h3>
                       <Info className="w-4 h-4 text-gray-400" />
@@ -421,7 +421,7 @@ export default function DonorDashboard() {
               </div>
 
                   {/* Balance / Total Distributed */}
-                  <div className="bg-white shadow-lg p-6 border border-gray-100">
+                  <div className="bg-white  p-6 border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-gray-600">Total Distributed</h3>
                       <Wallet className="w-4 h-4 text-gray-400" />
@@ -431,7 +431,7 @@ export default function DonorDashboard() {
               </div>
 
                   {/* Active Projects */}
-                  <div className="bg-white shadow-lg p-6 border border-gray-100">
+                  <div className="bg-white  p-6 border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-gray-600">Active Projects</h3>
                       <Activity className="w-4 h-4 text-gray-400" />
@@ -441,7 +441,7 @@ export default function DonorDashboard() {
               </div>
 
                   {/* Projects On Track */}
-                  <div className="bg-white shadow-lg p-6 border border-gray-100">
+                  <div className="bg-white  p-6 border border-gray-100">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm font-medium text-gray-600">Projects On Track</h3>
                       <Target className="w-4 h-4 text-gray-400" />
@@ -452,7 +452,7 @@ export default function DonorDashboard() {
                 </div>
 
                 {/* Investing Projects Table */}
-                <div className="bg-white shadow-lg border border-gray-100">
+                <div className="bg-white  border border-gray-100">
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl  text-gray-900">Your Investing Projects</h2>
@@ -489,7 +489,11 @@ export default function DonorDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                         {filteredOverviewProjects.map((project) => (
-                        <tr key={project.id} className="hover:bg-gray-50">
+                        <tr 
+                          key={project.id} 
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                        >
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm  text-gray-900">{project.title}</div>
                             </td>
@@ -540,7 +544,7 @@ export default function DonorDashboard() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-                <div className="bg-white shadow-lg border border-gray-100">
+                <div className="bg-white  border border-gray-100">
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl  text-gray-900">Projects</h2>
@@ -623,7 +627,11 @@ export default function DonorDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {filteredProjects.map((project) => (
-                        <tr key={project.id} className="hover:bg-gray-50">
+                        <tr 
+                          key={project.id} 
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                        >
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm  text-gray-900">{project.title}</div>
                           </td>
@@ -674,7 +682,7 @@ export default function DonorDashboard() {
               animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="bg-white shadow-lg border border-gray-100">
+                <div className="bg-white  border border-gray-100">
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl  text-gray-900">Milestones</h2>
@@ -792,7 +800,7 @@ export default function DonorDashboard() {
               animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="bg-white shadow-lg border border-gray-100">
+                <div className="bg-white  border border-gray-100">
                   <div className="p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl  text-gray-900">Transaction History</h2>
@@ -917,7 +925,7 @@ export default function DonorDashboard() {
               animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <div className="bg-white rounded-xl  border border-gray-100 p-6">
                   <h2 className="text-xl  text-gray-900 mb-6">Alerts</h2>
                   
                   <div className="space-y-4">
@@ -966,7 +974,7 @@ export default function DonorDashboard() {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-6"
             >
-                <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <div className="bg-white rounded-xl  border border-gray-100 p-6">
                   <h2 className="text-xl  text-gray-900 mb-6">Settings</h2>
                 
                   <div className="space-y-6">
