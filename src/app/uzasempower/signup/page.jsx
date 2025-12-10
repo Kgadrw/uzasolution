@@ -4,7 +4,11 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, Eye, EyeOff, User, Phone, Heart, Users, UserPlus } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, User, Phone, Heart, Users, UserPlus, ArrowLeft } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const Navbar = dynamic(() => import('../../../components/navbar'))
+const Footer = dynamic(() => import('../../../components/footer'))
 
 export default function UZAEmpowerSignup() {
   const router = useRouter()
@@ -144,38 +148,62 @@ export default function UZAEmpowerSignup() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4 relative overflow-hidden" style={{ overflow: 'hidden' }}>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="w-full max-w-md relative z-10"
-      >
-        {/* Logo/Header */}
-        <div className="text-center mb-8">
-          <motion.div
-            className="inline-flex items-center justify-center mb-4"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
-          >
-            <h1 className="text-2xl md:text-3xl font-extrabold text-blue-600">
-              Create Account
-            </h1>
-          </motion.div>
-          <p className="text-sm text-gray-600">
-            Join UZA Empower and make a difference
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30">
+      <Navbar />
+      
+      <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 relative overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 right-10 w-96 h-96 bg-[#E5243B]/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-10 w-72 h-72 bg-[#FBAF43]/5 rounded-full blur-3xl"></div>
         </div>
 
-        {/* Signup Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-white p-6 sm:p-8 border border-gray-200"
-        >
+        <div className="max-w-xl mx-auto relative z-10">
+          {/* Back Button */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <Link 
+              href="/uzasempower/login"
+              className="inline-flex items-center gap-2 text-gray-700 hover:text-[#FBAF43] transition-all duration-300 mb-6 group"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+              <span className="text-sm font-medium">Back to Login</span>
+            </Link>
+          </motion.div>
+
+          {/* Header */}
+          <motion.div
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <motion.div
+              className="w-16 h-16 bg-gradient-to-br from-[#FBAF43] to-[#e59e3b] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
+            >
+              <UserPlus className="w-8 h-8 text-white" />
+            </motion.div>
+            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3">
+              Create Account
+            </h1>
+            <p className="text-sm sm:text-base text-gray-600">
+              Join UZA Empower and make a difference
+            </p>
+          </motion.div>
+
+          {/* Signup Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-200/50"
+          >
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* General Error */}
             {errors.general && (
@@ -217,8 +245,8 @@ export default function UZAEmpowerSignup() {
                       : 'border-gray-300'
                   }`}
                 >
-                  <Users className={`w-6 h-6 mx-auto mb-2 ${selectedRole === 'beneficiary' ? 'text-[#00689D]' : 'text-gray-400'}`} />
-                  <span className={`text-sm font-semibold ${selectedRole === 'beneficiary' ? 'text-[#00689D]' : 'text-gray-600'}`}>
+                  <Users className={`w-6 h-6 mx-auto mb-2 ${selectedRole === 'beneficiary' ? 'text-[#19486A]' : 'text-gray-400'}`} />
+                  <span className={`text-sm font-semibold ${selectedRole === 'beneficiary' ? 'text-[#19486A]' : 'text-gray-600'}`}>
                     Beneficiary
                   </span>
                 </button>
@@ -253,12 +281,12 @@ export default function UZAEmpowerSignup() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('name')}
                   onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                  className={`block w-full pl-10 pr-3 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
                     errors.name 
                       ? 'border-red-400 focus:border-red-500' 
                       : focusedField === 'name'
                       ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300'
+                      : 'border-gray-300 hover:border-gray-400'
                   }`}
                   placeholder="John Doe"
                 />
@@ -293,12 +321,12 @@ export default function UZAEmpowerSignup() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                  className={`block w-full pl-10 pr-3 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
                     errors.email 
                       ? 'border-red-400 focus:border-red-500' 
                       : focusedField === 'email'
                       ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300'
+                      : 'border-gray-300 hover:border-gray-400'
                   }`}
                   placeholder="you@example.com"
                 />
@@ -333,12 +361,12 @@ export default function UZAEmpowerSignup() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('phone')}
                   onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                  className={`block w-full pl-10 pr-3 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
                     errors.phone 
                       ? 'border-red-400 focus:border-red-500' 
                       : focusedField === 'phone'
                       ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300'
+                      : 'border-gray-300 hover:border-gray-400'
                   }`}
                   placeholder="+250 788 123 456"
                 />
@@ -373,12 +401,12 @@ export default function UZAEmpowerSignup() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('password')}
                   onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-10 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                  className={`block w-full pl-10 pr-10 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
                     errors.password 
                       ? 'border-red-400 focus:border-red-500' 
                       : focusedField === 'password'
                       ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300'
+                      : 'border-gray-300 hover:border-gray-400'
                   }`}
                   placeholder="At least 8 characters"
                 />
@@ -424,12 +452,12 @@ export default function UZAEmpowerSignup() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('confirmPassword')}
                   onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-10 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                  className={`block w-full pl-10 pr-10 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
                     errors.confirmPassword 
                       ? 'border-red-400 focus:border-red-500' 
                       : focusedField === 'confirmPassword'
                       ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300'
+                      : 'border-gray-300 hover:border-gray-400'
                   }`}
                   placeholder="Confirm your password"
                 />
@@ -460,7 +488,9 @@ export default function UZAEmpowerSignup() {
             <motion.button
               type="submit"
               disabled={isLoading}
-              className={`w-full bg-[#FBAF43] text-white font-semibold py-2.5 px-4 text-sm flex items-center justify-center gap-2 ${
+              whileHover={{ scale: isLoading ? 1 : 1.01 }}
+              whileTap={{ scale: isLoading ? 1 : 0.99 }}
+              className={`w-full bg-gradient-to-r from-[#FBAF43] to-[#e59e3b] hover:from-[#e59e3b] hover:to-[#FBAF43] text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl text-sm flex items-center justify-center gap-2 ${
                 isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -496,7 +526,10 @@ export default function UZAEmpowerSignup() {
             </p>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
+      </section>
+
+      <Footer />
     </div>
   )
 }

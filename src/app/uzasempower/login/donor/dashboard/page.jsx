@@ -15,25 +15,10 @@ import * as XLSX from 'xlsx'
 export default function DonorDashboard() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
-  const [sidebarOpen, setSidebarOpen] = useState(false) // Start closed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
   const [exportDropdowns, setExportDropdowns] = useState({})
-  
-  // Auto-close sidebar on mobile when clicking outside
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true)
-      } else {
-        setSidebarOpen(false)
-      }
-    }
-    
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
   
   // Close notification dropdown when clicking outside
   useEffect(() => {
@@ -621,16 +606,8 @@ export default function DonorDashboard() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -674,27 +651,21 @@ export default function DonorDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 md:${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 min-h-[80px]">
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 transition-colors"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <h1 className="text-xl sm:text-2xl text-gray-900">Welcome back Donor User</h1>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-            <div className="relative flex-1 sm:flex-none">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between h-[80px]">
+              <div>
+            <h1 className="text-2xl text-gray-900">Welcome back Donor User</h1>
+              </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search something here.."
-                className="pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-full sm:w-48 md:w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
               />
-            </div>
+              </div>
             <div className="flex items-center gap-3">
               <div className="relative" ref={notificationDropdownRef}>
                 <button
@@ -711,7 +682,7 @@ export default function DonorDashboard() {
                 
                 {/* Notification Dropdown */}
                 {showNotificationDropdown && (
-                  <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 shadow-lg z-50 max-h-96 overflow-y-auto">
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 max-h-96 overflow-y-auto">
                     <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                       <h3 className="text-sm text-gray-900">Notifications</h3>
                       <button
@@ -769,14 +740,14 @@ export default function DonorDashboard() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-sm sm:text-base">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white ">
                   U
-                </div>
-                <div className="hidden sm:block">
-                  <p className="text-sm text-gray-900">Donor User</p>
+              </div>
+              <div>
+                  <p className="text-sm  text-gray-900">Donor User</p>
                   <p className="text-xs text-gray-600">donor@example.com</p>
-                </div>
+              </div>
               </div>
               </div>
             </div>
@@ -837,27 +808,27 @@ export default function DonorDashboard() {
 
                 {/* Investing Projects Table */}
                 <div className="bg-white  border border-gray-100">
-                  <div className="p-4 sm:p-6 border-b border-gray-200">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-                      <h2 className="text-lg sm:text-xl text-gray-900">Your Investing Projects</h2>
-                      <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
-                  <div className="relative flex-1 sm:flex-none">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+                  <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl  text-gray-900">Your Investing Projects</h2>
+                      <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                       type="text"
                       placeholder="Search projects..."
                             value={overviewSearchQuery}
                             onChange={(e) => setOverviewSearchQuery(e.target.value)}
-                            className="pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-full sm:w-48 md:w-64"
+                            className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
                     />
                   </div>
                         <div className="relative export-dropdown-container">
                           <button 
                             onClick={() => toggleExportDropdown('overview')}
-                            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors text-sm sm:text-base"
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
                           >
-                            <Download className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span className="hidden sm:inline">Export</span>
+                            <Download className="w-4 h-4" />
+                            Export
                           </button>
                           {exportDropdowns['overview'] && (
                             <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
@@ -884,12 +855,12 @@ export default function DonorDashboard() {
                     <table className="w-full">
                     <thead className="bg-gray-50">
                       <tr>
-                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project Name</th>
-                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs text-gray-600 uppercase tracking-wider hidden md:table-cell">Owner (Beneficiary)</th>
-                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs text-gray-600 uppercase tracking-wider hidden lg:table-cell">Location</th>
-                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs text-gray-600 uppercase tracking-wider hidden lg:table-cell">Category</th>
-                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Pledge</th>
-                          <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Funding Status</th>
+                          <th className="px-6 py-3 text-left text-xs  text-gray-600 uppercase tracking-wider">Project Name</th>
+                          <th className="px-6 py-3 text-left text-xs  text-gray-600 uppercase tracking-wider">Owner (Beneficiary)</th>
+                          <th className="px-6 py-3 text-left text-xs  text-gray-600 uppercase tracking-wider">Location</th>
+                          <th className="px-6 py-3 text-left text-xs  text-gray-600 uppercase tracking-wider">Category</th>
+                          <th className="px-6 py-3 text-right text-xs  text-gray-600 uppercase tracking-wider">Pledge</th>
+                          <th className="px-6 py-3 text-left text-xs  text-gray-600 uppercase tracking-wider">Funding Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -899,7 +870,7 @@ export default function DonorDashboard() {
                           className="hover:bg-gray-50 cursor-pointer"
                           onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
                         >
-                            <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
+                            <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm  text-gray-900">{project.title}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">

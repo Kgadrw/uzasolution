@@ -13,28 +13,13 @@ import {
 export default function BeneficiaryDashboard() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
-  const [sidebarOpen, setSidebarOpen] = useState(false) // Start closed on mobile
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showRequestFundModal, setShowRequestFundModal] = useState(false)
   const [showAddProjectModal, setShowAddProjectModal] = useState(false)
   const [showUploadEvidenceModal, setShowUploadEvidenceModal] = useState(false)
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
-  
-  // Auto-close sidebar on mobile when clicking outside
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true)
-      } else {
-        setSidebarOpen(false)
-      }
-    }
-    
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
   
   // Overview filters
   const [overviewSearchQuery, setOverviewSearchQuery] = useState('')
@@ -238,16 +223,8 @@ export default function BeneficiaryDashboard() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-      
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -291,25 +268,19 @@ export default function BeneficiaryDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 md:${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 min-h-[80px]">
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="md:hidden p-2 hover:bg-gray-100 transition-colors"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <h1 className="text-xl sm:text-2xl text-gray-900">Welcome back Beneficiary User</h1>
+        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between h-[80px]">
+          <div>
+            <h1 className="text-2xl text-gray-900">Welcome back Beneficiary User</h1>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4 w-full sm:w-auto">
-            <div className="relative flex-1 sm:flex-none">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search something here.."
-                className="pl-9 sm:pl-10 pr-3 sm:pr-4 py-2 text-sm sm:text-base border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-full sm:w-48 md:w-64"
+                className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
               />
             </div>
             <div className="flex items-center gap-3">
@@ -328,7 +299,7 @@ export default function BeneficiaryDashboard() {
                 
                 {/* Notification Dropdown */}
                 {showNotificationDropdown && (
-                  <div className="absolute right-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 shadow-lg z-50 max-h-96 overflow-y-auto">
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 max-h-96 overflow-y-auto">
                     <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                       <h3 className="text-sm text-gray-900">Notifications</h3>
                       <button
@@ -386,11 +357,11 @@ export default function BeneficiaryDashboard() {
                   </div>
                 )}
               </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-sm sm:text-base">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
                   B
                 </div>
-                <div className="hidden sm:block">
+                <div>
                   <p className="text-sm text-gray-900">Beneficiary User</p>
                   <p className="text-xs text-gray-600">beneficiary@example.com</p>
                 </div>
