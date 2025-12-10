@@ -22,7 +22,7 @@
     "lucide-react": "^0.503.0",
     "mongoose": "^8.8.0",
     "nanoid": "^5.0.7",
-    "next": "^15.3.1",
+    "next": "15.3.6",
     "next-sanity": "^9.10.2",
     "nodemailer": "^6.10.1",
     "ogl": "^1.0.11",
