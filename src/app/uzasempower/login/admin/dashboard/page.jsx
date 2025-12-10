@@ -319,8 +319,20 @@ export default function AdminDashboard() {
 
   const exportToPDF = (title, data, headers, filename) => {
     const doc = new jsPDF()
+    
+    // Add header
+    doc.setFillColor(16, 185, 129) // Green color
+    doc.rect(0, 0, 210, 20, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(18)
+    doc.setFont('helvetica', 'bold')
+    doc.text('UZAEMPOWER', 105, 12, { align: 'center' })
+    
+    // Reset text color for content
+    doc.setTextColor(0, 0, 0)
     doc.setFontSize(16)
-    doc.text(title, 14, 15)
+    doc.setFont('helvetica', 'normal')
+    doc.text(title, 14, 35)
     
     const tableData = data.map(row => 
       headers.map(header => {
@@ -334,10 +346,33 @@ export default function AdminDashboard() {
     autoTable(doc, {
       head: [tableHeaders],
       body: tableData,
-      startY: 25,
+      startY: 45,
       styles: { fontSize: 9 },
-      headStyles: { fillColor: [16, 185, 129] }
+      headStyles: { fillColor: [16, 185, 129] },
+      didDrawPage: function (data) {
+        // Add footer on each page
+        doc.setFontSize(8)
+        doc.setTextColor(128, 128, 128)
+        doc.setFont('helvetica', 'italic')
+        const pageCount = doc.internal.getNumberOfPages()
+        for (let i = 1; i <= pageCount; i++) {
+          doc.setPage(i)
+          doc.text('Powered by UZAEMPOWER', 105, doc.internal.pageSize.height - 10, { align: 'center' })
+        }
+        doc.setTextColor(0, 0, 0)
+        doc.setFont('helvetica', 'normal')
+      }
     })
+
+    // Add footer to last page if not already added
+    const pageCount = doc.internal.getNumberOfPages()
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i)
+      doc.setFontSize(8)
+      doc.setTextColor(128, 128, 128)
+      doc.setFont('helvetica', 'italic')
+      doc.text('Powered by UZAEMPOWER', 105, doc.internal.pageSize.height - 10, { align: 'center' })
+    }
 
     doc.save(`${filename}.pdf`)
   }
@@ -478,14 +513,33 @@ export default function AdminDashboard() {
       XLSX.writeFile(wb, 'all-reports.csv')
     } else {
       const doc = new jsPDF()
-      let yPos = 15
+      
+      // Add header to first page
+      doc.setFillColor(16, 185, 129) // Green color
+      doc.rect(0, 0, 210, 20, 'F')
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(18)
+      doc.setFont('helvetica', 'bold')
+      doc.text('UZAEMPOWER', 105, 12, { align: 'center' })
+      doc.setTextColor(0, 0, 0)
+      
+      let yPos = 35
 
       const addSection = (title, data, headers) => {
         if (yPos > 250) {
           doc.addPage()
-          yPos = 15
+          // Add header to new page
+          doc.setFillColor(16, 185, 129)
+          doc.rect(0, 0, 210, 20, 'F')
+          doc.setTextColor(255, 255, 255)
+          doc.setFontSize(18)
+          doc.setFont('helvetica', 'bold')
+          doc.text('UZAEMPOWER', 105, 12, { align: 'center' })
+          doc.setTextColor(0, 0, 0)
+          yPos = 25
         }
         doc.setFontSize(14)
+        doc.setFont('helvetica', 'normal')
         doc.text(title, 14, yPos)
         yPos += 10
 
@@ -504,7 +558,20 @@ export default function AdminDashboard() {
           body: tableData,
           startY: yPos,
           styles: { fontSize: 8 },
-          headStyles: { fillColor: [16, 185, 129] }
+          headStyles: { fillColor: [16, 185, 129] },
+          didDrawPage: function (data) {
+            // Add footer on each page
+            doc.setFontSize(8)
+            doc.setTextColor(128, 128, 128)
+            doc.setFont('helvetica', 'italic')
+            const pageCount = doc.internal.getNumberOfPages()
+            for (let i = 1; i <= pageCount; i++) {
+              doc.setPage(i)
+              doc.text('Powered by UZAEMPOWER', 105, doc.internal.pageSize.height - 10, { align: 'center' })
+            }
+            doc.setTextColor(0, 0, 0)
+            doc.setFont('helvetica', 'normal')
+          }
         })
 
         yPos = doc.lastAutoTable.finalY + 10
@@ -521,6 +588,16 @@ export default function AdminDashboard() {
       addSection('Funding Distribution', fundingDistributionData.map(d => ({ Range: d.range, Count: d.count })), ['Range', 'Count'])
       addSection('Milestone Completion', milestoneCompletionData.map(d => ({ Project: d.project, Completed: d.completed, Total: d.total })), ['Project', 'Completed', 'Total'])
       addSection('Donor Contribution', donorContributionData.map(d => ({ Quarter: d.name, Donors: d.donors, Amount: formatCurrency(d.amount) })), ['Quarter', 'Donors', 'Amount'])
+
+      // Add footer to all pages
+      const pageCount = doc.internal.getNumberOfPages()
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i)
+        doc.setFontSize(8)
+        doc.setTextColor(128, 128, 128)
+        doc.setFont('helvetica', 'italic')
+        doc.text('Powered by UZAEMPOWER', 105, doc.internal.pageSize.height - 10, { align: 'center' })
+      }
 
       doc.save('all-reports.pdf')
     }
