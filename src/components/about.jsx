@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import Noise from './Noise'
 
 export default function AboutUs() {
   return (
@@ -94,13 +95,21 @@ export default function AboutUs() {
             {/* Background Image */}
             <div className="absolute inset-0">
               <Image 
-                src="/8.png" 
+                src="/ai.jpg" 
                 alt="AI Technology Background" 
                 fill 
-                className="object-cover"
+                className="object-cover opacity-30"
               />
-              {/* Dark overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0E2A44]/95 via-[#0E2A44]/90 to-[#1B3A54]/95"></div>
+              {/* Dark overlay for text readability - solid overlay without right gradient */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0E2A44]/95 via-[#0E2A44]/95 to-[#1B3A54]/95"></div>
+              {/* Noise effect */}
+              <Noise
+                patternSize={250}
+                patternScaleX={1}
+                patternScaleY={1}
+                patternRefreshInterval={2}
+                patternAlpha={15}
+              />
             </div>
             
             {/* Content */}
@@ -118,32 +127,72 @@ export default function AboutUs() {
                 Start now <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            
-            {/* Decorative blob */}
-            <div className="pointer-events-none absolute -right-10 bottom-0 w-64 h-64 rounded-full bg-gradient-to-tr from-[#FBAF43] to-[#4fd1c5] opacity-20 blur-2xl hidden md:block z-0" />
           </motion.div>
 
           {/* Secure workspace */}
-          <motion.div whileHover={{ y: -4 }} className="relative bg-white/80 backdrop-blur rounded-2xl p-6 border border-gray-200/50">
-            <span className="inline-block text-[10px] uppercase tracking-widest text-[#213348] bg-[#F8FAFC] border border-gray-200/60 rounded-full px-3 py-1">
-              Secure workspace
-            </span>
-            <h4 className="mt-3 text-lg font-bold text-[#213348] leading-snug pr-24">
-              Work safely without sacrificing productivity
-            </h4>
+          <motion.div whileHover={{ y: -4 }} className="relative rounded-2xl p-6 border border-gray-200/50 overflow-hidden">
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image 
+                src="/7.jpg" 
+                alt="Secure Workspace Background" 
+                fill 
+                className="object-cover opacity-20"
+              />
+              {/* Light overlay for text readability */}
+              <div className="absolute inset-0 bg-white/90"></div>
+              {/* Noise effect */}
+              <Noise
+                patternSize={250}
+                patternScaleX={1}
+                patternScaleY={1}
+                patternRefreshInterval={2}
+                patternAlpha={15}
+              />
+            </div>
             
-
+            {/* Content */}
+            <div className="relative z-10">
+              <span className="inline-block text-[10px] uppercase tracking-widest text-[#213348] bg-[#F8FAFC] border border-gray-200/60 rounded-full px-3 py-1">
+                Secure workspace
+              </span>
+              <h4 className="mt-3 text-lg font-bold text-[#213348] leading-snug pr-24">
+                Work safely without sacrificing productivity
+              </h4>
+            </div>
           </motion.div>
 
           {/* Adoption */}
-          <motion.div whileHover={{ y: -4 }} className="relative bg-[#0E1A28] text-white rounded-2xl p-6 border border-white/10">
-            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
-              Successful adoption
-            </span>
-            <h4 className="mt-3 text-lg font-bold leading-snug">
-              Success lies in how teams use software effectively
-            </h4>
+          <motion.div whileHover={{ y: -4 }} className="relative text-white rounded-2xl p-6 border border-white/10 overflow-hidden">
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image 
+                src="/art.jpg" 
+                alt="Successful Adoption Background" 
+                fill 
+                className="object-cover opacity-30"
+              />
+              {/* Dark overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0E1A28]/95 via-[#0E1A28]/90 to-[#0E1A28]/95"></div>
+              {/* Noise effect */}
+              <Noise
+                patternSize={250}
+                patternScaleX={1}
+                patternScaleY={1}
+                patternRefreshInterval={2}
+                patternAlpha={15}
+              />
+            </div>
             
+            {/* Content */}
+            <div className="relative z-10">
+              <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1">
+                Successful adoption
+              </span>
+              <h4 className="mt-3 text-lg font-bold leading-snug">
+                Success lies in how teams use software effectively
+              </h4>
+            </div>
                 </motion.div>
               </div>
 
