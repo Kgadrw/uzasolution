@@ -1,18 +1,37 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { 
   DollarSign, CheckCircle, AlertCircle, Bell,
   Search, Download, MapPin, Heart, Settings, LogOut, 
-  LayoutDashboard, Menu, Info, Wallet, Activity, Target
+  LayoutDashboard, Menu, Info, Wallet, Activity, Target, X
 } from 'lucide-react'
 
 export default function DonorDashboard() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
+  const notificationDropdownRef = useRef(null)
+  
+  // Close notification dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
+        setShowNotificationDropdown(false)
+      }
+    }
+
+    if (showNotificationDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showNotificationDropdown])
   
   // Overview filters
   const [overviewSearchQuery, setOverviewSearchQuery] = useState('')
@@ -35,10 +54,21 @@ export default function DonorDashboard() {
   const [ledgerDateFrom, setLedgerDateFrom] = useState('')
   const [ledgerDateTo, setLedgerDateTo] = useState('')
   const [ledgerTypeFilter, setLedgerTypeFilter] = useState('all')
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ show: true, message, type })
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: 'success' })
+    }, 3000)
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    router.push('/uzasempower/login')
+    showNotification('Donor User logged out successfully', 'success')
+    setTimeout(() => {
+      localStorage.removeItem('user')
+      router.push('/uzasempower/login')
+    }, 1500)
   }
 
   const menuItems = [
@@ -244,6 +274,49 @@ export default function DonorDashboard() {
     },
   ]
 
+  const notifications = [
+    {
+      id: 1,
+      title: 'Project Milestone Completed',
+      message: 'Vegetable Farming Project has completed the Land Preparation milestone',
+      date: '2024-01-20',
+      read: false,
+      type: 'success'
+    },
+    {
+      id: 2,
+      title: 'New Funding Request',
+      message: 'Poultry Farming Initiative has submitted a new funding request',
+      date: '2024-01-19',
+      read: false,
+      type: 'info'
+    },
+    {
+      id: 3,
+      title: 'Project At Risk',
+      message: 'Beekeeping Project is behind schedule and needs attention',
+      date: '2024-01-18',
+      read: false,
+      type: 'warning'
+    },
+    {
+      id: 4,
+      title: 'Evidence Submitted',
+      message: 'Dairy Farming Project has submitted new evidence documents',
+      date: '2024-01-17',
+      read: true,
+      type: 'info'
+    },
+    {
+      id: 5,
+      title: 'Project Completed',
+      message: 'Fish Farming Project has been successfully completed',
+      date: '2024-01-15',
+      read: true,
+      type: 'success'
+    },
+  ]
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-RW', { 
       style: 'currency',
@@ -377,12 +450,77 @@ export default function DonorDashboard() {
               />
               </div>
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <Bell className="w-6 h-6 text-gray-600 cursor-pointer hover:text-green-600" />
-                {portfolioSummary.unreadAlerts > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                    {portfolioSummary.unreadAlerts}
-                  </span>
+              <div className="relative" ref={notificationDropdownRef}>
+                <button
+                  onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+                  className="relative"
+                >
+                  <Bell className="w-6 h-6 text-gray-600 cursor-pointer hover:text-green-600" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                      {notifications.filter(n => !n.read).length}
+                    </span>
+                  )}
+                </button>
+                
+                {/* Notification Dropdown */}
+                {showNotificationDropdown && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 max-h-96 overflow-y-auto">
+                    <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                      <h3 className="text-sm text-gray-900">Notifications</h3>
+                      <button
+                        onClick={() => setShowNotificationDropdown(false)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="divide-y divide-gray-200">
+                      {notifications.length === 0 ? (
+                        <div className="p-4 text-center text-sm text-gray-500">
+                          No notifications
+                        </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`p-4 hover:bg-gray-50 cursor-pointer ${!notif.read ? 'bg-blue-50' : ''}`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className={`flex-shrink-0 mt-0.5 ${
+                                notif.type === 'success' ? 'text-green-500' :
+                                notif.type === 'warning' ? 'text-yellow-500' :
+                                'text-blue-500'
+                              }`}>
+                                {notif.type === 'success' ? (
+                                  <CheckCircle className="w-4 h-4" />
+                                ) : notif.type === 'warning' ? (
+                                  <AlertCircle className="w-4 h-4" />
+                                ) : (
+                                  <Info className="w-4 h-4" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm text-gray-900 mb-1">{notif.title}</p>
+                                <p className="text-xs text-gray-600 mb-1">{notif.message}</p>
+                                <p className="text-xs text-gray-500">{new Date(notif.date).toLocaleDateString()}</p>
+                              </div>
+                              {!notif.read && (
+                                <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-1"></div>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                    {notifications.length > 0 && (
+                      <div className="p-3 border-t border-gray-200 text-center">
+                        <button className="text-xs text-green-600 hover:text-green-700">
+                          Mark all as read
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
               <div className="flex items-center gap-3">
@@ -467,7 +605,10 @@ export default function DonorDashboard() {
                             className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
                     />
                   </div>
-                        <button className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors">
+                        <button 
+                          onClick={() => showNotification('Data exported successfully', 'success')}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        >
                           <Download className="w-4 h-4" />
                           Export
                         </button>
@@ -1030,7 +1171,13 @@ export default function DonorDashboard() {
 
                     {/* Save Button */}
                     <div className="border-t border-gray-200 pt-6">
-                      <button className="px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors ">
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          showNotification('Settings saved successfully', 'success')
+                        }}
+                        className="px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors "
+                      >
                         Save Settings
                   </button>
                     </div>
@@ -1042,6 +1189,47 @@ export default function DonorDashboard() {
                       </div>
         </div>
       </div>
+
+      {/* Notification Modal */}
+      {notification.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className={`bg-white max-w-md w-full p-6 ${
+              notification.type === 'success' ? 'border-l-4 border-green-500' :
+              notification.type === 'error' ? 'border-l-4 border-red-500' :
+              'border-l-4 border-yellow-500'
+            }`}
+          >
+            <div className="flex items-start gap-4">
+              <div className={`flex-shrink-0 ${
+                notification.type === 'success' ? 'text-green-500' :
+                notification.type === 'error' ? 'text-red-500' :
+                'text-yellow-500'
+              }`}>
+                {notification.type === 'success' ? (
+                  <CheckCircle className="w-6 h-6" />
+                ) : notification.type === 'error' ? (
+                  <AlertCircle className="w-6 h-6" />
+                ) : (
+                  <Info className="w-6 h-6" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-900">{notification.message}</p>
+              </div>
+              <button
+                onClick={() => setNotification({ show: false, message: '', type: 'success' })}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

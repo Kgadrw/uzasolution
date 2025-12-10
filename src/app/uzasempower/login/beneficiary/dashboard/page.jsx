@@ -1,108 +1,234 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { 
-  Wallet, Calendar, CheckCircle, AlertCircle, 
-  TrendingUp, DollarSign, FileText, Upload, Plus,
-  MapPin, Image as ImageIcon, Download, Settings,
-  LogOut, Eye, X, Camera, MapPin as MapPinIcon, LayoutDashboard, Menu, ArrowRight
+  DollarSign, CheckCircle, AlertCircle, Bell,
+  Search, Download, MapPin, Heart, Settings, LogOut, 
+  LayoutDashboard, Menu, Info, Wallet, Activity, Target,
+  Plus, Upload, FileText, BarChart3, Users, TrendingUp, X
 } from 'lucide-react'
 
 export default function BeneficiaryDashboard() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState('profile-project')
-  const [showAddTransaction, setShowAddTransaction] = useState(false)
-  const [showRequestFunds, setShowRequestFunds] = useState(false)
-  const [selectedMilestone, setSelectedMilestone] = useState(null)
+  const [activeTab, setActiveTab] = useState('overview')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [showRequestFundModal, setShowRequestFundModal] = useState(false)
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false)
+  const [showUploadEvidenceModal, setShowUploadEvidenceModal] = useState(false)
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
+  const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
+  const notificationDropdownRef = useRef(null)
+  
+  // Overview filters
+  const [overviewSearchQuery, setOverviewSearchQuery] = useState('')
+
+  // Close notification dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
+        setShowNotificationDropdown(false)
+      }
+    }
+
+    if (showNotificationDropdown) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showNotificationDropdown])
+
+  const showNotification = (message, type = 'success') => {
+    setNotification({ show: true, message, type })
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: 'success' })
+    }, 3000)
+  }
 
   const handleLogout = () => {
-    localStorage.removeItem('user')
-    router.push('/uzasempower/login')
+    showNotification('Beneficiary User logged out successfully', 'success')
+    setTimeout(() => {
+      localStorage.removeItem('user')
+      router.push('/uzasempower/login')
+    }, 1500)
   }
 
   const menuItems = [
-    { id: 'profile-project', label: 'Profile & Project', icon: Settings },
-    { id: 'funding-request', label: 'Funding Request', icon: Plus },
-    { id: 'transactions', label: 'Record Transaction', icon: DollarSign },
-    { id: 'milestones', label: 'Submit Evidence', icon: CheckCircle },
-    { id: 'tranches', label: 'Tranches', icon: TrendingUp },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'funding-request', label: 'Funding Request', icon: DollarSign },
+    { id: 'submit-evidence', label: 'Submit Evidence', icon: Upload },
+    { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ]
 
   // Mock data
   const summaryData = {
-    cashBalance: 1250000,
-    nextMilestone: 'Planting Complete',
-    nextMilestoneDate: '2024-02-15',
-    nextMilestoneStatus: 'In progress',
-    pendingDecisions: 2,
-    projectHealth: 'On Track'
+    totalFunded: 8500000,
+    totalDonors: 5,
+    activeProjects: 3,
+    pendingDocuments: 2,
+    onTrackProjects: 2
   }
 
-  const projectData = {
-    title: 'Vegetable Farming Project',
-    projectId: 'PROJ-2024-001',
-    location: 'Kicukiro District, Kigali Sector',
-    category: 'Agriculture – Vegetables',
-    stage: 'Production',
-    totalBudget: 5000000,
-    totalDisbursed: 2500000,
-    totalSpent: 1250000,
-    totalRevenue: 1800000,
-    margin: 30.4,
-    runway: 45,
-    reportingConsistency: '5 weeks with 1+ update',
-    anomalyCount: 0
+  const donors = [
+    {
+      id: 1,
+      name: 'John Smith',
+      email: 'john@example.com',
+      totalDonated: 3000000,
+      projects: ['Vegetable Farming Project', 'Poultry Initiative']
+    },
+    {
+      id: 2,
+      name: 'Sarah Johnson',
+      email: 'sarah@example.com',
+      totalDonated: 2500000,
+      projects: ['Beekeeping Project']
+    },
+    {
+      id: 3,
+      name: 'Michael Brown',
+      email: 'michael@example.com',
+      totalDonated: 2000000,
+      projects: ['Vegetable Farming Project']
+    },
+  ]
+
+  const projects = [
+    {
+      id: 1,
+      title: 'Vegetable Farming Project',
+      location: 'Kicukiro, Rwanda',
+      category: 'Agriculture',
+      totalFunded: 5000000,
+      totalRequested: 8000000,
+      status: 'Active',
+      donors: ['John Smith', 'Michael Brown'],
+      missingDocuments: ['Business License', 'Tax Certificate']
+    },
+    {
+      id: 2,
+      title: 'Poultry Farming Initiative',
+      location: 'Gasabo, Rwanda',
+      category: 'Livestock',
+      totalFunded: 2000000,
+      totalRequested: 3000000,
+      status: 'Active',
+      donors: ['John Smith'],
+      missingDocuments: []
+    },
+    {
+      id: 3,
+      title: 'Beekeeping Project',
+      location: 'Nyarugenge, Rwanda',
+      category: 'Agriculture',
+      totalFunded: 1500000,
+      totalRequested: 2000000,
+      status: 'On Hold',
+      donors: ['Sarah Johnson'],
+      missingDocuments: ['Environmental Impact Assessment']
+    },
+  ]
+
+  const fundingRequests = [
+    {
+      id: 1,
+      project: 'Vegetable Farming Project',
+      amount: 3000000,
+      status: 'Pending',
+      submittedDate: '2024-01-15',
+      reviewedBy: null
+    },
+    {
+      id: 2,
+      project: 'Poultry Farming Initiative',
+      amount: 1000000,
+      status: 'Approved',
+      submittedDate: '2024-01-10',
+      reviewedBy: 'Admin User'
+    },
+    {
+      id: 3,
+      project: 'Beekeeping Project',
+      amount: 500000,
+      status: 'Rejected',
+      submittedDate: '2024-01-05',
+      reviewedBy: 'Admin User'
+    },
+  ]
+
+  const notifications = [
+    {
+      id: 1,
+      title: 'Funding Request Approved',
+      message: 'Your funding request for Poultry Farming Initiative has been approved',
+      date: '2024-01-20',
+      read: false,
+      type: 'success'
+    },
+    {
+      id: 2,
+      title: 'Missing Documents',
+      message: 'You have 2 missing documents that need to be uploaded',
+      date: '2024-01-19',
+      read: false,
+      type: 'warning'
+    },
+    {
+      id: 3,
+      title: 'Milestone Reminder',
+      message: 'Land Preparation milestone is due in 3 days',
+      date: '2024-01-18',
+      read: true,
+      type: 'info'
+    },
+    {
+      id: 4,
+      title: 'New Donor',
+      message: 'John Smith has pledged to your Vegetable Farming Project',
+      date: '2024-01-17',
+      read: true,
+      type: 'info'
+    },
+  ]
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-RW', { 
+      style: 'currency',
+      currency: 'RWF',
+      minimumFractionDigits: 0 
+    }).format(amount)
   }
-
-  const transactions = [
-    { id: 1, date: '2024-01-20', type: 'Expense', category: 'Seed', description: 'Tomato seeds purchase', amount: -50000, balance: 1200000, proofStatus: 'Uploaded', hasEvidence: true, location: 'Kigali' },
-    { id: 2, date: '2024-01-18', type: 'Revenue', category: 'Sales', description: 'Tomato harvest sale', amount: 200000, balance: 1250000, proofStatus: 'Uploaded', hasEvidence: true, location: 'Kigali' },
-    { id: 3, date: '2024-01-15', type: 'Disbursement', category: 'Funding', description: 'Tranche 2 release', amount: 1000000, balance: 1050000, proofStatus: 'N/A', hasEvidence: false, location: null },
-    { id: 4, date: '2024-01-12', type: 'Expense', category: 'Fertilizer', description: 'Organic fertilizer', amount: -75000, balance: 50000, proofStatus: 'Uploaded', hasEvidence: true, location: 'Kigali' },
-    { id: 5, date: '2024-01-10', type: 'Expense', category: 'Labour', description: 'Field preparation', amount: -100000, balance: 125000, proofStatus: 'Missing', hasEvidence: false, location: 'Kigali' },
-  ]
-
-  const milestones = [
-    { id: 1, name: 'Land Preparation', description: 'Complete land clearing and soil preparation', targetDate: '2024-01-05', status: 'Approved', evidenceCount: 5, lastUpdated: '2024-01-04', trancheLinked: 500000, adminComment: 'Well done!' },
-    { id: 2, name: 'Seed Planting', description: 'Plant all seeds according to plan', targetDate: '2024-01-20', status: 'Evidence submitted', evidenceCount: 8, lastUpdated: '2024-01-19', trancheLinked: 750000, adminComment: null },
-    { id: 3, name: 'Planting Complete', description: 'Complete planting phase and initial maintenance', targetDate: '2024-02-15', status: 'In progress', evidenceCount: 2, lastUpdated: '2024-01-25', trancheLinked: 1000000, adminComment: null },
-    { id: 4, name: 'First Harvest', description: 'Complete first harvest cycle', targetDate: '2024-03-30', status: 'Not started', evidenceCount: 0, lastUpdated: null, trancheLinked: 1250000, adminComment: null },
-  ]
-
 
   const getStatusColor = (status) => {
     const colors = {
-      'On Track': 'bg-green-100 text-green-800',
-      'At Risk': 'bg-yellow-100 text-yellow-800',
-      'Paused': 'bg-red-100 text-red-800',
+      'Active': 'bg-green-100 text-green-800',
+      'On Hold': 'bg-yellow-100 text-yellow-800',
+      'Pending': 'bg-yellow-100 text-yellow-800',
       'Approved': 'bg-green-100 text-green-800',
       'Rejected': 'bg-red-100 text-red-800',
-      'In progress': 'bg-blue-100 text-blue-800',
-      'Evidence submitted': 'bg-purple-100 text-purple-800',
-      'Not started': 'bg-gray-100 text-gray-800',
+      'Completed': 'bg-blue-100 text-blue-800',
     }
     return colors[status] || 'bg-gray-100 text-gray-800'
   }
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-RW', { style: 'currency', currency: 'RWF', minimumFractionDigits: 0 }).format(amount)
-  }
+  const filteredOverviewProjects = projects.filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
+                         project.location.toLowerCase().includes(overviewSearchQuery.toLowerCase())
+    return matchesSearch
+  })
 
   return (
-    <div className="h-screen bg-gray-50 flex overflow-hidden">
+    <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
-        <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-          {sidebarOpen && (
-            <h2 className="text-xl font-bold text-[#FBAF43]">My Dashboard</h2>
-          )}
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 "
+            className="p-2 hover:bg-gray-100 transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -117,13 +243,13 @@ export default function BeneficiaryDashboard() {
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
                   activeTab === item.id
-                    ? 'bg-[#FBAF43] text-white'
+                    ? 'bg-green-50 text-green-700 border border-green-200'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
                 title={!sidebarOpen ? item.label : ''}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
-                {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
+                {sidebarOpen && <span className="text-sm">{item.label}</span>}
               </button>
             )
           })}
@@ -136,509 +262,944 @@ export default function BeneficiaryDashboard() {
             title={!sidebarOpen ? 'Logout' : ''}
           >
             <LogOut className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
+            {sidebarOpen && <span className="text-sm">Logout</span>}
           </button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
-        <div className="h-full overflow-y-auto custom-scrollbar pt-8 pb-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-
-
-          {/* Profile & Project Tab */}
-          {activeTab === 'profile-project' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              {/* Profile Section */}
-              <div className="bg-white shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Profile & Project Information</h2>
-                
-                <div className="space-y-6">
-                  {/* Personal Profile */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal Profile</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Full Name</label>
-                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="John Doe" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Business Name</label>
-                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Doe Farming Cooperative" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Phone Number</label>
-                        <input type="tel" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="+250 788 123 456" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Email</label>
-                        <input type="email" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="john.doe@example.com" />
-                      </div>
-                      <div className="md:col-span-2">
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Location</label>
-                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Kicukiro District, Kigali Sector, Rwanda" />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Project Information */}
-                  <div className="border-t border-gray-200 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Project Details</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Title</label>
-                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="What is your project?" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Location</label>
-                        <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Where is your project located?" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Description</label>
-                        <textarea rows={3} className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Describe your project..." />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1.5">Total Budget Required (RWF)</label>
-                        <input type="number" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="How much do you need?" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <button className="flex-1 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 text-sm transition-colors">
-                      Save Profile & Project
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Record Transaction Tab */}
-          {activeTab === 'transactions' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              {/* Quick Record Form */}
-              <div className="bg-white shadow-lg p-6 max-w-2xl mx-auto">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Record Transaction</h2>
-                <p className="text-sm text-gray-600 mb-6">Record every spend or sale with photo proof</p>
-                
-                <form className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Transaction Type</label>
-                      <select className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent">
-                        <option>Select type...</option>
-                        <option>Expense (Spend)</option>
-                        <option>Revenue (Sale)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-700 mb-1.5">Date</label>
-                      <input type="date" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Amount (RWF)</label>
-                    <input type="number" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="Enter amount" />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Description</label>
-                    <input type="text" className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent" placeholder="What was this transaction for?" />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Category</label>
-                    <select className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent">
-                      <option>Select category...</option>
-                      <option>Seed</option>
-                      <option>Fertilizer</option>
-                      <option>Labour</option>
-                      <option>Equipment</option>
-                      <option>Transport</option>
-                      <option>Sales</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 mb-1.5">Photo Proof (Required)</label>
-                    <div className="border-2 border-dashed border-gray-300 p-4 text-center hover:border-[#FBAF43] transition-colors cursor-pointer">
-                      <Camera className="w-6 h-6 mx-auto text-gray-400 mb-2" />
-                      <p className="text-xs text-gray-600">Click to upload photo</p>
-                      <p className="text-[10px] text-gray-500 mt-0.5">JPG, PNG up to 5MB</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" id="gps" className="rounded" defaultChecked />
-                    <label htmlFor="gps" className="text-xs text-gray-700">Auto-capture GPS location</label>
-                  </div>
-                  
-                  <button
-                    type="submit"
-                    className="w-full bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 text-sm transition-colors"
-                  >
-                    Record Transaction
-                  </button>
-                </form>
-              </div>
-
-              {/* Recent Transactions */}
-              <div className="bg-white shadow-lg p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Recent Transactions</h3>
-                <div className="space-y-2">
-                  {transactions.slice(0, 5).map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between p-3 border border-gray-200 hover:bg-gray-50">
-                      <div className="flex items-center gap-3">
-                        <span className={`px-2 py-1 text-xs font-medium ${
-                          tx.type === 'Revenue' ? 'bg-green-100 text-green-800' :
-                          tx.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {tx.type}
-                        </span>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">{tx.description}</p>
-                          <p className="text-xs text-gray-500">{new Date(tx.date).toLocaleDateString()}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-semibold ${
-                          tx.amount > 0 ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {tx.amount > 0 ? '+' : ''}{formatCurrency(tx.amount)}
-                        </p>
-                        <span className={`text-[10px] ${
-                          tx.proofStatus === 'Uploaded' ? 'text-green-600' : 'text-red-600'
-                        }`}>
-                          {tx.proofStatus}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Submit Evidence Tab */}
-          {activeTab === 'milestones' && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {milestones.map((milestone, index) => (
-                <motion.div
-                  key={milestone.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  onClick={() => setSelectedMilestone(milestone)}
-                  className="bg-white shadow-lg p-4 cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.02] border border-gray-200 hover:border-[#FBAF43] group"
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between h-[80px]">
+          <div>
+            <h1 className="text-2xl text-gray-900">Welcome back Beneficiary User</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search something here.."
+                className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="relative" ref={notificationDropdownRef}>
+                <button
+                  onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+                  className="relative"
                 >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-[#FBAF43] to-[#e59e3b] text-white flex items-center justify-center font-bold text-sm group-hover:scale-110 transition-transform">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-bold text-gray-900 group-hover:text-[#FBAF43] transition-colors truncate">{milestone.name}</h3>
-                        <span className={`inline-block mt-1 px-1.5 py-0.5 text-[10px] font-semibold ${getStatusColor(milestone.status)}`}>
-                          {milestone.status}
-                        </span>
-                      </div>
+                  <Bell className="w-6 h-6 text-gray-600 cursor-pointer hover:text-green-600" />
+                  {notifications.filter(n => !n.read).length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                      {notifications.filter(n => !n.read).length}
+                    </span>
+                  )}
+                </button>
+                
+                {/* Notification Dropdown */}
+                {showNotificationDropdown && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-200 shadow-lg z-50 max-h-96 overflow-y-auto">
+                    <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                      <h3 className="text-sm text-gray-900">Notifications</h3>
+                      <button
+                        onClick={() => setShowNotificationDropdown(false)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                     </div>
-                    <CheckCircle className={`w-4 h-4 flex-shrink-0 transition-colors ${
-                      milestone.status === 'Approved' ? 'text-green-500' : 'text-gray-300'
-                    }`} />
-                  </div>
-                  
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-2">{milestone.description}</p>
-                  
-                  <div className="space-y-1.5 mb-3">
-                    <div className="flex items-center gap-1.5 text-xs text-gray-600">
-                      <Calendar className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                      <span className="truncate">{new Date(milestone.targetDate).toLocaleDateString()}</span>
+                    <div className="divide-y divide-gray-200">
+                      {notifications.length === 0 ? (
+                        <div className="p-4 text-center text-sm text-gray-500">
+                          No notifications
+                        </div>
+                      ) : (
+                        notifications.map((notif) => (
+                          <div
+                            key={notif.id}
+                            className={`p-4 hover:bg-gray-50 cursor-pointer ${!notif.read ? 'bg-blue-50' : ''}`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <div className={`flex-shrink-0 mt-0.5 ${
+                                notif.type === 'success' ? 'text-green-500' :
+                                notif.type === 'warning' ? 'text-yellow-500' :
+                                'text-blue-500'
+                              }`}>
+                                {notif.type === 'success' ? (
+                                  <CheckCircle className="w-4 h-4" />
+                                ) : notif.type === 'warning' ? (
+                                  <AlertCircle className="w-4 h-4" />
+                                ) : (
+                                  <Info className="w-4 h-4" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm text-gray-900 mb-1">{notif.title}</p>
+                                <p className="text-xs text-gray-600 mb-1">{notif.message}</p>
+                                <p className="text-xs text-gray-500">{new Date(notif.date).toLocaleDateString()}</p>
+                              </div>
+                              {!notif.read && (
+                                <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-1"></div>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-gray-600">
-                      <FileText className="w-3 h-3 text-gray-400 flex-shrink-0" />
-                      <span>{milestone.evidenceCount} items</span>
-                    </div>
-                    {milestone.trancheLinked && (
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <DollarSign className="w-3 h-3 text-[#FBAF43] flex-shrink-0" />
-                        <span className="font-semibold text-[#FBAF43] truncate">
-                          {formatCurrency(milestone.trancheLinked)}
-                        </span>
+                    {notifications.length > 0 && (
+                      <div className="p-3 border-t border-gray-200 text-center">
+                        <button className="text-xs text-green-600 hover:text-green-700">
+                          Mark all as read
+                        </button>
                       </div>
                     )}
                   </div>
-                  
-                  {milestone.adminComment && (
-                    <div className="bg-blue-50 border-l-2 border-blue-400 p-2 mb-3">
-                      <p className="text-[10px] text-blue-800 line-clamp-2"><strong>Admin:</strong> {milestone.adminComment}</p>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                    <span className="text-[10px] text-gray-500 truncate">
-                      {milestone.lastUpdated ? new Date(milestone.lastUpdated).toLocaleDateString() : 'Not started'}
-                    </span>
-                    <div className="flex items-center gap-1 text-[#FBAF43] group-hover:gap-1.5 transition-all flex-shrink-0">
-                      {milestone.status === 'Not started' || milestone.status === 'In progress' ? (
-                        <>
-                          <Upload className="w-3 h-3" />
-                          <span className="text-[10px] font-semibold">Submit</span>
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="w-3 h-3" />
-                          <span className="text-[10px] font-semibold">View</span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
+                  B
+                </div>
+                <div>
+                  <p className="text-sm text-gray-900">Beneficiary User</p>
+                  <p className="text-xs text-gray-600">beneficiary@example.com</p>
+                </div>
+              </div>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Tranches Tab */}
-          {activeTab === 'tranches' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-6"
-            >
-              <div className="bg-white shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Tranche Status</h2>
-                
-                <div className="space-y-4">
-                  {[
-                    { id: 1, name: 'Tranche 1', amount: 2500000, status: 'Received', date: '2024-01-10', description: 'Initial funding upon approval' },
-                    { id: 2, name: 'Tranche 2', amount: 1500000, status: 'Pending', date: null, description: 'Release after milestone completion' },
-                    { id: 3, name: 'Tranche 3', amount: 1000000, status: 'Locked', date: null, description: 'Release after final milestone' },
-                  ].map((tranche) => (
-                    <div key={tranche.id} className="border border-gray-200 p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <h3 className="text-lg font-bold text-gray-900">{tranche.name}</h3>
-                          <p className="text-sm text-gray-600">{tranche.description}</p>
-                        </div>
-                        <span className={`px-3 py-1 text-sm font-semibold ${
-                          tranche.status === 'Received' ? 'bg-green-100 text-green-800' :
-                          tranche.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {tranche.status}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-xs text-gray-600">Amount</p>
-                          <p className="text-lg font-bold text-gray-900">{formatCurrency(tranche.amount)}</p>
-                        </div>
-                        {tranche.date && (
-                          <div className="text-right">
-                            <p className="text-xs text-gray-600">Received Date</p>
-                            <p className="text-sm font-semibold text-gray-900">{new Date(tranche.date).toLocaleDateString()}</p>
-                          </div>
-                        )}
-                        {tranche.status === 'Pending' && (
-                          <div className="text-right">
-                            <p className="text-xs text-gray-600">Status</p>
-                            <p className="text-sm font-semibold text-yellow-600">Awaiting milestone completion</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Funding Request Tab */}
-          {activeTab === 'funding-request' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white shadow-lg p-6 max-w-3xl mx-auto"
-            >
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Submit Funding Request</h2>
-                <p className="text-sm text-gray-600">Submit funding request with budget breakdown</p>
-              </div>
-              
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Requested Amount (RWF)</label>
-                  <input
-                    type="number"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                    placeholder="Enter total amount needed"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Budget Breakdown</label>
-                  <textarea
-                    rows={4}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                    placeholder="Break down your budget:&#10;• Seeds: 500,000 RWF&#10;• Fertilizer: 300,000 RWF&#10;• Labour: 200,000 RWF&#10;• Equipment: 1,000,000 RWF"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Project Description</label>
-                  <textarea
-                    rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
-                    placeholder="What is your project? Where? How much?"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1.5">Supporting Documents</label>
-                  <div className="border-2 border-dashed border-gray-300 p-4 text-center hover:border-[#FBAF43] transition-colors cursor-pointer">
-                    <Upload className="w-5 h-5 mx-auto text-gray-400 mb-1" />
-                    <p className="text-xs text-gray-600">Click to upload budget breakdown</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">PDF, JPG, PNG up to 10MB</p>
-                  </div>
-                </div>
-                
-                <button
-                  type="submit"
-                  className="w-full bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 text-sm transition-colors"
-                >
-                  Submit Funding Request
-                </button>
-              </form>
-            </motion.div>
-          )}
-
-
-          {/* Add Transaction Modal */}
-          {showAddTransaction && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4">
+        <div className="h-[calc(100vh-80px)] overflow-y-auto">
+          <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+            
+            {/* Overview Tab */}
+            {activeTab === 'overview' && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
               >
-                <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                  <h3 className="text-xl font-bold text-gray-900">Add Transaction</h3>
-                  <button onClick={() => setShowAddTransaction(false)} className="text-gray-400 hover:text-gray-600">
-                    <X className="w-6 h-6" />
-                  </button>
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="bg-white border border-gray-100 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm text-gray-600">Total Funded</h3>
+                      <Wallet className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-2xl text-gray-900">{formatCurrency(summaryData.totalFunded)}</p>
+                    <p className="text-xs text-gray-500 mt-1">Total amount received</p>
+                  </div>
+
+                  <div className="bg-white border border-gray-100 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm text-gray-600">Total Donors</h3>
+                      <Users className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-2xl text-gray-900">{summaryData.totalDonors}</p>
+                    <p className="text-xs text-gray-500 mt-1">Supporting your projects</p>
+                  </div>
+
+                  <div className="bg-white border border-gray-100 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm text-gray-600">Active Projects</h3>
+                      <Activity className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-2xl text-gray-900">{summaryData.activeProjects}</p>
+                    <p className="text-xs text-gray-500 mt-1">Currently active</p>
+                  </div>
+
+                  <div className="bg-white border border-gray-100 p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-sm text-gray-600">Missing Documents</h3>
+                      <AlertCircle className="w-4 h-4 text-gray-400" />
+                    </div>
+                    <p className="text-2xl text-red-600">{summaryData.pendingDocuments}</p>
+                    <p className="text-xs text-gray-500 mt-1">Requires attention</p>
+                  </div>
                 </div>
-                
-                <form className="p-6 space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Transaction Type</label>
-                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]">
-                        <option>Expense</option>
-                        <option>Revenue</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                      <input type="date" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]" />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Amount</label>
-                      <input type="number" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
-                      <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]">
-                        <option>RWF</option>
-                        <option>USD</option>
-                      </select>
+
+                {/* Missing Documents Notification */}
+                {summaryData.pendingDocuments > 0 && (
+                  <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4">
+                    <div className="flex items-start">
+                      <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
+                      <div className="flex-1">
+                        <h3 className="text-sm text-yellow-900 mb-1">Missing Documents Required</h3>
+                        <p className="text-xs text-yellow-700">
+                          You have {summaryData.pendingDocuments} missing document(s) that need to be uploaded to complete your application.
+                        </p>
+                        <button
+                          onClick={() => setActiveTab('submit-evidence')}
+                          className="mt-2 text-xs text-yellow-900 underline hover:text-yellow-700"
+                        >
+                          Upload documents now
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]">
-                      <option>Seed</option>
-                      <option>Fertilizer</option>
-                      <option>Labour</option>
-                      <option>Transport</option>
-                      <option>Utilities</option>
-                      <option>Equipment</option>
-                      <option>Other</option>
-                    </select>
+                )}
+
+                {/* Donors Section */}
+                <div className="bg-white border border-gray-100 p-6">
+                  <h2 className="text-xl text-gray-900 mb-4">Donors Who Donated</h2>
+                  <div className="space-y-3">
+                    {donors.map((donor) => (
+                      <div key={donor.id} className="border border-gray-200 p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <p className="text-sm text-gray-900">{donor.name}</p>
+                            <p className="text-xs text-gray-600">{donor.email}</p>
+                          </div>
+                          <p className="text-sm text-gray-900">{formatCurrency(donor.totalDonated)}</p>
+                        </div>
+                        <div className="mt-2">
+                          <p className="text-xs text-gray-500 mb-1">Projects:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {donor.projects.map((project, idx) => (
+                              <span key={idx} className="px-2 py-1 text-xs bg-blue-100 text-blue-800">
+                                {project}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
-                    <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]">
-                      <option>Cash</option>
-                      <option>MoMo</option>
-                      <option>Bank</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Vendor / Buyer Name (optional)</label>
-                    <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]" />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Description / Notes</label>
-                    <textarea rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#FBAF43]" />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Attach Proof</label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
-                      <Camera className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-600">Upload image or PDF</p>
+                </div>
+
+                {/* Projects List */}
+                <div className="bg-white border border-gray-100">
+                  <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl text-gray-900">Your Projects</h2>
+                      <div className="flex items-center gap-3">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                          <input
+                            type="text"
+                            placeholder="Search projects..."
+                            value={overviewSearchQuery}
+                            onChange={(e) => setOverviewSearchQuery(e.target.value)}
+                            className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
+                          />
+                        </div>
+                        <button
+                          onClick={() => setShowAddProjectModal(true)}
+                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add Project
+                        </button>
+                      </div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2">
-                    <input type="checkbox" id="gps" className="rounded" />
-                    <label htmlFor="gps" className="text-sm text-gray-700">Auto-capture GPS location</label>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project Name</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Location</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Category</th>
+                          <th className="px-6 py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Funded</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Funding Status</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Missing Docs</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {filteredOverviewProjects.map((project) => (
+                          <tr key={project.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">{project.title}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-1 text-sm text-gray-700">
+                                <MapPin className="w-4 h-4" />
+                                {project.location}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">
+                                {project.category}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className="text-sm text-gray-900">{formatCurrency(project.totalFunded)}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-900">
+                                  {Math.round((project.totalFunded / project.totalRequested) * 100)}%
+                                </span>
+                                <div className="w-24 bg-gray-200 h-2">
+                                  <div 
+                                    className="bg-green-500 h-2"
+                                    style={{ width: `${(project.totalFunded / project.totalRequested) * 100}%` }}
+                                  ></div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs ${getStatusColor(project.status)}`}>
+                                {project.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {project.missingDocuments.length > 0 ? (
+                                <span className="px-2 py-1 text-xs bg-red-100 text-red-800">
+                                  {project.missingDocuments.length} missing
+                                </span>
+                              ) : (
+                                <span className="text-xs text-gray-500">Complete</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
-                  
-                  <div className="flex gap-4 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setShowAddTransaction(false)}
-                      className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="submit"
-                      className="flex-1 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold py-2 px-4 rounded-lg transition-colors"
-                    >
-                      Save Transaction
-                    </button>
-                  </div>
-                </form>
+                </div>
               </motion.div>
-            </div>
-          )}
+            )}
+
+            {/* Funding Request Tab */}
+            {activeTab === 'funding-request' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="bg-white border border-gray-100">
+                  <div className="p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl text-gray-900">Funding Requests</h2>
+                      <button
+                        onClick={() => setShowRequestFundModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Request Fund
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project</th>
+                          <th className="px-6 py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Amount</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Submitted Date</th>
+                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Reviewed By</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-200">
+                        {fundingRequests.map((request) => (
+                          <tr key={request.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-900">{request.project}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className="text-sm text-gray-900">{formatCurrency(request.amount)}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs ${getStatusColor(request.status)}`}>
+                                {request.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{new Date(request.submittedDate).toLocaleDateString()}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{request.reviewedBy || 'Pending'}</div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Submit Evidence Tab */}
+            {activeTab === 'submit-evidence' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="bg-white border border-gray-100 p-6">
+                  <h2 className="text-xl text-gray-900 mb-4">Submit Evidence & Documents</h2>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Upload required documents and evidence to support your funding requests and project milestones.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div className="border border-gray-200 p-4">
+                      <h3 className="text-sm text-gray-900 mb-2">Missing Documents</h3>
+                      <div className="space-y-2">
+                        {projects.filter(p => p.missingDocuments.length > 0).map((project) => (
+                          <div key={project.id} className="bg-yellow-50 border border-yellow-200 p-3">
+                            <p className="text-xs text-gray-900 mb-2">{project.title}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {project.missingDocuments.map((doc, idx) => (
+                                <span key={idx} className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800">
+                                  {doc}
+                                </span>
+                              ))}
+                            </div>
+                            <button 
+                              onClick={() => setShowUploadEvidenceModal(true)}
+                              className="mt-2 text-xs text-green-600 hover:text-green-700"
+                            >
+                              Upload Documents
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => setShowUploadEvidenceModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                      >
+                        <Upload className="w-4 h-4" />
+                        Upload Evidence
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Reports Tab */}
+            {activeTab === 'reports' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="bg-white border border-gray-100 p-6">
+                  <h2 className="text-xl text-gray-900 mb-4">Prepare Reports for Donors</h2>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Create comprehensive reports to share with your donors about project progress and impact.
+                  </p>
+
+                  <div className="space-y-4">
+                    <div className="border border-gray-200 p-4">
+                      <h3 className="text-sm text-gray-900 mb-4">Create New Report</h3>
+                      <form 
+                        className="space-y-4"
+                        onSubmit={(e) => {
+                          e.preventDefault()
+                          showNotification('Report submitted successfully', 'success')
+                        }}
+                      >
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Report Title</label>
+                          <input
+                            type="text"
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="e.g., Q1 2024 Progress Report"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Project</label>
+                          <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option>Select project...</option>
+                            {projects.map((project) => (
+                              <option key={project.id}>{project.title}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Report Period</label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <input
+                              type="date"
+                              className="px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                              placeholder="Start Date"
+                            />
+                            <input
+                              type="date"
+                              className="px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                              placeholder="End Date"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Executive Summary</label>
+                          <textarea
+                            rows={4}
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Provide a high-level overview of project progress, achievements, and challenges..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Key Achievements</label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="List major milestones and accomplishments..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Financial Summary</label>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Total Spent</label>
+                              <input
+                                type="number"
+                                className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="Amount in RWF"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-600 mb-1">Remaining Budget</label>
+                              <input
+                                type="number"
+                                className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                placeholder="Amount in RWF"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Impact Metrics</label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Describe the impact: beneficiaries reached, income generated, jobs created, etc..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Challenges & Solutions</label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Describe any challenges faced and how they were addressed..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Next Steps</label>
+                          <textarea
+                            rows={3}
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            placeholder="Outline future plans and upcoming milestones..."
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-700 mb-2">Supporting Media (Photos, Videos)</label>
+                          <div className="border-2 border-dashed border-gray-300 p-6 text-center hover:border-green-500 transition-colors cursor-pointer">
+                            <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                            <p className="text-sm text-gray-600">Upload images or videos</p>
+                            <p className="text-xs text-gray-500 mt-1">JPG, PNG, MP4 up to 50MB</p>
+                          </div>
+                        </div>
+                        <div className="flex gap-4">
+                          <button
+                            type="button"
+                            onClick={() => showNotification('Report draft saved successfully', 'success')}
+                            className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                          >
+                            Save Draft
+                          </button>
+                          <button
+                            type="submit"
+                            className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                          >
+                            Submit Report
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Settings Tab */}
+            {activeTab === 'settings' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="bg-white border border-gray-100 p-6">
+                  <h2 className="text-xl text-gray-900 mb-6">Settings</h2>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg text-gray-900 mb-4">Profile Settings</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">Full Name</label>
+                          <input
+                            type="text"
+                            defaultValue="Beneficiary User"
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">Email</label>
+                          <input
+                            type="email"
+                            defaultValue="beneficiary@example.com"
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm text-gray-700 mb-2">Phone Number</label>
+                          <input
+                            type="tel"
+                            placeholder="+250 XXX XXX XXX"
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-200 pt-6">
+                      <h3 className="text-lg text-gray-900 mb-4">Notification Settings</h3>
+                      <div className="space-y-3">
+                        <label className="flex items-center gap-3">
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" />
+                          <span className="text-sm text-gray-700">Email notifications for funding approvals</span>
+                        </label>
+                        <label className="flex items-center gap-3">
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" />
+                          <span className="text-sm text-gray-700">SMS notifications for milestone deadlines</span>
+                        </label>
+                        <label className="flex items-center gap-3">
+                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" />
+                          <span className="text-sm text-gray-700">Weekly project summary reports</span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-200 pt-6">
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          showNotification('Settings saved successfully', 'success')
+                        }}
+                        className="px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                      >
+                        Save Settings
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
           </div>
         </div>
       </div>
+
+      {/* Request Fund Modal */}
+      {showRequestFundModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Request Funding</h3>
+              <button
+                onClick={() => setShowRequestFundModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+            
+            <form 
+              className="p-6 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                showNotification('Funding request submitted successfully', 'success')
+                setShowRequestFundModal(false)
+              }}
+            >
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Project</label>
+                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  <option>Select project...</option>
+                  {projects.map((project) => (
+                    <option key={project.id}>{project.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Requested Amount (RWF)</label>
+                <input
+                  type="number"
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter amount"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Budget Breakdown</label>
+                <textarea
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Break down your budget..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Justification</label>
+                <textarea
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Explain why this funding is needed..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Supporting Documents</label>
+                <div className="border-2 border-dashed border-gray-300 p-4 text-center hover:border-green-500 transition-colors cursor-pointer">
+                  <Upload className="w-6 h-6 mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600">Click to upload documents</p>
+                </div>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowRequestFundModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  Submit Request
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Add Project Modal */}
+      {showAddProjectModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Add New Project</h3>
+              <button
+                onClick={() => setShowAddProjectModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+            
+            <form 
+              className="p-6 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                showNotification('Project added successfully', 'success')
+                setShowAddProjectModal(false)
+              }}
+            >
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Project Title</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter project title"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Location</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter project location"
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Category</label>
+                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  <option>Select category...</option>
+                  <option>Agriculture</option>
+                  <option>Livestock</option>
+                  <option>Aquaculture</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Description</label>
+                <textarea
+                  rows={4}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Describe your project..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Total Budget Required (RWF)</label>
+                <input
+                  type="number"
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Enter total budget"
+                />
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddProjectModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  Add Project
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Upload Evidence Modal */}
+      {showUploadEvidenceModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Upload Evidence</h3>
+              <button
+                onClick={() => setShowUploadEvidenceModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+            
+            <form 
+              className="p-6 space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                showNotification('Document submitted successfully', 'success')
+                setShowUploadEvidenceModal(false)
+              }}
+            >
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Document Type</label>
+                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  <option>Select document type...</option>
+                  <option>Business License</option>
+                  <option>Tax Certificate</option>
+                  <option>Environmental Impact Assessment</option>
+                  <option>Project Proposal</option>
+                  <option>Budget Breakdown</option>
+                  <option>Milestone Evidence</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Project</label>
+                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                  <option>Select project...</option>
+                  {projects.map((project) => (
+                    <option key={project.id}>{project.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Upload File</label>
+                <div className="border-2 border-dashed border-gray-300 p-6 text-center hover:border-green-500 transition-colors cursor-pointer">
+                  <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Description (Optional)</label>
+                <textarea
+                  rows={3}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Add any additional notes about this document..."
+                />
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowUploadEvidenceModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  Submit Document
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Notification Modal */}
+      {notification.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className={`bg-white max-w-md w-full p-6 ${
+              notification.type === 'success' ? 'border-l-4 border-green-500' :
+              notification.type === 'error' ? 'border-l-4 border-red-500' :
+              'border-l-4 border-yellow-500'
+            }`}
+          >
+            <div className="flex items-start gap-4">
+              <div className={`flex-shrink-0 ${
+                notification.type === 'success' ? 'text-green-500' :
+                notification.type === 'error' ? 'text-red-500' :
+                'text-yellow-500'
+              }`}>
+                {notification.type === 'success' ? (
+                  <CheckCircle className="w-6 h-6" />
+                ) : notification.type === 'error' ? (
+                  <AlertCircle className="w-6 h-6" />
+                ) : (
+                  <Info className="w-6 h-6" />
+                )}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-gray-900">{notification.message}</p>
+              </div>
+              <button
+                onClick={() => setNotification({ show: false, message: '', type: 'success' })}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }
-
