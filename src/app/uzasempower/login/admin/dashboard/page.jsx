@@ -2,12 +2,21 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { 
   Users, FileCheck, DollarSign, AlertTriangle, 
   CheckCircle, XCircle, Clock, TrendingUp, BarChart3,
   Search, Download, Eye, LogOut, Bell,
   UserCheck, LayoutDashboard, Menu, X, Info
 } from 'lucide-react'
+
+// Dynamically import recharts to avoid SSR and module resolution issues
+import {
+  BarChart, Bar, PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area
+} from 'recharts'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import * as XLSX from 'xlsx'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -17,6 +26,7 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
+  const [exportDropdowns, setExportDropdowns] = useState({})
 
   // Close notification dropdown when clicking outside
   useEffect(() => {
@@ -34,6 +44,23 @@ export default function AdminDashboard() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [showNotificationDropdown])
+
+  // Close export dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.export-dropdown-container')) {
+        setExportDropdowns({})
+      }
+    }
+
+    if (Object.keys(exportDropdowns).length > 0) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [exportDropdowns])
 
   const handleLogout = () => {
     localStorage.removeItem('user')
@@ -199,6 +226,65 @@ export default function AdminDashboard() {
     },
   ]
 
+  // Chart data for Reports
+  const projectPerformanceData = [
+    { name: 'Jan', completed: 4, active: 8, pending: 3 },
+    { name: 'Feb', completed: 6, active: 10, pending: 2 },
+    { name: 'Mar', completed: 8, active: 12, pending: 4 },
+    { name: 'Apr', completed: 10, active: 15, pending: 3 },
+    { name: 'May', completed: 12, active: 18, pending: 5 },
+    { name: 'Jun', completed: 15, active: 20, pending: 4 },
+  ]
+
+  const fundingDistributionData = [
+    { range: '0-1M', count: 8 },
+    { range: '1-2M', count: 12 },
+    { range: '2-3M', count: 15 },
+    { range: '3-5M', count: 7 },
+    { range: '5-10M', count: 3 },
+  ]
+
+  const categoryDistributionData = [
+    { name: 'Agriculture', value: 35, color: '#10b981' },
+    { name: 'Livestock', value: 25, color: '#3b82f6' },
+    { name: 'Aquaculture', value: 15, color: '#f59e0b' },
+    { name: 'Beekeeping', value: 12, color: '#8b5cf6' },
+    { name: 'Other', value: 13, color: '#ef4444' },
+  ]
+
+  const financialTrendData = [
+    { month: 'Jan', requested: 15000000, disbursed: 8000000 },
+    { month: 'Feb', requested: 18000000, disbursed: 10000000 },
+    { month: 'Mar', requested: 22000000, disbursed: 12000000 },
+    { month: 'Apr', requested: 25000000, disbursed: 15000000 },
+    { month: 'May', requested: 28000000, disbursed: 18000000 },
+    { month: 'Jun', requested: 32000000, disbursed: 22000000 },
+  ]
+
+  const statusDistributionData = [
+    { name: 'Active', value: 32, color: '#10b981' },
+    { name: 'Pending Review', value: 8, color: '#f59e0b' },
+    { name: 'At Risk', value: 4, color: '#ef4444' },
+    { name: 'Completed', value: 15, color: '#3b82f6' },
+  ]
+
+  const milestoneCompletionData = [
+    { project: 'Vegetable', completed: 8, total: 10 },
+    { project: 'Poultry', completed: 6, total: 8 },
+    { project: 'Beekeeping', completed: 4, total: 7 },
+    { project: 'Fish', completed: 10, total: 10 },
+    { project: 'Dairy', completed: 5, total: 9 },
+  ]
+
+  const donorContributionData = [
+    { name: 'Q1', donors: 12, amount: 8500000 },
+    { name: 'Q2', donors: 18, amount: 12000000 },
+    { name: 'Q3', donors: 22, amount: 15000000 },
+    { name: 'Q4', donors: 25, amount: 18000000 },
+  ]
+
+  const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4']
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-RW', { style: 'currency', currency: 'RWF', minimumFractionDigits: 0 }).format(amount)
   }
@@ -221,6 +307,223 @@ export default function AdminDashboard() {
       'Resolved': 'bg-green-100 text-green-800',
     }
     return colors[status] || 'bg-gray-100 text-gray-800'
+  }
+
+  // Export functions
+  const exportToCSV = (data, filename, headers) => {
+    const ws = XLSX.utils.json_to_sheet(data, { header: headers || Object.keys(data[0] || {}) })
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
+    XLSX.writeFile(wb, `${filename}.csv`)
+  }
+
+  const exportToPDF = (title, data, headers, filename) => {
+    const doc = new jsPDF()
+    doc.setFontSize(16)
+    doc.text(title, 14, 15)
+    
+    const tableData = data.map(row => 
+      headers.map(header => {
+        const value = row[header.key] || row[header] || ''
+        return typeof value === 'object' ? JSON.stringify(value) : String(value)
+      })
+    )
+
+    const tableHeaders = headers.map(h => typeof h === 'string' ? h : h.label || h.key)
+
+    autoTable(doc, {
+      head: [tableHeaders],
+      body: tableData,
+      startY: 25,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [16, 185, 129] }
+    })
+
+    doc.save(`${filename}.pdf`)
+  }
+
+  const toggleExportDropdown = (id) => {
+    setExportDropdowns(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }))
+  }
+
+  // Export handlers for different data types
+  const exportProjectPerformance = (format) => {
+    if (format === 'csv') {
+      exportToCSV(projectPerformanceData, 'project-performance')
+    } else {
+      exportToPDF(
+        'Project Performance Overview',
+        projectPerformanceData,
+        ['name', 'completed', 'active', 'pending'],
+        'project-performance'
+      )
+    }
+  }
+
+  const exportFinancialTrends = (format) => {
+    const data = financialTrendData.map(item => ({
+      month: item.month,
+      requested: formatCurrency(item.requested),
+      disbursed: formatCurrency(item.disbursed)
+    }))
+    if (format === 'csv') {
+      exportToCSV(data, 'financial-trends')
+    } else {
+      exportToPDF(
+        'Financial Trends',
+        financialTrendData,
+        [
+          { key: 'month', label: 'Month' },
+          { key: 'requested', label: 'Requested (RWF)' },
+          { key: 'disbursed', label: 'Disbursed (RWF)' }
+        ],
+        'financial-trends'
+      )
+    }
+  }
+
+  const exportCategoryDistribution = (format) => {
+    if (format === 'csv') {
+      exportToCSV(categoryDistributionData.map(d => ({ Category: d.name, Projects: d.value })), 'category-distribution')
+    } else {
+      exportToPDF(
+        'Projects by Category',
+        categoryDistributionData.map(d => ({ Category: d.name, Projects: d.value })),
+        ['Category', 'Projects'],
+        'category-distribution'
+      )
+    }
+  }
+
+  const exportStatusDistribution = (format) => {
+    if (format === 'csv') {
+      exportToCSV(statusDistributionData.map(d => ({ Status: d.name, Projects: d.value })), 'status-distribution')
+    } else {
+      exportToPDF(
+        'Projects by Status',
+        statusDistributionData.map(d => ({ Status: d.name, Projects: d.value })),
+        ['Status', 'Projects'],
+        'status-distribution'
+      )
+    }
+  }
+
+  const exportFundingDistribution = (format) => {
+    if (format === 'csv') {
+      exportToCSV(fundingDistributionData.map(d => ({ 'Funding Range': d.range, 'Number of Projects': d.count })), 'funding-distribution')
+    } else {
+      exportToPDF(
+        'Funding Distribution',
+        fundingDistributionData.map(d => ({ 'Funding Range': d.range, 'Number of Projects': d.count })),
+        ['Funding Range', 'Number of Projects'],
+        'funding-distribution'
+      )
+    }
+  }
+
+  const exportMilestoneCompletion = (format) => {
+    if (format === 'csv') {
+      exportToCSV(milestoneCompletionData.map(d => ({ Project: d.project, Completed: d.completed, Total: d.total })), 'milestone-completion')
+    } else {
+      exportToPDF(
+        'Milestone Completion Rate',
+        milestoneCompletionData.map(d => ({ Project: d.project, Completed: d.completed, Total: d.total })),
+        ['Project', 'Completed', 'Total'],
+        'milestone-completion'
+      )
+    }
+  }
+
+  const exportDonorContribution = (format) => {
+    const data = donorContributionData.map(item => ({
+      Quarter: item.name,
+      'Number of Donors': item.donors,
+      'Total Amount': formatCurrency(item.amount)
+    }))
+    if (format === 'csv') {
+      exportToCSV(data, 'donor-contribution')
+    } else {
+      exportToPDF(
+        'Donor Contribution Trends',
+        donorContributionData.map(d => ({ Quarter: d.name, Donors: d.donors, Amount: formatCurrency(d.amount) })),
+        ['Quarter', 'Donors', 'Amount'],
+        'donor-contribution'
+      )
+    }
+  }
+
+  const exportAllReports = (format) => {
+    if (format === 'csv') {
+      // Create a workbook with multiple sheets
+      const wb = XLSX.utils.book_new()
+      
+      const sheets = [
+        { name: 'Project Performance', data: projectPerformanceData },
+        { name: 'Financial Trends', data: financialTrendData.map(d => ({ month: d.month, requested: formatCurrency(d.requested), disbursed: formatCurrency(d.disbursed) })) },
+        { name: 'Category Distribution', data: categoryDistributionData.map(d => ({ Category: d.name, Projects: d.value })) },
+        { name: 'Status Distribution', data: statusDistributionData.map(d => ({ Status: d.name, Projects: d.value })) },
+        { name: 'Funding Distribution', data: fundingDistributionData.map(d => ({ 'Funding Range': d.range, 'Number of Projects': d.count })) },
+        { name: 'Milestone Completion', data: milestoneCompletionData.map(d => ({ Project: d.project, Completed: d.completed, Total: d.total })) },
+        { name: 'Donor Contribution', data: donorContributionData.map(d => ({ Quarter: d.name, Donors: d.donors, Amount: formatCurrency(d.amount) })) }
+      ]
+
+      sheets.forEach(sheet => {
+        const ws = XLSX.utils.json_to_sheet(sheet.data)
+        XLSX.utils.book_append_sheet(wb, ws, sheet.name)
+      })
+
+      XLSX.writeFile(wb, 'all-reports.csv')
+    } else {
+      const doc = new jsPDF()
+      let yPos = 15
+
+      const addSection = (title, data, headers) => {
+        if (yPos > 250) {
+          doc.addPage()
+          yPos = 15
+        }
+        doc.setFontSize(14)
+        doc.text(title, 14, yPos)
+        yPos += 10
+
+        const tableData = data.map(row => 
+          headers.map(header => {
+            const key = typeof header === 'string' ? header : header.key
+            const value = row[key] || ''
+            return typeof value === 'object' ? JSON.stringify(value) : String(value)
+          })
+        )
+
+        const tableHeaders = headers.map(h => typeof h === 'string' ? h : h.label || h.key)
+
+        autoTable(doc, {
+          head: [tableHeaders],
+          body: tableData,
+          startY: yPos,
+          styles: { fontSize: 8 },
+          headStyles: { fillColor: [16, 185, 129] }
+        })
+
+        yPos = doc.lastAutoTable.finalY + 10
+      }
+
+      addSection('Project Performance Overview', projectPerformanceData, ['name', 'completed', 'active', 'pending'])
+      addSection('Financial Trends', financialTrendData, [
+        { key: 'month', label: 'Month' },
+        { key: 'requested', label: 'Requested' },
+        { key: 'disbursed', label: 'Disbursed' }
+      ])
+      addSection('Category Distribution', categoryDistributionData.map(d => ({ Category: d.name, Projects: d.value })), ['Category', 'Projects'])
+      addSection('Status Distribution', statusDistributionData.map(d => ({ Status: d.name, Projects: d.value })), ['Status', 'Projects'])
+      addSection('Funding Distribution', fundingDistributionData.map(d => ({ Range: d.range, Count: d.count })), ['Range', 'Count'])
+      addSection('Milestone Completion', milestoneCompletionData.map(d => ({ Project: d.project, Completed: d.completed, Total: d.total })), ['Project', 'Completed', 'Total'])
+      addSection('Donor Contribution', donorContributionData.map(d => ({ Quarter: d.name, Donors: d.donors, Amount: formatCurrency(d.amount) })), ['Quarter', 'Donors', 'Amount'])
+
+      doc.save('all-reports.pdf')
+    }
   }
 
   return (
@@ -765,41 +1068,413 @@ export default function AdminDashboard() {
 
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="bg-white border border-gray-200 p-6">
-              <h2 className="text-lg text-gray-900 mb-6">System Reports</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <BarChart3 className="w-8 h-8 text-green-600" />
-                  <div className="text-left">
-                    <p className="text-gray-900">Project Performance Report</p>
-                    <p className="text-sm text-gray-600">Download comprehensive project analytics</p>
+            <div className="space-y-6">
+              {/* Report Actions */}
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg text-gray-900">System Reports</h2>
+                  <div className="relative export-dropdown-container">
+                    <button 
+                      onClick={() => toggleExportDropdown('all')}
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 transition-colors text-sm"
+                    >
+                      <Download className="w-4 h-4" />
+                      Export All Reports
+                    </button>
+                    {exportDropdowns['all'] && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                        <button
+                          onClick={() => { exportAllReports('csv'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as CSV
+                        </button>
+                        <button
+                          onClick={() => { exportAllReports('pdf'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as PDF
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <Download className="w-5 h-5 text-gray-400 ml-auto" />
-                </button>
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <TrendingUp className="w-8 h-8 text-green-600" />
-                  <div className="text-left">
-                    <p className="text-gray-900">Financial Summary</p>
-                    <p className="text-sm text-gray-600">View funding and disbursement reports</p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <BarChart3 className="w-8 h-8 text-green-600" />
+                    <div className="text-left">
+                      <p className="text-gray-900">Project Performance Report</p>
+                      <p className="text-sm text-gray-600">Download comprehensive project analytics</p>
+                    </div>
+                    <Download className="w-5 h-5 text-gray-400 ml-auto" />
+                  </button>
+                  <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <TrendingUp className="w-8 h-8 text-green-600" />
+                    <div className="text-left">
+                      <p className="text-gray-900">Financial Summary</p>
+                      <p className="text-sm text-gray-600">View funding and disbursement reports</p>
+                    </div>
+                    <Download className="w-5 h-5 text-gray-400 ml-auto" />
+                  </button>
+                  <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <Users className="w-8 h-8 text-green-600" />
+                    <div className="text-left">
+                      <p className="text-gray-900">User Activity Report</p>
+                      <p className="text-sm text-gray-600">Monitor user engagement and activity</p>
+                    </div>
+                    <Download className="w-5 h-5 text-gray-400 ml-auto" />
+                  </button>
+                  <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <AlertTriangle className="w-8 h-8 text-green-600" />
+                    <div className="text-left">
+                      <p className="text-gray-900">Alert & Risk Report</p>
+                      <p className="text-sm text-gray-600">Review system alerts and risk metrics</p>
+                    </div>
+                    <Download className="w-5 h-5 text-gray-400 ml-auto" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Project Performance Bar Chart */}
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg text-gray-900">Project Performance Overview</h3>
+                  <div className="relative export-dropdown-container">
+                    <button 
+                      onClick={() => toggleExportDropdown('performance')}
+                      className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                      <Download className="w-4 h-4" />
+                      Export
+                    </button>
+                    {exportDropdowns['performance'] && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                        <button
+                          onClick={() => { exportProjectPerformance('csv'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as CSV
+                        </button>
+                        <button
+                          onClick={() => { exportProjectPerformance('pdf'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as PDF
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <Download className="w-5 h-5 text-gray-400 ml-auto" />
-                </button>
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <Users className="w-8 h-8 text-green-600" />
-                  <div className="text-left">
-                    <p className="text-gray-900">User Activity Report</p>
-                    <p className="text-sm text-gray-600">Monitor user engagement and activity</p>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={projectPerformanceData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" stroke="#6b7280" fontSize={12} />
+                    <YAxis stroke="#6b7280" fontSize={12} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                      labelStyle={{ color: '#374151' }}
+                    />
+                    <Legend />
+                    <Bar dataKey="completed" fill="#10b981" name="Completed" />
+                    <Bar dataKey="active" fill="#3b82f6" name="Active" />
+                    <Bar dataKey="pending" fill="#f59e0b" name="Pending" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Financial Trends Area Chart */}
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg text-gray-900">Financial Trends</h3>
+                  <div className="relative export-dropdown-container">
+                    <button 
+                      onClick={() => toggleExportDropdown('financial')}
+                      className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                      <Download className="w-4 h-4" />
+                      Export
+                    </button>
+                    {exportDropdowns['financial'] && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                        <button
+                          onClick={() => { exportFinancialTrends('csv'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as CSV
+                        </button>
+                        <button
+                          onClick={() => { exportFinancialTrends('pdf'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as PDF
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <Download className="w-5 h-5 text-gray-400 ml-auto" />
-                </button>
-                <button className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  <AlertTriangle className="w-8 h-8 text-green-600" />
-                  <div className="text-left">
-                    <p className="text-gray-900">Alert & Risk Report</p>
-                    <p className="text-sm text-gray-600">Review system alerts and risk metrics</p>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={financialTrendData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="month" stroke="#6b7280" fontSize={12} />
+                    <YAxis stroke="#6b7280" fontSize={12} tickFormatter={(value) => `${(value / 1000000).toFixed(0)}M`} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                      formatter={(value) => formatCurrency(value)}
+                    />
+                    <Legend />
+                    <Area type="monotone" dataKey="requested" stackId="1" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.6} name="Requested" />
+                    <Area type="monotone" dataKey="disbursed" stackId="2" stroke="#10b981" fill="#10b981" fillOpacity={0.6} name="Disbursed" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Category Distribution Pie Chart */}
+                <div className="bg-white border border-gray-200 p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg text-gray-900">Projects by Category</h3>
+                    <div className="relative export-dropdown-container">
+                      <button 
+                        onClick={() => toggleExportDropdown('category')}
+                        className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                      >
+                        <Download className="w-4 h-4" />
+                        Export
+                      </button>
+                      {exportDropdowns['category'] && (
+                        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                          <button
+                            onClick={() => { exportCategoryDistribution('csv'); setExportDropdowns({}) }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Export as CSV
+                          </button>
+                          <button
+                            onClick={() => { exportCategoryDistribution('pdf'); setExportDropdowns({}) }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Export as PDF
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  <Download className="w-5 h-5 text-gray-400 ml-auto" />
-                </button>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={categoryDistributionData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {categoryDistributionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                        formatter={(value) => `${value} projects`}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Status Distribution Pie Chart */}
+                <div className="bg-white border border-gray-200 p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg text-gray-900">Projects by Status</h3>
+                    <div className="relative export-dropdown-container">
+                      <button 
+                        onClick={() => toggleExportDropdown('status')}
+                        className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                      >
+                        <Download className="w-4 h-4" />
+                        Export
+                      </button>
+                      {exportDropdowns['status'] && (
+                        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                          <button
+                            onClick={() => { exportStatusDistribution('csv'); setExportDropdowns({}) }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Export as CSV
+                          </button>
+                          <button
+                            onClick={() => { exportStatusDistribution('pdf'); setExportDropdowns({}) }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >
+                            Export as PDF
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={statusDistributionData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {statusDistributionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                        formatter={(value) => `${value} projects`}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Funding Distribution Histogram */}
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg text-gray-900">Funding Distribution (Histogram)</h3>
+                  <div className="relative export-dropdown-container">
+                    <button 
+                      onClick={() => toggleExportDropdown('funding')}
+                      className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                      <Download className="w-4 h-4" />
+                      Export
+                    </button>
+                    {exportDropdowns['funding'] && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                        <button
+                          onClick={() => { exportFundingDistribution('csv'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as CSV
+                        </button>
+                        <button
+                          onClick={() => { exportFundingDistribution('pdf'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as PDF
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={fundingDistributionData} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis type="number" stroke="#6b7280" fontSize={12} />
+                    <YAxis dataKey="range" type="category" stroke="#6b7280" fontSize={12} width={80} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                      formatter={(value) => `${value} projects`}
+                    />
+                    <Bar dataKey="count" fill="#10b981" name="Number of Projects" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Milestone Completion Bar Chart */}
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg text-gray-900">Milestone Completion Rate</h3>
+                  <div className="relative export-dropdown-container">
+                    <button 
+                      onClick={() => toggleExportDropdown('milestone')}
+                      className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                      <Download className="w-4 h-4" />
+                      Export
+                    </button>
+                    {exportDropdowns['milestone'] && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                        <button
+                          onClick={() => { exportMilestoneCompletion('csv'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as CSV
+                        </button>
+                        <button
+                          onClick={() => { exportMilestoneCompletion('pdf'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as PDF
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={milestoneCompletionData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="project" stroke="#6b7280" fontSize={12} />
+                    <YAxis stroke="#6b7280" fontSize={12} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                    />
+                    <Legend />
+                    <Bar dataKey="completed" fill="#10b981" name="Completed" />
+                    <Bar dataKey="total" fill="#e5e7eb" name="Total" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+
+              {/* Donor Contribution Line Chart */}
+              <div className="bg-white border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg text-gray-900">Donor Contribution Trends</h3>
+                  <div className="relative export-dropdown-container">
+                    <button 
+                      onClick={() => toggleExportDropdown('donor')}
+                      className="text-sm text-green-600 hover:text-green-700 flex items-center gap-1"
+                    >
+                      <Download className="w-4 h-4" />
+                      Export
+                    </button>
+                    {exportDropdowns['donor'] && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                        <button
+                          onClick={() => { exportDonorContribution('csv'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as CSV
+                        </button>
+                        <button
+                          onClick={() => { exportDonorContribution('pdf'); setExportDropdowns({}) }}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Export as PDF
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={donorContributionData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                    <XAxis dataKey="name" stroke="#6b7280" fontSize={12} />
+                    <YAxis yAxisId="left" stroke="#6b7280" fontSize={12} />
+                    <YAxis yAxisId="right" orientation="right" stroke="#6b7280" fontSize={12} tickFormatter={(value) => formatCurrency(value)} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb' }}
+                      formatter={(value, name) => {
+                        if (name === 'amount') return formatCurrency(value)
+                        return value
+                      }}
+                    />
+                    <Legend />
+                    <Line yAxisId="left" type="monotone" dataKey="donors" stroke="#3b82f6" strokeWidth={2} name="Number of Donors" />
+                    <Line yAxisId="right" type="monotone" dataKey="amount" stroke="#10b981" strokeWidth={2} name="Total Amount" />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           )}
