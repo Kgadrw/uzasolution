@@ -4,11 +4,9 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { 
-  DollarSign, TrendingUp, CheckCircle, AlertCircle, Bell,
-  Search, Filter, Download, Eye, MapPin, Calendar,
-  Users, Heart, FileText, Settings, LogOut, 
-  LayoutDashboard, Menu, X, ExternalLink, Info,
-  Globe, Wallet, Activity, Target
+  DollarSign, CheckCircle, AlertCircle, Bell,
+  Search, Download, MapPin, Heart, Settings, LogOut, 
+  LayoutDashboard, Menu, Info, Wallet, Activity, Target
 } from 'lucide-react'
 
 export default function DonorDashboard() {
