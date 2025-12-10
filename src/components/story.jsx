@@ -33,9 +33,9 @@ export default function AboutPage() {
       <section className="relative pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 md:px-12 lg:px-20 bg-gray-50">
         {/* Decorative Lines - Hidden on mobile */}
         <div className="absolute inset-0 pointer-events-none hidden md:block">
-          {/* Vertical Lines */}
-          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/30 to-transparent"></div>
-          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/30 to-transparent"></div>
+          {/* Vertical Lines - Less visible with gradient edges */}
+          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/10 to-transparent"></div>
+          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/10 to-transparent"></div>
         </div>
         
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 md:gap-12 items-center relative z-10">
@@ -82,13 +82,13 @@ export default function AboutPage() {
       <section className="relative py-12 sm:py-16 px-4 sm:px-6 md:px-12 lg:px-20 bg-gray-50">
         {/* Decorative Lines - Hidden on mobile */}
         <div className="absolute inset-0 pointer-events-none hidden md:block">
-          {/* Horizontal Lines */}
-          <div className="absolute top-1/3 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
-          <div className="absolute top-2/3 w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent"></div>
+          {/* Horizontal Lines - Less visible with gradient edges */}
+          <div className="absolute top-1/3 w-full h-px bg-gradient-to-r from-transparent via-gray-200/10 to-transparent"></div>
+          <div className="absolute top-2/3 w-full h-px bg-gradient-to-r from-transparent via-gray-200/10 to-transparent"></div>
 
-          {/* Vertical Lines */}
-          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
-          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300 to-transparent"></div>
+          {/* Vertical Lines - Less visible with gradient edges */}
+          <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/10 to-transparent"></div>
+          <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/10 to-transparent"></div>
         </div>
 
         <div className="max-w-7xl mx-auto text-center mb-8 sm:mb-12 relative z-10">
