@@ -9,7 +9,7 @@ export default function Portfolio() {
 
       {/* Hero / Company Overview */}
       <div className="relative w-full bg-[#13212F] text-white py-32 px-8 md:px-16 lg:px-24 flex flex-col items-center text-center">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-6 leading-tight">UZA Solutions Ltd</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold mb-6 leading-tight">UZA Solutions Ltd</h1>
         <p className="text-xl md:text-2xl max-w-3xl mb-8">
           Making Trade Simpler, Faster, and More Affordable for African Businesses
         </p>
@@ -43,7 +43,7 @@ export default function Portfolio() {
 
       {/* Banking Partners Cards */}
       <div className="py-20 px-8 md:px-16 lg:px-24 max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Banking Partners</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-12 text-center">Banking Partners</h2>
         <div className="grid md:grid-cols-2 gap-12">
           {[
             {
@@ -82,7 +82,7 @@ export default function Portfolio() {
 
       {/* Products & Supply */}
       <div className="py-20 px-8 md:px-16 lg:px-24 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Products & Supply Capacity</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-12 text-center">Products & Supply Capacity</h2>
         <div className="grid md:grid-cols-3 gap-12">
           {[
             {
@@ -135,7 +135,7 @@ export default function Portfolio() {
 
       {/* Why Choose Us / Infographic */}
       <div className="py-20 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
-        <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Why Choose Us</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-12 text-center">Why Choose Us</h2>
         <div className="grid md:grid-cols-3 gap-12 text-center">
           {[
             { icon: <Globe className="w-14 h-14 text-[#FBAF43] mx-auto mb-4" />, title: 'Direct from Manufacturers', desc: 'Bypass middlemen for right products at right price' },
@@ -153,7 +153,7 @@ export default function Portfolio() {
 
       {/* Contact Information / Call to Action */}
       <div className="py-20 px-8 md:px-16 lg:px-24 bg-[#13212F] text-white text-center rounded-t-3xl">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">Get in Touch</h2>
+        <h2 className="text-2xl md:text-3xl font-bold mb-6">Get in Touch</h2>
         <p className="text-lg md:text-xl mb-6">Email: info@uzasolutionsltd.com | Phone: +250 788 371 081</p>
         <a href="https://www.uzabulk.com" className="inline-flex items-center gap-2 bg-[#FBAF43] text-[#13212F] px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-yellow-500 transition-all duration-300">
           Visit UzaBulk.com <ArrowRight className="w-5 h-5" />

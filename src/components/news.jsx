@@ -23,7 +23,7 @@ export default function InsightsSection() {
                 Insights
               </span>
             </div>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-snug">
+            <h2 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-snug">
               News & Blogs
             </h2>
           </div>
@@ -45,7 +45,7 @@ export default function InsightsSection() {
         {/* Our Story in Motion Videos */}
         <div className="mb-12">
           <div className="text-center mb-8">
-            <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
+            <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4">
               Our Story in Motion
             </h3>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">

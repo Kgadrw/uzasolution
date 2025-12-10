@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X, Mail } from 'lucide-react'
+import { Menu, X, LogIn } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 export default function Navbar({ initialSolid = false }) {
@@ -55,7 +55,7 @@ export default function Navbar({ initialSolid = false }) {
   const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News']
 
   return (
-    <nav className="fixed top-0 left-0 z-30" style={{ right: '14px', width: 'calc(100% - 14px)' }}>
+    <nav className="fixed top-0 left-0 right-0 z-30 w-full">
       <div
         className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 sm:py-2.5 md:py-3 border-b border-gray-100 transition-all duration-500 ${
           scrolled
@@ -98,15 +98,15 @@ export default function Navbar({ initialSolid = false }) {
         {/* CTA Button - Desktop */}
         <div className="hidden lg:block">
           <Link
-            href="/contact"
+            href="/uzasempower/login"
             className="group relative px-3 xl:px-4 py-1.5 rounded-full font-bold text-[10px] xl:text-xs tracking-wider uppercase transition-all duration-300 transform hover:scale-105 shadow-lg bg-[#FBAF43] hover:bg-[#00142B] text-white flex items-center justify-center space-x-2 overflow-hidden"
           >
             {/* Toggle switch effect background */}
             <div className="absolute inset-0 bg-[#FBAF43] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
-            <span className="relative z-10 group-hover:text-[#00142B] transition-colors duration-300 whitespace-nowrap">Contact Us</span>
-            {/* Contact icon in circular badge */}
+            <span className="relative z-10 group-hover:text-[#00142B] transition-colors duration-300 whitespace-nowrap">Login</span>
+            {/* Login icon in circular badge */}
             <div className="relative z-10 w-5 h-5 xl:w-6 xl:h-6 bg-white rounded-full flex items-center justify-center border border-[#FBAF43] group-hover:border-[#DDA63A] transition-colors duration-300">
-              <Mail className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
+              <LogIn className="w-2.5 h-2.5 xl:w-3 xl:h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
             </div>
           </Link>
         </div>
@@ -167,15 +167,15 @@ export default function Navbar({ initialSolid = false }) {
             </Link>
           ))}
           
-          {/* Contact Button in Mobile Menu */}
+          {/* Login Button in Mobile Menu */}
           <Link
-            href="/contact"
+            href="/uzasempower/login"
             onClick={() => setShowMobileMenu(false)}
             className="mt-2 group relative px-5 py-3.5 sm:py-4 rounded-lg sm:rounded-xl font-bold text-sm tracking-wider uppercase transition-all duration-300 transform active:scale-95 shadow-lg bg-[#FBAF43] hover:bg-[#00142B] text-white flex items-center justify-center space-x-2 overflow-hidden touch-manipulation min-h-[48px]"
           >
-            <span className="relative z-10">Contact Us</span>
+            <span className="relative z-10">Login</span>
             <div className="relative z-10 w-5 h-5 bg-white rounded-full flex items-center justify-center border border-white/20">
-              <Mail className="w-3 h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
+              <LogIn className="w-3 h-3 text-[#FBAF43] group-hover:text-[#00142B] transition-colors duration-300" />
             </div>
           </Link>
         </div>

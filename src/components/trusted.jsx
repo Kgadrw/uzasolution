@@ -10,7 +10,7 @@ export default function WhySection() {
         <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "url('/7.jpg')", backgroundSize: 'cover', backgroundPosition: 'center' }} />
         <div className="absolute inset-0 bg-[#13212F]/70" />
         <div className="relative z-10 text-center px-4 py-12">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Let’s Build Africa’s Trade Future Together</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-4">Let's Build Africa's Trade Future Together</h1>
           <p className="text-sm md:text-base lg:text-lg mb-8 max-w-2xl mx-auto text-gray-200">
             Join us in revolutionizing trade for African businesses and creating global opportunities.
           </p>

@@ -82,7 +82,7 @@ export default function ImpactCardsSection() {
             {/* Left Side - Text Content */}
             <div className="space-y-4 sm:space-y-6">
               <div>
-                <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4">
+                <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4">
                   Driving Sustainable Impact
                 </h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed mb-4 sm:mb-6">

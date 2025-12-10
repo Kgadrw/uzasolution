@@ -35,7 +35,7 @@ export default function ComingSoon({
               <span className="text-sm font-medium text-[#FBAF43]">Coming Soon</span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-extrabold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               {title}
             </h1>
             
@@ -57,7 +57,7 @@ export default function ComingSoon({
               transition={{ duration: 0.8, delay: 0.2 }}
               className="mb-16"
             >
-              <h2 className="text-3xl font-bold mb-12">What to Expect</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-12">What to Expect</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {features.map((feature, index) => (
                   <motion.div
@@ -85,7 +85,7 @@ export default function ComingSoon({
             transition={{ duration: 0.8, delay: 0.4 }}
             className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 md:p-12"
           >
-            <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Stay Updated</h2>
             <p className="text-gray-300 mb-8 max-w-2xl mx-auto">
               Be the first to know when {title} launches. Get early access and exclusive updates.
             </p>

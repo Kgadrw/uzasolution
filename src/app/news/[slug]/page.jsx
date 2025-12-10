@@ -47,7 +47,7 @@ export default function NewsArticlePage({ params }) {
               <p className="text-xs uppercase tracking-widest text-[#FBAF43]">
                 {new Date(article.date).toLocaleDateString()} • {article.author}
               </p>
-              <h1 className="mt-2 text-3xl md:text-5xl font-extrabold">{article.title}</h1>
+              <h1 className="mt-2 text-2xl md:text-3xl font-extrabold">{article.title}</h1>
             </div>
           </div>
         </div>

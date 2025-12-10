@@ -174,87 +174,56 @@ export default function UZAEmpowerPage() {
     <div className="min-h-screen bg-white">
       <Navbar />
       
-      {/* Hero Section - Rotating Images with Text Overlays */}
-      <section className="relative h-[450px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden flex items-center justify-center rounded-b-[1.5rem] sm:rounded-b-[2rem] md:rounded-b-[3rem] border-b-0 sm:border-b-4 border-[#19486A]">
+      {/* Hero Section - Matching Homepage Hero Structure */}
+      <section className="relative min-h-[500px] sm:min-h-[550px] md:h-[600px] w-full overflow-hidden group rounded-l-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
         {heroImages.map((imageData, index) => (
           <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
             index === currentImageIndex ? 'opacity-100' : 'opacity-0'
           }`}>
-        <Image
+            <Image
               src={imageData.src}
-          alt="UZA Empower - Transforming Lives"
-          fill
-          className="object-cover"
+              alt="UZA Empower - Transforming Lives"
+              fill
+              className="object-cover"
               priority={index === 0}
             />
             
-            {/* Blue gradient overlay for all images - Enhanced for mobile */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#19486A]/85 via-[#19486A]/90 to-[#19486A]/60"></div>
+            {/* Gradient overlay - matching homepage */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent md:bg-gradient-to-r md:from-[#00142B]/95 md:via-[#00142B]/80 md:to-transparent" />
             
-            {/* Hero Text Overlay */}
-            <div className="absolute inset-0 flex items-center">
-              <div className="max-w-6xl px-4 sm:px-6 md:px-8 lg:px-16">
-                
-               <motion.h1 
-                 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl text-white mb-3 sm:mb-4 md:mb-5 lg:mb-6 leading-tight font-bold" 
-                 style={{ fontFamily: 'Comfortaa, sans-serif' }}
-                 initial={{ opacity: 0, y: 50 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ duration: 0.8, delay: 0.2 }}
-               >
-                 Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
-               </motion.h1>
-               
-               <motion.p 
-                 className="text-sm sm:text-base md:text-lg lg:text-xl text-white mb-4 sm:mb-5 md:mb-6 lg:mb-8 xl:mb-12 max-w-4xl leading-relaxed font-medium" 
-                 style={{ fontFamily: 'Comfortaa, sans-serif' }}
-                 initial={{ opacity: 0, y: 30 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ duration: 0.8, delay: 0.4 }}
-               >
-                 Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
-               </motion.p>
-                
-                <motion.div 
-                  className="flex justify-start"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.6 }}
-                >
+            {/* Hero Content Left-Aligned with responsive padding - matching homepage */}
+            <div className="relative z-10 flex min-h-[500px] sm:min-h-[550px] md:h-full items-center px-4 py-8 sm:px-8 sm:py-12 md:px-32 md:py-32">
+              <div className="max-w-xs sm:max-w-md md:max-w-xl text-left w-full">
+                <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold leading-tight text-white mb-3 sm:mb-4">
+                  Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
+                </h1>
+                <p className="mt-3 sm:mt-4 md:mt-6 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-200 leading-relaxed">
+                  Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
+                </p>
+                <div className="mt-4 sm:mt-6 md:mt-8">
                   <Link href="/uzasempower/login">
-                    <motion.button 
-                      className="group px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-3.5 rounded-lg sm:rounded-xl md:rounded-2xl lg:rounded-3xl font-bold text-sm sm:text-base transition-all duration-300 transform hover:scale-110 shadow-2xl bg-[#DDA63A] hover:bg-[#C7A03A] text-[#00142B] flex items-center justify-center space-x-2 sm:space-x-3 touch-manipulation min-h-[44px] sm:min-h-[48px] cursor-pointer"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span>Partner with Us</span>
-                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 group-hover:translate-x-2 transition-transform" />
-                    </motion.button>
+                    <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base touch-manipulation">
+                      Get Started
+                    </button>
                   </Link>
-                  </motion.div>
                 </div>
               </div>
-
-                  </div>
+            </div>
+          </div>
         ))}
         
-        {/* Image indicator dots */}
-        <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-          {heroImages.map((imageData, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentImageIndex(index)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-full transition-all duration-300 touch-manipulation ${
-                index === currentImageIndex 
-                  ? imageData.type === 'challenge'
-                    ? 'bg-[#FF3A21] scale-125'
-                    : 'bg-[#DDA63A] scale-125'
-                  : 'bg-white/50 hover:bg-white/80'
+        {/* Slider Dots - matching homepage */}
+        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+          {heroImages.map((_, idx) => (
+            <span
+              key={idx}
+              onClick={() => setCurrentImageIndex(idx)}
+              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all touch-manipulation ${
+                idx === currentImageIndex ? 'bg-[#FBAF43]' : 'bg-white/50'
               }`}
-              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
-                  </div>
+        </div>
       </section>
 
       {/* Program Introduction Slider */}
@@ -283,7 +252,7 @@ export default function UZAEmpowerPage() {
                   transition={{ duration: 0.6, delay: 0.2 }}
                 >
                   <motion.h2 
-                    className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6"
+                    className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
@@ -409,7 +378,7 @@ export default function UZAEmpowerPage() {
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
             <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
-              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 lg:mb-8 px-2">
+              <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 lg:mb-8 px-2">
                 Join the Movement
               </h2>
               <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
@@ -485,7 +454,7 @@ export default function UZAEmpowerPage() {
           <div className="max-w-7xl mx-auto">
             {/* Title - Left aligned */}
             <motion.h2 
-              className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-8 sm:mb-10 md:mb-12 text-left"
+              className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-8 sm:mb-10 md:mb-12 text-left"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -552,7 +521,7 @@ export default function UZAEmpowerPage() {
               viewport={{ once: true }}
             >
               <motion.h2 
-                className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 px-4" 
+                className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 px-4" 
                 style={{ fontFamily: 'Comfortaa, sans-serif' }}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

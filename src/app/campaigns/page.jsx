@@ -84,7 +84,7 @@ export default function CampaignsPage() {
                 <span className="uppercase text-xs tracking-widest text-[#FBAF43] font-bold">Campaign</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+              <h1 className="text-2xl md:text-3xl font-extrabold leading-tight mb-6">
                 Wikwigora
               </h1>
               
@@ -177,7 +177,7 @@ export default function CampaignsPage() {
               transition={{ duration: 0.8 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-4xl md:text-5xl font-bold text-[#213348] mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#213348] mb-6">
                 Wikwigora Revolution
               </h2>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
@@ -240,7 +240,7 @@ export default function CampaignsPage() {
           >
             <div className="flex items-center justify-center gap-3 mb-6">
               <Instagram className="w-8 h-8 text-[#FBAF43]" />
-              <h2 className="text-4xl md:text-5xl font-bold text-[#213348]">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#213348]">
                 Follow Our Journey
               </h2>
             </div>
@@ -311,7 +311,7 @@ export default function CampaignsPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-[#213348] mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#213348] mb-6">
               Success Stories
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -377,7 +377,7 @@ export default function CampaignsPage() {
             viewport={{ once: true }}
             className="bg-gradient-to-r from-[#213348] to-[#0E2A44] rounded-2xl p-12 text-white"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6">
               Join the Wikwigora Revolution
             </h2>
             <p className="text-xl text-gray-200 mb-8 max-w-2xl mx-auto">

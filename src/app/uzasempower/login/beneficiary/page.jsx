@@ -113,7 +113,7 @@ export default function BeneficiaryLogin() {
             >
               <Users className="w-8 h-8 text-white" />
             </motion.div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3">
+            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3">
               Beneficiary Login
             </h1>
             <p className="text-sm sm:text-base text-gray-600">

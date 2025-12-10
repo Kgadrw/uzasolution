@@ -13,7 +13,7 @@ export default function AboutUs() {
         <div className="mb-20">
           <div className="text-center mb-12">
             
-            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-4">
               Discover Our Tech-Driven Solutions
             </h2>
             <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
@@ -64,7 +64,7 @@ export default function AboutUs() {
                 Our Solutions
               </p>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
+            <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
               Tech-Driven Platforms to Power Africa's Digital Trade Future
             </h2>
           </div>
@@ -89,22 +89,38 @@ export default function AboutUs() {
           {/* Feature card */}
             <motion.div
             whileHover={{ y: -4 }}
-            className="relative bg-gradient-to-b from-[#0E2A44] to-[#1B3A54] text-white rounded-2xl p-8 overflow-hidden md:col-span-2 md:row-span-2 border border-white/10"
+            className="relative text-white rounded-2xl p-8 overflow-hidden md:col-span-2 md:row-span-2 border border-white/10"
           >
-            <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
-              Integrations & AI
-            </span>
-            <h3 className="text-2xl md:text-3xl font-extrabold leading-snug max-w-xl">
-              Embrace AI to help you work smarter every day
-            </h3>
-            <p className="mt-3 text-sm md:text-base text-gray-200 max-w-lg">
-              Automate sourcing workflows, QC docs, and shipment tracking inside our platforms.
-            </p>
-            <Link href="https://www.uzabulk.com/" className="mt-6 inline-flex items-center gap-2 bg-white text-[#213348] hover:bg-[#FBAF43] hover:text-[#213348] font-semibold px-5 py-3 rounded-full transition-colors w-max">
-              Start now <ArrowRight className="w-4 h-4" />
-            </Link>
-            {/* Decorative blob instead of image */}
-            <div className="pointer-events-none absolute -right-10 bottom-0 w-64 h-64 rounded-full bg-gradient-to-tr from-[#FBAF43] to-[#4fd1c5] opacity-20 blur-2xl hidden md:block" />
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image 
+                src="/8.png" 
+                alt="AI Technology Background" 
+                fill 
+                className="object-cover"
+              />
+              {/* Dark overlay for text readability */}
+              <div className="absolute inset-0 bg-gradient-to-b from-[#0E2A44]/95 via-[#0E2A44]/90 to-[#1B3A54]/95"></div>
+            </div>
+            
+            {/* Content */}
+            <div className="relative z-10">
+              <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
+                Integrations & AI
+              </span>
+              <h3 className="text-2xl md:text-3xl font-extrabold leading-snug max-w-xl">
+                Embrace AI to help you work smarter every day
+              </h3>
+              <p className="mt-3 text-sm md:text-base text-gray-200 max-w-lg">
+                Automate sourcing workflows, QC docs, and shipment tracking inside our platforms.
+              </p>
+              <Link href="https://www.uzabulk.com/" className="mt-6 inline-flex items-center gap-2 bg-white text-[#213348] hover:bg-[#FBAF43] hover:text-[#213348] font-semibold px-5 py-3 rounded-full transition-colors w-max">
+                Start now <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            
+            {/* Decorative blob */}
+            <div className="pointer-events-none absolute -right-10 bottom-0 w-64 h-64 rounded-full bg-gradient-to-tr from-[#FBAF43] to-[#4fd1c5] opacity-20 blur-2xl hidden md:block z-0" />
           </motion.div>
 
           {/* Secure workspace */}

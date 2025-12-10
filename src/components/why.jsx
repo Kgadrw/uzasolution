@@ -58,7 +58,7 @@ export default function WhyChooseUZA() {
             </span>
           </div>
 
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
+          <h2 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
             Transforming Africa's Trade with{' '}
             <span className="text-[#FBAF43]">Seamless, Tech-Driven Solutions</span>
           </h2>

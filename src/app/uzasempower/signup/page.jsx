@@ -160,7 +160,7 @@ export default function UZAEmpowerSignup() {
             animate={{ scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
           >
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-blue-600">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-blue-600">
               Create Account
             </h1>
           </motion.div>

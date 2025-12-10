@@ -58,7 +58,7 @@ export default function HeroSection() {
         {/* Hero Content Left-Aligned with responsive padding */}
         <div className="relative z-10 flex h-full items-center px-4 py-16 sm:px-8 sm:py-20 md:px-32 md:py-32">
           <div className="max-w-xs sm:max-w-md md:max-w-xl text-left">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold leading-tight text-white">
+            <h1 className="text-2xl md:text-3xl font-bold leading-tight text-white">
               <span className="text-[#FBAF43]">Africa</span>'s Gateway to Global Trade
             </h1>
             <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 leading-relaxed">
