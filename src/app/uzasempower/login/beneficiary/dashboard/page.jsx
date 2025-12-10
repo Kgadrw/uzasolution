@@ -20,6 +20,20 @@ export default function BeneficiaryDashboard() {
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
+
+  // Close sidebar on mobile when clicking outside
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true)
+      } else {
+        setSidebarOpen(false)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   
   // Overview filters
   const [overviewSearchQuery, setOverviewSearchQuery] = useState('')
@@ -223,9 +237,17 @@ export default function BeneficiaryDashboard() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
+      <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
+        <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 hover:bg-gray-100 transition-colors"
@@ -268,14 +290,22 @@ export default function BeneficiaryDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} ml-0 overflow-hidden`}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between h-[80px]">
-          <div>
-            <h1 className="text-2xl text-gray-900">Welcome back Beneficiary User</h1>
+        <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between h-[80px]">
+          <div className="flex items-center gap-3 md:gap-0">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="md:hidden p-2 hover:bg-gray-100 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div>
+              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back Beneficiary User</h1>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
@@ -283,7 +313,7 @@ export default function BeneficiaryDashboard() {
                 className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
               />
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               <div className="relative" ref={notificationDropdownRef}>
                 <button
                   onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
@@ -371,7 +401,7 @@ export default function BeneficiaryDashboard() {
         </div>
 
         <div className="h-[calc(100vh-80px)] overflow-y-auto">
-          <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+          <div className="w-full px-4 md:px-6 lg:px-8 py-4 md:py-6 space-y-4 md:space-y-6 overflow-y-auto h-[calc(100vh-80px)]">
             
             {/* Overview Tab */}
             {activeTab === 'overview' && (
@@ -381,7 +411,7 @@ export default function BeneficiaryDashboard() {
                 className="space-y-6"
               >
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                   <div className="bg-white border border-gray-100 p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h3 className="text-sm text-gray-600">Total Funded</h3>
@@ -470,7 +500,7 @@ export default function BeneficiaryDashboard() {
 
                 {/* Projects List */}
                 <div className="bg-white border border-gray-100">
-                  <div className="p-6 border-b border-gray-200">
+                  <div className="p-4 md:p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl text-gray-900">Your Projects</h2>
                       <div className="flex items-center gap-3">
@@ -495,8 +525,9 @@ export default function BeneficiaryDashboard() {
                     </div>
                   </div>
                   
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
+                  <div className="overflow-x-auto -mx-4 md:mx-0">
+                    <div className="min-w-full inline-block align-middle">
+                      <table className="w-full min-w-[600px]">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project Name</th>
@@ -559,6 +590,7 @@ export default function BeneficiaryDashboard() {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -572,7 +604,7 @@ export default function BeneficiaryDashboard() {
                 className="space-y-6"
               >
                 <div className="bg-white border border-gray-100">
-                  <div className="p-6 border-b border-gray-200">
+                  <div className="p-4 md:p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <h2 className="text-xl text-gray-900">Funding Requests</h2>
                       <button
@@ -585,8 +617,9 @@ export default function BeneficiaryDashboard() {
                     </div>
                   </div>
                   
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
+                  <div className="overflow-x-auto -mx-4 md:mx-0">
+                    <div className="min-w-full inline-block align-middle">
+                      <table className="w-full min-w-[600px]">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project</th>
@@ -620,6 +653,7 @@ export default function BeneficiaryDashboard() {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
               </motion.div>

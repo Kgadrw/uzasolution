@@ -28,6 +28,20 @@ export default function AdminDashboard() {
   const notificationDropdownRef = useRef(null)
   const [exportDropdowns, setExportDropdowns] = useState({})
 
+  // Close sidebar on mobile when clicking outside
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSidebarOpen(true)
+      } else {
+        setSidebarOpen(false)
+      }
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   // Close notification dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -605,9 +619,17 @@ export default function AdminDashboard() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
+      <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
+        <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           {sidebarOpen && (
             <h2 className="text-xl text-green-600">Admin Panel</h2>
           )}
@@ -653,14 +675,22 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'} overflow-hidden`}>
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'md:ml-64' : 'md:ml-20'} ml-0 overflow-hidden`}>
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between h-[80px]">
-          <div>
-            <h1 className="text-2xl text-gray-900">Welcome back Admin User</h1>
+        <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between h-[80px]">
+          <div className="flex items-center gap-3 md:gap-0">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="md:hidden p-2 hover:bg-gray-100 transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div>
+              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back Admin User</h1>
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative">
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
@@ -755,15 +785,15 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="h-full overflow-y-auto p-6">
+        <div className="h-full overflow-y-auto p-4 md:p-6">
 
 
           {/* Overview Tab */}
           {activeTab === 'overview' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Summary Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Total Projects</p>
                     <FileCheck className="w-5 h-5 text-green-600" />
@@ -771,7 +801,7 @@ export default function AdminDashboard() {
                   <p className="text-2xl text-gray-900">{summaryData.totalProjects}</p>
                   <p className="text-xs text-gray-500 mt-1">All projects in system</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Pending Review</p>
                     <Clock className="w-5 h-5 text-yellow-600" />
@@ -779,7 +809,7 @@ export default function AdminDashboard() {
                   <p className="text-2xl text-gray-900">{summaryData.pendingReview}</p>
                   <p className="text-xs text-gray-500 mt-1">Awaiting approval</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Active Projects</p>
                     <CheckCircle className="w-5 h-5 text-green-600" />
@@ -787,7 +817,7 @@ export default function AdminDashboard() {
                   <p className="text-2xl text-gray-900">{summaryData.activeProjects}</p>
                   <p className="text-xs text-gray-500 mt-1">Currently active</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Total Funds</p>
                     <DollarSign className="w-5 h-5 text-green-600" />
@@ -795,7 +825,7 @@ export default function AdminDashboard() {
                   <p className="text-lg text-gray-900">{formatCurrency(summaryData.totalFunds)}</p>
                   <p className="text-xs text-gray-500 mt-1">Total requested</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Total Disbursed</p>
                     <DollarSign className="w-5 h-5 text-blue-600" />
@@ -803,7 +833,7 @@ export default function AdminDashboard() {
                   <p className="text-lg text-gray-900">{formatCurrency(summaryData.totalDisbursed)}</p>
                   <p className="text-xs text-gray-500 mt-1">Funds released</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Pending Tranches</p>
                     <Clock className="w-5 h-5 text-yellow-600" />
@@ -811,7 +841,7 @@ export default function AdminDashboard() {
                   <p className="text-2xl text-gray-900">{summaryData.pendingTranches}</p>
                   <p className="text-xs text-gray-500 mt-1">Awaiting release</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">Active Alerts</p>
                     <AlertTriangle className="w-5 h-5 text-red-600" />
@@ -819,7 +849,7 @@ export default function AdminDashboard() {
                   <p className="text-2xl text-gray-900">{summaryData.alertsCount}</p>
                   <p className="text-xs text-gray-500 mt-1">Require attention</p>
                 </div>
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-gray-600">KYC Pending</p>
                     <UserCheck className="w-5 h-5 text-purple-600" />
@@ -832,7 +862,7 @@ export default function AdminDashboard() {
               {/* Quick Actions */}
               <div className="bg-white border border-gray-200 p-6">
                 <h2 className="text-lg text-gray-900 mb-4">Quick Actions</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                   <button 
                     onClick={() => setActiveTab('projects')}
                     className="flex flex-col items-center gap-2 p-4 bg-blue-50 hover:bg-blue-100 transition-colors"
@@ -904,7 +934,7 @@ export default function AdminDashboard() {
 
           {/* Projects Tab */}
           {activeTab === 'projects' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Filters */}
               <div className="bg-white border border-gray-200 p-4">
                 <div className="flex flex-wrap items-center gap-4">
@@ -936,8 +966,9 @@ export default function AdminDashboard() {
               </div>
 
               {/* Projects Table */}
-              <div className="bg-white border border-gray-200 overflow-x-auto">
-                <table className="w-full text-sm">
+              <div className="bg-white border border-gray-200 overflow-x-auto -mx-4 md:mx-0">
+                <div className="min-w-full inline-block align-middle">
+                  <table className="w-full text-sm min-w-[600px]">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-4 py-3 text-left text-xs text-gray-600">Project</th>
@@ -990,6 +1021,7 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
+                  </div>
               </div>
             </div>
           )}
@@ -1145,7 +1177,7 @@ export default function AdminDashboard() {
 
           {/* Reports Tab */}
           {activeTab === 'reports' && (
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {/* Report Actions */}
               <div className="bg-white border border-gray-200 p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -1307,7 +1339,7 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Category Distribution Pie Chart */}
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg text-gray-900">Projects by Category</h3>
                     <div className="relative export-dropdown-container">
@@ -1361,7 +1393,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Status Distribution Pie Chart */}
-                <div className="bg-white border border-gray-200 p-6">
+                <div className="bg-white border border-gray-200 p-4 md:p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg text-gray-900">Projects by Status</h3>
                     <div className="relative export-dropdown-container">
