@@ -280,18 +280,6 @@ export default function DonorDashboard() {
     { id: 'settings', label: 'Settings', icon: Settings },
   ]
 
-  // Loading state check
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    )
-  }
-
   // All data is now fetched from API and stored in state
 
   const formatCurrency = (amount) => {
@@ -562,6 +550,18 @@ export default function DonorDashboard() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
+      {/* Top Loading Bar */}
+      {loading && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
+          <motion.div
+            className="h-full bg-[#FBAF43]"
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
+      
       {/* Mobile Overlay */}
           {sidebarOpen && (
         <div 

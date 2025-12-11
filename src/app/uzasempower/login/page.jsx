@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
+import { api } from '@/lib/api/config'
 
 export default function UZAEmpowerLogin() {
   const router = useRouter()
@@ -51,7 +52,7 @@ export default function UZAEmpowerLogin() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     
     if (!validateForm()) {
@@ -60,27 +61,32 @@ export default function UZAEmpowerLogin() {
 
     setIsLoading(true)
     
-    // Simulate loading
-    setTimeout(() => {
-      // Determine role based on email
-      const email = formData.email.toLowerCase()
-      let role = null
-      
-      if (email.includes('admin')) {
-        role = 'admin'
-      } else if (email.includes('donor')) {
-        role = 'donor'
-      } else if (email.includes('beneficiary')) {
-        role = 'beneficiary'
+    try {
+      // Use backend login API
+      const data = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password,
+      })
+
+      // Backend API returns: { success, message, data: { user, token, refreshToken } }
+      if (!data.success || !data.data) {
+        setErrors({ 
+          general: data.message || data.errors?.[0] || 'Invalid email or password' 
+        })
+        setIsLoading(false)
+        return
       }
 
-      // Store user data in localStorage
-      const userData = {
-        email: formData.email,
-        role: role || 'beneficiary',
-        name: formData.email.split('@')[0]
-      }
-      localStorage.setItem('user', JSON.stringify(userData))
+      // Store token and user data
+      localStorage.setItem('token', data.data.token)
+      localStorage.setItem('refreshToken', data.data.refreshToken)
+      localStorage.setItem('user', JSON.stringify({
+        ...data.data.user,
+        token: data.data.token,
+      }))
+
+      // Get user role from API response
+      const role = data.data.user.role || 'beneficiary'
 
       // Redirect based on role
       if (role === 'admin') {
@@ -93,7 +99,13 @@ export default function UZAEmpowerLogin() {
         // Default to beneficiary if role can't be determined
         router.push('/uzasempower/login/beneficiary/dashboard')
       }
-    }, 500)
+    } catch (error) {
+      console.error('Login error:', error)
+      setErrors({ 
+        general: error.message || 'An error occurred. Please try again.' 
+      })
+      setIsLoading(false)
+    }
   }
 
   return (

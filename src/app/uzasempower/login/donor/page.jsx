@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Heart, Mail, Lock, Eye, EyeOff, Sparkles, TrendingUp } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { api } from '@/lib/api/config'
 
 const Navbar = dynamic(() => import('../../../../components/navbar'))
 const Footer = dynamic(() => import('../../../../components/footer'))
@@ -64,12 +65,49 @@ export default function DonorLogin() {
 
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      // Use backend login API
+      const data = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password,
+      })
+
+      // Backend API returns: { success, message, data: { user, token, refreshToken } }
+      if (!data.success || !data.data) {
+        setErrors({ 
+          general: data.message || data.errors?.[0] || 'Invalid email or password' 
+        })
+        setIsLoading(false)
+        return
+      }
+
+      // Verify user is a donor
+      const role = data.data.user.role
+      if (role !== 'donor') {
+        setErrors({ 
+          general: 'This login is for donors only. Please use the correct login page.' 
+        })
+        setIsLoading(false)
+        return
+      }
+
+      // Store token and user data
+      localStorage.setItem('token', data.data.token)
+      localStorage.setItem('refreshToken', data.data.refreshToken)
+      localStorage.setItem('user', JSON.stringify({
+        ...data.data.user,
+        token: data.data.token,
+      }))
+
+      // Redirect to donor dashboard
+      router.push('/uzasempower/login/donor/dashboard')
+    } catch (error) {
+      console.error('Login error:', error)
+      setErrors({ 
+        general: error.message || 'An error occurred. Please try again.' 
+      })
       setIsLoading(false)
-      
-      // Login successful - dashboard routing removed
-    }, 1000)
+    }
   }
 
   return (
@@ -142,6 +180,17 @@ export default function DonorLogin() {
             className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-200/50"
           >
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* General Error */}
+              {errors.general && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm rounded-lg"
+                >
+                  {errors.general}
+                </motion.div>
+              )}
+              
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-2">

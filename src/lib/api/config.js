@@ -1,5 +1,9 @@
 // API Configuration
-export const API_BASE_URL = 'https://uza-backend.onrender.com/api/v1'
+// Use Next.js proxy in production to avoid CORS issues
+const USE_PROXY = typeof window !== 'undefined' && window.location.hostname !== 'localhost'
+export const API_BASE_URL = USE_PROXY 
+  ? '/api/backend'  // Use Next.js proxy
+  : 'https://uza-backend.onrender.com/api/v1'  // Direct connection in development
 
 // Get authentication token from localStorage
 export const getAuthToken = () => {

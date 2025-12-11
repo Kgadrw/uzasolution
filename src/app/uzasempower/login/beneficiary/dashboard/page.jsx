@@ -37,6 +37,22 @@ export default function BeneficiaryDashboard() {
   const [milestones, setMilestones] = useState([])
   const [missingDocuments, setMissingDocuments] = useState([])
   const [notifications, setNotifications] = useState([])
+  const [user, setUser] = useState(null)
+
+  // Load user data from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        try {
+          const parsedUser = JSON.parse(userData)
+          setUser(parsedUser)
+        } catch (error) {
+          console.error('Error parsing user data:', error)
+        }
+      }
+    }
+  }, [])
 
   // Fetch dashboard data
   useEffect(() => {
@@ -179,18 +195,6 @@ export default function BeneficiaryDashboard() {
     { id: 'settings', label: 'Settings', icon: Settings },
   ]
 
-  // Loading state check
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading dashboard...</p>
-        </div>
-      </div>
-    )
-  }
-
   // All data is now fetched from API and stored in state
 
   const formatCurrency = (amount) => {
@@ -230,6 +234,18 @@ export default function BeneficiaryDashboard() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
+      {/* Top Loading Bar */}
+      {loading && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
+          <motion.div
+            className="h-full bg-[#FBAF43]"
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
+      
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
@@ -294,7 +310,7 @@ export default function BeneficiaryDashboard() {
               <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back Beneficiary User</h1>
+              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back {user?.name || 'Beneficiary User'}</h1>
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
@@ -382,11 +398,11 @@ export default function BeneficiaryDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-                  B
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'B'}
                 </div>
                 <div>
-                  <p className="text-sm text-gray-900">Beneficiary User</p>
-                  <p className="text-xs text-gray-600">beneficiary@example.com</p>
+                  <p className="text-sm text-gray-900">{user?.name || 'Beneficiary User'}</p>
+                  <p className="text-xs text-gray-600">{user?.email || 'beneficiary@example.com'}</p>
                 </div>
               </div>
             </div>
@@ -868,7 +884,7 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-sm text-gray-700 mb-2">Full Name</label>
                           <input
                             type="text"
-                            defaultValue="Beneficiary User"
+                            defaultValue={user?.name || 'Beneficiary User'}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
                         </div>
@@ -876,7 +892,7 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-sm text-gray-700 mb-2">Email</label>
                           <input
                             type="email"
-                            defaultValue="beneficiary@example.com"
+                            defaultValue={user?.email || 'beneficiary@example.com'}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
                         </div>
@@ -884,6 +900,7 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-sm text-gray-700 mb-2">Phone Number</label>
                           <input
                             type="tel"
+                            defaultValue={user?.phone || ''}
                             placeholder="+250 XXX XXX XXX"
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
