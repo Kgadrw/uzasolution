@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Users, Mail, Lock, Eye, EyeOff, Sparkles, TrendingUp } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { api } from '@/lib/api/config'
+import { login, storeAuthData } from '@/lib/api/auth'
 
 const Navbar = dynamic(() => import('../../../../components/navbar'))
 const Footer = dynamic(() => import('../../../../components/footer'))
@@ -63,26 +63,24 @@ export default function BeneficiaryLogin() {
       return
     }
 
+    setErrors({})
     setIsLoading(true)
     
     try {
-      // Use backend login API
-      const data = await api.post('/auth/login', {
-        email: formData.email,
-        password: formData.password,
-      })
+      // Call login API
+      const result = await login(formData.email, formData.password)
 
-      // Backend API returns: { success, message, data: { user, token, refreshToken } }
-      if (!data.success || !data.data) {
+      // Check if login was successful
+      if (!result.success) {
         setErrors({ 
-          general: data.message || data.error || data.errors?.[0] || 'Invalid email or password' 
+          general: result.message || 'Invalid email or password' 
         })
         setIsLoading(false)
         return
       }
 
       // Verify user is a beneficiary
-      const role = data.data.user.role
+      const role = result.data.user.role?.toLowerCase()
       if (role !== 'beneficiary') {
         setErrors({ 
           general: 'This login is for beneficiaries only. Please use the correct login page.' 
@@ -91,20 +89,16 @@ export default function BeneficiaryLogin() {
         return
       }
 
-      // Store token and user data
-      localStorage.setItem('token', data.data.token)
-      localStorage.setItem('refreshToken', data.data.refreshToken)
-      localStorage.setItem('user', JSON.stringify({
-        ...data.data.user,
-        token: data.data.token,
-      }))
+      // Store authentication data
+      const { user, token, refreshToken } = result.data
+      storeAuthData(user, token, refreshToken)
 
       // Redirect to beneficiary dashboard
       router.push('/uzasempower/login/beneficiary/dashboard')
     } catch (error) {
       console.error('Login error:', error)
       setErrors({ 
-        general: error.message || 'An error occurred. Please try again.' 
+        general: error.message || 'An unexpected error occurred. Please try again.' 
       })
       setIsLoading(false)
     }

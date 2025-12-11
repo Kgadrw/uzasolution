@@ -55,6 +55,15 @@ async function handleRequest(request, params, method) {
         const body = await request.text()
         if (body) {
           options.body = body
+          // Log request details for debugging (only in development)
+          if (process.env.NODE_ENV === 'development') {
+            try {
+              const bodyObj = JSON.parse(body)
+              console.log('Proxy request:', { url, method, body: bodyObj })
+            } catch (e) {
+              console.log('Proxy request:', { url, method, body })
+            }
+          }
         }
       } catch (e) {
         console.error('Error reading request body:', e)
@@ -62,26 +71,90 @@ async function handleRequest(request, params, method) {
     }
     
     // Make request to backend
-    const response = await fetch(url, options)
+    let response
+    try {
+      response = await fetch(url, options)
+    } catch (fetchError) {
+      console.error('Fetch error:', fetchError)
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: 'Failed to connect to backend server. Please try again later.' 
+        },
+        { status: 503 }
+      )
+    }
     
     // Get response data - handle both JSON and text responses
-    let data
-    const contentType = response.headers.get('content-type')
-    if (contentType && contentType.includes('application/json')) {
-      try {
-        data = await response.json()
-      } catch (e) {
-        console.error('Error parsing JSON response:', e)
-        data = { success: false, message: 'Failed to parse response' }
+    let data = {}
+    let responseText = ''
+    
+    try {
+      // Read response as text first (can only read once)
+      responseText = await response.text()
+      
+      const contentType = response.headers.get('content-type') || ''
+      
+      if (responseText && responseText.trim()) {
+        if (contentType.includes('application/json')) {
+          try {
+            data = JSON.parse(responseText)
+          } catch (parseError) {
+            console.error('Error parsing JSON response:', parseError)
+            console.error('Response text:', responseText.substring(0, 500))
+            data = { 
+              success: false, 
+              message: 'Invalid JSON response from server' 
+            }
+          }
+        } else {
+          // Not JSON, treat as plain text
+          data = { 
+            success: false, 
+            message: responseText || 'Request failed' 
+          }
+        }
+      } else {
+        // Empty response
+        data = { 
+          success: false, 
+          message: `Empty response from server (${response.status})` 
+        }
       }
-    } else {
-      const text = await response.text()
-      data = { success: false, message: text || 'Request failed' }
+    } catch (readError) {
+      console.error('Error reading response:', readError)
+      data = { 
+        success: false, 
+        message: `Failed to read response: ${readError.message}` 
+      }
+    }
+    
+    // Log error responses for debugging
+    if (!response.ok || !data.success) {
+      console.error('Backend error response:', {
+        status: response.status,
+        statusText: response.statusText,
+        url,
+        method,
+        data,
+        responseText: responseText.substring(0, 500),
+        contentType: response.headers.get('content-type')
+      })
+      
+      // Ensure data has at least a message
+      if (!data || Object.keys(data).length === 0) {
+        data = {
+          success: false,
+          message: `Request failed with status ${response.status}`,
+        }
+      } else if (!data.message && !data.error) {
+        data.message = data.message || `Request failed with status ${response.status}`
+      }
     }
     
     // Return response with proper status
-    return NextResponse.json(data, {
-      status: response.status,
+    return NextResponse.json(data || { success: false, message: 'Empty response from server' }, {
+      status: response.status || 500,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',

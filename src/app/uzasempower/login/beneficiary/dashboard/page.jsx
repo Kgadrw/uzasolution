@@ -19,6 +19,21 @@ export default function BeneficiaryDashboard() {
   const [showAddProjectModal, setShowAddProjectModal] = useState(false)
   const [showUploadEvidenceModal, setShowUploadEvidenceModal] = useState(false)
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Form states
+  const [projectForm, setProjectForm] = useState({
+    title: '',
+    description: '',
+    category: '',
+    location: '',
+    fundingGoal: ''
+  })
+  const [fundingRequestForm, setFundingRequestForm] = useState({
+    projectId: '',
+    amount: '',
+    reason: ''
+  })
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
 
@@ -103,8 +118,10 @@ export default function BeneficiaryDashboard() {
         // Fetch projects
         const projectsRes = await api.get('/beneficiary/projects')
         if (projectsRes.success && projectsRes.data) {
-          const formattedProjects = (projectsRes.data.projects || projectsRes.data || []).map((p, idx) => ({
-            id: p._id || idx + 1,
+          // Handle paginated response (data.data) or direct array (data)
+          const projectsArray = projectsRes.data.data || projectsRes.data.projects || projectsRes.data || []
+          const formattedProjects = (Array.isArray(projectsArray) ? projectsArray : []).map((p, idx) => ({
+            id: p._id || p.id || idx + 1,
             title: p.title || 'Untitled Project',
             location: p.location || 'N/A',
             category: p.category || 'Other',
@@ -928,13 +945,47 @@ export default function BeneficiaryDashboard() {
 
                     <div className="border-t border-gray-200 pt-6">
                       <button 
-                        onClick={(e) => {
+                        onClick={async (e) => {
                           e.preventDefault()
-                          showNotification('Settings saved successfully', 'success')
+                          const nameInput = e.target.closest('.space-y-4').querySelector('input[type="text"]')
+                          const emailInput = e.target.closest('.space-y-4').querySelector('input[type="email"]')
+                          const phoneInput = e.target.closest('.space-y-4').querySelector('input[type="tel"]')
+                          
+                          const updateData = {}
+                          if (nameInput?.value) updateData.name = nameInput.value
+                          if (emailInput?.value) updateData.email = emailInput.value
+                          if (phoneInput?.value) updateData.phone = phoneInput.value
+
+                          if (Object.keys(updateData).length === 0) {
+                            showNotification('No changes to save', 'error')
+                            return
+                          }
+
+                          setIsSubmitting(true)
+                          try {
+                            const response = await api.put('/auth/profile', updateData)
+                            if (response.success) {
+                              showNotification('Profile updated successfully', 'success')
+                              // Update user in localStorage
+                              if (response.data?.user) {
+                                const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+                                localStorage.setItem('user', JSON.stringify({ ...currentUser, ...response.data.user }))
+                                setUser({ ...user, ...response.data.user })
+                              }
+                            } else {
+                              showNotification(response.message || 'Failed to update profile', 'error')
+                            }
+                          } catch (error) {
+                            console.error('Error updating profile:', error)
+                            showNotification(error.message || 'Failed to update profile', 'error')
+                          } finally {
+                            setIsSubmitting(false)
+                          }
                         }}
-                        className="px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        disabled={isSubmitting}
+                        className="px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                       >
-                        Save Settings
+                        {isSubmitting ? 'Saving...' : 'Save Settings'}
                       </button>
                     </div>
                   </div>
@@ -966,65 +1017,105 @@ export default function BeneficiaryDashboard() {
             
             <form 
               className="p-6 space-y-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault()
-                showNotification('Funding request submitted successfully', 'success')
-                setShowRequestFundModal(false)
+                
+                if (!fundingRequestForm.projectId || !fundingRequestForm.amount || !fundingRequestForm.reason) {
+                  showNotification('Please fill in all required fields', 'error')
+                  return
+                }
+
+                setIsSubmitting(true)
+                try {
+                  const response = await api.post('/beneficiary/funding-requests', {
+                    projectId: fundingRequestForm.projectId,
+                    amount: Number(fundingRequestForm.amount),
+                    reason: fundingRequestForm.reason
+                  })
+
+                  if (response.success) {
+                    showNotification('Funding request submitted successfully', 'success')
+                    setShowRequestFundModal(false)
+                    setFundingRequestForm({ projectId: '', amount: '', reason: '' })
+                    // Refresh funding requests
+                    const fundingRes = await api.get('/beneficiary/funding-requests')
+                    if (fundingRes.success && fundingRes.data) {
+                      const formattedRequests = (fundingRes.data.requests || fundingRes.data || []).map((r, idx) => ({
+                        id: r._id || idx + 1,
+                        title: r.title || 'Untitled Request',
+                        amount: r.amount || 0,
+                        status: r.status || 'pending',
+                        date: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                        description: r.description || ''
+                      }))
+                      setFundingRequests(formattedRequests)
+                    }
+                  } else {
+                    showNotification(response.message || 'Failed to submit funding request', 'error')
+                  }
+                } catch (error) {
+                  console.error('Error creating funding request:', error)
+                  showNotification(error.message || 'Failed to submit funding request', 'error')
+                } finally {
+                  setIsSubmitting(false)
+                }
               }}
             >
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Project</label>
-                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                  <option>Select project...</option>
+                <label className="block text-sm text-gray-700 mb-2">Project *</label>
+                <select 
+                  value={fundingRequestForm.projectId}
+                  onChange={(e) => setFundingRequestForm({ ...fundingRequestForm, projectId: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select project...</option>
                   {projects.map((project) => (
-                    <option key={project.id}>{project.title}</option>
+                    <option key={project.id} value={project.id}>{project.title}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Requested Amount (RWF)</label>
+                <label className="block text-sm text-gray-700 mb-2">Requested Amount (RWF) *</label>
                 <input
                   type="number"
+                  value={fundingRequestForm.amount}
+                  onChange={(e) => setFundingRequestForm({ ...fundingRequestForm, amount: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Enter amount"
+                  min="0"
+                  required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Budget Breakdown</label>
+                <label className="block text-sm text-gray-700 mb-2">Justification / Reason *</label>
                 <textarea
                   rows={4}
-                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  placeholder="Break down your budget..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-700 mb-2">Justification</label>
-                <textarea
-                  rows={3}
+                  value={fundingRequestForm.reason}
+                  onChange={(e) => setFundingRequestForm({ ...fundingRequestForm, reason: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Explain why this funding is needed..."
+                  required
                 />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-700 mb-2">Supporting Documents</label>
-                <div className="border-2 border-dashed border-gray-300 p-4 text-center hover:border-green-500 transition-colors cursor-pointer">
-                  <Upload className="w-6 h-6 mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600">Click to upload documents</p>
-                </div>
               </div>
               <div className="flex gap-4 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowRequestFundModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setShowRequestFundModal(false)
+                    setFundingRequestForm({ projectId: '', amount: '', reason: '' })
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
-                  Submit Request
+                  {isSubmitting ? 'Submitting...' : 'Submit Request'}
                 </button>
               </div>
             </form>
@@ -1052,67 +1143,146 @@ export default function BeneficiaryDashboard() {
             
             <form 
               className="p-6 space-y-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault()
-                showNotification('Project added successfully', 'success')
-                setShowAddProjectModal(false)
+                
+                if (!projectForm.title || !projectForm.description || !projectForm.category || !projectForm.location || !projectForm.fundingGoal) {
+                  showNotification('Please fill in all fields', 'error')
+                  return
+                }
+
+                setIsSubmitting(true)
+                try {
+                  const response = await api.post('/beneficiary/projects', {
+                    title: projectForm.title,
+                    description: projectForm.description,
+                    category: projectForm.category,
+                    location: projectForm.location,
+                    fundingGoal: Number(projectForm.fundingGoal)
+                  })
+
+                  if (response.success) {
+                    showNotification('Project created successfully', 'success')
+                    setShowAddProjectModal(false)
+                    setProjectForm({ title: '', description: '', category: '', location: '', fundingGoal: '' })
+                    // Refresh projects list
+                    const projectsRes = await api.get('/beneficiary/projects')
+                    if (projectsRes.success && projectsRes.data) {
+                      // Handle paginated response (data.data) or direct array (data)
+                      const projectsArray = projectsRes.data.data || projectsRes.data.projects || projectsRes.data || []
+                      const formattedProjects = (Array.isArray(projectsArray) ? projectsArray : []).map((p, idx) => ({
+                        id: p._id || p.id || idx + 1,
+                        title: p.title || 'Untitled Project',
+                        location: p.location || 'N/A',
+                        category: p.category || 'Other',
+                        totalFunded: p.totalFunded || 0,
+                        totalRequested: p.fundingGoal || p.amount || 0,
+                        status: p.status || 'pending'
+                      }))
+                      setProjects(formattedProjects)
+                    }
+                    // Refresh dashboard overview
+                    const overviewRes = await api.get('/beneficiary/dashboard/overview')
+                    if (overviewRes.success && overviewRes.data) {
+                      const data = overviewRes.data.summaryData || {}
+                      setSummaryData({
+                        totalFunded: data.totalFunded || 0,
+                        totalDonors: data.totalDonors || 0,
+                        activeProjects: data.activeProjects || 0,
+                        pendingDocuments: data.pendingDocuments || 0,
+                        onTrackProjects: data.onTrackProjects || 0
+                      })
+                    }
+                  } else {
+                    showNotification(response.message || 'Failed to create project', 'error')
+                  }
+                } catch (error) {
+                  console.error('Error creating project:', error)
+                  showNotification(error.message || 'Failed to create project', 'error')
+                } finally {
+                  setIsSubmitting(false)
+                }
               }}
             >
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Project Title</label>
+                <label className="block text-sm text-gray-700 mb-2">Project Title *</label>
                 <input
                   type="text"
+                  value={projectForm.title}
+                  onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Enter project title"
+                  required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Location</label>
+                <label className="block text-sm text-gray-700 mb-2">Location *</label>
                 <input
                   type="text"
+                  value={projectForm.location}
+                  onChange={(e) => setProjectForm({ ...projectForm, location: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Enter project location"
+                  required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Category</label>
-                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                  <option>Select category...</option>
-                  <option>Agriculture</option>
-                  <option>Livestock</option>
-                  <option>Aquaculture</option>
-                  <option>Other</option>
+                <label className="block text-sm text-gray-700 mb-2">Category *</label>
+                <select 
+                  value={projectForm.category}
+                  onChange={(e) => setProjectForm({ ...projectForm, category: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select category...</option>
+                  <option value="Agriculture">Agriculture</option>
+                  <option value="Livestock">Livestock</option>
+                  <option value="Aquaculture">Aquaculture</option>
+                  <option value="Beekeeping">Beekeeping</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Description</label>
+                <label className="block text-sm text-gray-700 mb-2">Description *</label>
                 <textarea
                   rows={4}
+                  value={projectForm.description}
+                  onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Describe your project..."
+                  required
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Total Budget Required (RWF)</label>
+                <label className="block text-sm text-gray-700 mb-2">Total Budget Required (RWF) *</label>
                 <input
                   type="number"
+                  value={projectForm.fundingGoal}
+                  onChange={(e) => setProjectForm({ ...projectForm, fundingGoal: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Enter total budget"
+                  min="0"
+                  required
                 />
               </div>
               <div className="flex gap-4 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowAddProjectModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setShowAddProjectModal(false)
+                    setProjectForm({ title: '', description: '', category: '', location: '', fundingGoal: '' })
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
-                  Add Project
+                  {isSubmitting ? 'Creating...' : 'Add Project'}
                 </button>
               </div>
             </form>

@@ -39,36 +39,134 @@ export const apiFetch = async (endpoint, options = {}) => {
     : `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`
 
   try {
-    const response = await fetch(url, {
-      ...options,
-      headers,
-    })
+    let response
+    try {
+      response = await fetch(url, {
+        ...options,
+        headers,
+      })
+    } catch (fetchError) {
+      // Network error or CORS error
+      console.error('Fetch network error:', fetchError)
+      throw new Error('Network error. Please check your internet connection and try again.')
+    }
+
+    // Check if response exists
+    if (!response) {
+      throw new Error('No response received from server')
+    }
 
     // Try to parse response as JSON
-    let data
+    let data = {}
+    let responseText = ''
+    
     try {
-      const text = await response.text()
-      if (text) {
-        data = JSON.parse(text)
+      responseText = await response.text()
+      
+      if (responseText && responseText.trim()) {
+        // Try to parse as JSON
+        try {
+          data = JSON.parse(responseText)
+        } catch (parseError) {
+          // If parsing fails, it might be plain text
+          const trimmedText = responseText.trim()
+          if (trimmedText.startsWith('{') || trimmedText.startsWith('[')) {
+            // Looks like JSON but failed to parse
+            console.error('Failed to parse JSON response:', parseError)
+            console.error('Response text:', responseText.substring(0, 200))
+            data = { 
+              success: false, 
+              message: `Server error (${response.status}): Invalid JSON response` 
+            }
+          } else {
+            // Plain text response
+            data = { 
+              success: false, 
+              message: trimmedText || `Server error (${response.status})` 
+            }
+          }
+        }
       } else {
-        data = {}
+        // Empty response
+        data = { 
+          success: false, 
+          message: `Empty response from server (${response.status})` 
+        }
       }
-    } catch (parseError) {
-      console.error('Error parsing response:', parseError)
+    } catch (error) {
+      console.error('Error reading response:', error)
       data = { 
         success: false, 
-        message: `Server error (${response.status})` 
+        message: `Failed to read response: ${error.message}` 
       }
     }
 
     if (!response.ok) {
-      const errorMessage = data.message || data.error || `HTTP error! status: ${response.status}`
+      // Log full error details for debugging
+      const errorDetails = {
+        status: response?.status || 'unknown',
+        statusText: response?.statusText || 'unknown',
+        url: url || 'unknown',
+        responseText: responseText ? responseText.substring(0, 500) : 'No response text',
+        parsedData: data || {},
+        hasData: !!data,
+        dataKeys: data ? Object.keys(data) : [],
+      }
+      
+      try {
+        if (response?.headers) {
+          errorDetails.headers = Object.fromEntries(response.headers.entries())
+        } else {
+          errorDetails.headers = 'No headers available'
+        }
+      } catch (e) {
+        errorDetails.headers = `Could not read headers: ${e.message}`
+      }
+      
+      // Log more details
+      console.error('API Error Response:', errorDetails)
+      console.error('Response object:', {
+        ok: response?.ok,
+        status: response?.status,
+        statusText: response?.statusText,
+        type: response?.type,
+        url: response?.url,
+      })
+      console.error('Response text length:', responseText?.length || 0)
+      console.error('Parsed data:', data)
+      
+      // Provide more detailed error messages
+      let errorMessage = data?.message || data?.error || (Array.isArray(data?.errors) && data.errors[0]) || null
+      
+      // If no message, provide status-based messages
+      if (!errorMessage) {
+        if (response.status === 401) {
+          errorMessage = 'Invalid email or password'
+        } else if (response.status === 403) {
+          errorMessage = 'Access denied'
+        } else if (response.status === 404) {
+          errorMessage = 'Resource not found'
+        } else if (response.status === 500) {
+          errorMessage = 'Server error. Please try again later or contact support if the problem persists.'
+        } else if (response.status === 0) {
+          errorMessage = 'Network error. Please check your internet connection.'
+        } else {
+          errorMessage = `Request failed with status ${response.status}`
+        }
+      }
+      
       throw new Error(errorMessage)
     }
 
     return data
   } catch (error) {
     console.error('API Error:', error)
+    
+    // Handle network errors
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      throw new Error('Network error. Please check your internet connection and try again.')
+    }
+    
     // If it's already an Error object, throw it as is
     if (error instanceof Error) {
       throw error

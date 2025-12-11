@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
-import { api } from '@/lib/api/config'
+import { login, storeAuthData, getDashboardRoute } from '@/lib/api/auth'
 
 export default function UZAEmpowerLogin() {
   const router = useRouter()
@@ -24,12 +24,9 @@ export default function UZAEmpowerLogin() {
       ...prev,
       [name]: value
     }))
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
+    // Clear errors when user starts typing
+    if (errors[name] || errors.general) {
+      setErrors({})
     }
   }
 
@@ -55,54 +52,43 @@ export default function UZAEmpowerLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
+    // Validate form
     if (!validateForm()) {
       return
     }
 
+    // Clear previous errors and set loading
+    setErrors({})
     setIsLoading(true)
     
     try {
-      // Use backend login API
-      const data = await api.post('/auth/login', {
-        email: formData.email,
-        password: formData.password,
-      })
+      // Call login API
+      const result = await login(formData.email, formData.password)
 
-      // Backend API returns: { success, message, data: { user, token, refreshToken } }
-      if (!data.success || !data.data) {
+      // Check if login was successful
+      if (!result.success) {
         setErrors({ 
-          general: data.message || data.error || data.errors?.[0] || 'Invalid email or password' 
+          general: result.message || 'Invalid email or password' 
         })
         setIsLoading(false)
         return
       }
 
-      // Store token and user data
-      localStorage.setItem('token', data.data.token)
-      localStorage.setItem('refreshToken', data.data.refreshToken)
-      localStorage.setItem('user', JSON.stringify({
-        ...data.data.user,
-        token: data.data.token,
-      }))
+      // Store authentication data
+      const { user, token, refreshToken } = result.data
+      storeAuthData(user, token, refreshToken)
 
-      // Get user role from API response
-      const role = data.data.user.role || 'beneficiary'
-
-      // Redirect based on role
-      if (role === 'admin') {
-        router.push('/uzasempower/login/admin/dashboard')
-      } else if (role === 'donor') {
-        router.push('/uzasempower/login/donor/dashboard')
-      } else if (role === 'beneficiary') {
-        router.push('/uzasempower/login/beneficiary/dashboard')
-      } else {
-        // Default to beneficiary if role can't be determined
-        router.push('/uzasempower/login/beneficiary/dashboard')
-      }
+      // Get dashboard route based on role
+      const dashboardRoute = getDashboardRoute(user.role)
+      
+      // Navigate to dashboard
+      router.push(dashboardRoute)
+      
     } catch (error) {
+      // Handle unexpected errors
       console.error('Login error:', error)
       setErrors({ 
-        general: error.message || 'An error occurred. Please try again.' 
+        general: error.message || 'An unexpected error occurred. Please try again.' 
       })
       setIsLoading(false)
     }
