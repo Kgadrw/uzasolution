@@ -1,45 +1,72 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Frontend Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
 
-# dependencies
-node_modules
-/.pnp
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
+# Frontend Testing
+coverage/
+.nyc_output
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
+# Frontend Production
 /build
+/dist
+/.next
+/out
 
-# misc
-.DS_Store
-*.pem
+# Frontend Environment
+.env
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# debug
+# Frontend Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+lerna-debug.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# Frontend IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
 
-# vercel
+# Frontend OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Frontend Cache
+.next/
 .vercel
+.turbo
+.cache/
 
-# typescript
+# Frontend Misc
 *.tsbuildinfo
+.eslintcache
+.stylelintcache
 next-env.d.ts
 
-# large video files
-public/testimonial.mp4
-*.mp4
+# Backend folder (exclude from frontend repo)
+# Uncomment the line below if you want completely separate repositories
+/backend/
+
+# Documentation files (optional - remove if you want to track them)
+BACKEND_REQUIREMENTS.md
+THIRD_PARTY_SERVICES.md
+GIT_SETUP.md

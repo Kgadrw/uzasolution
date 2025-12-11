@@ -4,11 +4,8 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, Eye, EyeOff, User, Phone, Heart, Users, UserPlus, ArrowLeft } from 'lucide-react'
-import dynamic from 'next/dynamic'
-
-const Navbar = dynamic(() => import('../../../components/navbar'))
-const Footer = dynamic(() => import('../../../components/footer'))
+import { Mail, Lock, Eye, EyeOff, User, Phone, Heart, Users, UserPlus } from 'lucide-react'
+import { api } from '@/lib/api/config'
 
 export default function UZAEmpowerSignup() {
   const router = useRouter()
@@ -99,34 +96,45 @@ export default function UZAEmpowerSignup() {
     setIsLoading(true)
     
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password,
-          role: formData.role,
-        }),
+      // Use backend register API
+      const data = await api.post('/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
+      // Backend API returns: { success, message, data: { user, token, refreshToken } }
+      if (!data.success || !data.data) {
         setErrors({ 
-          general: data.message || 'Registration failed' 
+          general: data.message || data.errors?.[0] || 'Registration failed' 
         })
         setIsLoading(false)
         return
       }
 
       // Store token and user data
-      if (data.data?.token) {
-        localStorage.setItem('token', data.data.token)
-        localStorage.setItem('user', JSON.stringify(data.data.user))
+      localStorage.setItem('token', data.data.token)
+      localStorage.setItem('refreshToken', data.data.refreshToken)
+      localStorage.setItem('user', JSON.stringify({
+        ...data.data.user,
+        token: data.data.token,
+      }))
+
+      // Update phone number via profile update if provided
+      if (formData.phone) {
+        try {
+          await api.put('/auth/profile', {
+            phone: formData.phone,
+          }, {
+            headers: {
+              'Authorization': `Bearer ${data.data.token}`,
+            },
+          })
+        } catch (phoneError) {
+          console.warn('Failed to update phone number:', phoneError)
+          // Continue with registration even if phone update fails
+        }
       }
 
       // Redirect based on role
@@ -141,69 +149,28 @@ export default function UZAEmpowerSignup() {
     } catch (error) {
       console.error('Signup error:', error)
       setErrors({ 
-        general: 'An error occurred. Please try again.' 
+        general: error.message || 'An error occurred. Please try again.' 
       })
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-red-50/30">
-      <Navbar />
-      
-      <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 relative overflow-hidden">
-        {/* Background decorative elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 right-10 w-96 h-96 bg-[#E5243B]/5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 left-10 w-72 h-72 bg-[#FBAF43]/5 rounded-full blur-3xl"></div>
-        </div>
+    <div className="h-screen bg-white flex items-center justify-center p-4 relative" style={{ overflow: 'hidden', height: '100vh' }}>
 
-        <div className="max-w-xl mx-auto relative z-10">
-          {/* Back Button */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <Link 
-              href="/uzasempower/login"
-              className="inline-flex items-center gap-2 text-gray-700 hover:text-[#FBAF43] transition-all duration-300 mb-6 group"
-            >
-              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-              <span className="text-sm font-medium">Back to Login</span>
-            </Link>
-          </motion.div>
-
-          {/* Header */}
-          <motion.div
-            className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-          >
+        className="w-full max-w-md relative z-10"
+      >
+        {/* Signup Form */}
             <motion.div
-              className="w-16 h-16 bg-gradient-to-br from-[#FBAF43] to-[#e59e3b] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl"
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, type: "spring" }}
-            >
-              <UserPlus className="w-8 h-8 text-white" />
-            </motion.div>
-            <h1 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3">
-              Create Account
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600">
-              Join UZA Empower and make a difference
-            </p>
-          </motion.div>
-
-          {/* Signup Form */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 sm:p-8 border border-gray-200/50"
-          >
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-white p-6 sm:p-8 border border-gray-200"
+        >
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* General Error */}
             {errors.general && (
@@ -218,7 +185,7 @@ export default function UZAEmpowerSignup() {
 
             {/* Role Selection */}
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-3">
+              <label className="block text-xs font-semibold text-gray-700 mb-2">
                 I am a
               </label>
               <div className="grid grid-cols-2 gap-3">
@@ -262,175 +229,181 @@ export default function UZAEmpowerSignup() {
               )}
             </div>
 
-            {/* Name Field */}
-            <div>
-              <label htmlFor="name" className="block text-xs font-semibold text-gray-700 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
-                  focusedField === 'name' ? 'text-[#FBAF43]' : 'text-gray-400'
-                }`}>
-                  <User className="h-4 w-4" />
+            {/* Name and Email Fields in Columns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="block text-xs font-semibold text-gray-700 mb-2">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
+                    focusedField === 'name' ? 'text-[#FBAF43]' : 'text-gray-400'
+                  }`}>
+                    <User className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('name')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                      errors.name 
+                        ? 'border-red-400 focus:border-red-500' 
+                        : focusedField === 'name'
+                        ? 'border-[#FBAF43] bg-white'
+                        : 'border-gray-300'
+                    }`}
+                    placeholder="John Doe"
+                  />
                 </div>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-3 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
-                    errors.name 
-                      ? 'border-red-400 focus:border-red-500' 
-                      : focusedField === 'name'
-                      ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  placeholder="John Doe"
-                />
+                {errors.name && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-1.5 text-xs text-red-500 font-medium"
+                  >
+                    {errors.name}
+                  </motion.p>
+                )}
               </div>
-              {errors.name && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1.5 text-xs text-red-500 font-medium"
-                >
-                  {errors.name}
-                </motion.p>
-              )}
+
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
+                    focusedField === 'email' ? 'text-[#FBAF43]' : 'text-gray-400'
+                  }`}>
+                    <Mail className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                      errors.email 
+                        ? 'border-red-400 focus:border-red-500' 
+                        : focusedField === 'email'
+                        ? 'border-[#FBAF43] bg-white'
+                        : 'border-gray-300'
+                    }`}
+                    placeholder="you@example.com"
+                  />
+                </div>
+                {errors.email && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-1.5 text-xs text-red-500 font-medium"
+                  >
+                    {errors.email}
+                  </motion.p>
+                )}
+              </div>
             </div>
 
-            {/* Email Field */}
-            <div>
-              <label htmlFor="email" className="block text-xs font-semibold text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
-                  focusedField === 'email' ? 'text-[#FBAF43]' : 'text-gray-400'
-                }`}>
-                  <Mail className="h-4 w-4" />
+            {/* Phone and Password Fields in Columns */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Phone Field */}
+              <div>
+                <label htmlFor="phone" className="block text-xs font-semibold text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
+                    focusedField === 'phone' ? 'text-[#FBAF43]' : 'text-gray-400'
+                  }`}>
+                    <Phone className="h-4 w-4" />
+                  </div>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('phone')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`block w-full pl-10 pr-3 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                      errors.phone 
+                        ? 'border-red-400 focus:border-red-500' 
+                        : focusedField === 'phone'
+                        ? 'border-[#FBAF43] bg-white'
+                        : 'border-gray-300'
+                    }`}
+                    placeholder="+250 788 123 456"
+                  />
                 </div>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-3 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
-                    errors.email 
-                      ? 'border-red-400 focus:border-red-500' 
-                      : focusedField === 'email'
-                      ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  placeholder="you@example.com"
-                />
+                {errors.phone && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-1.5 text-xs text-red-500 font-medium"
+                  >
+                    {errors.phone}
+                  </motion.p>
+                )}
               </div>
-              {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1.5 text-xs text-red-500 font-medium"
-                >
-                  {errors.email}
-                </motion.p>
-              )}
-            </div>
 
-            {/* Phone Field */}
-            <div>
-              <label htmlFor="phone" className="block text-xs font-semibold text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <div className="relative">
-                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
-                  focusedField === 'phone' ? 'text-[#FBAF43]' : 'text-gray-400'
-                }`}>
-                  <Phone className="h-4 w-4" />
+              {/* Password Field */}
+              <div>
+                <label htmlFor="password" className="block text-xs font-semibold text-gray-700 mb-2">
+                  Password
+                </label>
+                <div className="relative">
+                  <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
+                    focusedField === 'password' ? 'text-[#FBAF43]' : 'text-gray-400'
+                  }`}>
+                    <Lock className="h-4 w-4" />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    className={`block w-full pl-10 pr-10 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
+                      errors.password 
+                        ? 'border-red-400 focus:border-red-500' 
+                        : focusedField === 'password'
+                        ? 'border-[#FBAF43] bg-white'
+                        : 'border-gray-300'
+                    }`}
+                    placeholder="At least 8 characters"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField('phone')}
-                  onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-3 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
-                    errors.phone 
-                      ? 'border-red-400 focus:border-red-500' 
-                      : focusedField === 'phone'
-                      ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  placeholder="+250 788 123 456"
-                />
+                {errors.password && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="mt-1.5 text-xs text-red-500 font-medium"
+                  >
+                    {errors.password}
+                  </motion.p>
+                )}
               </div>
-              {errors.phone && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1.5 text-xs text-red-500 font-medium"
-                >
-                  {errors.phone}
-                </motion.p>
-              )}
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label htmlFor="password" className="block text-xs font-semibold text-gray-700 mb-2">
-                Password
-              </label>
-              <div className="relative">
-                <div className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none transition-colors ${
-                  focusedField === 'password' ? 'text-[#FBAF43]' : 'text-gray-400'
-                }`}>
-                  <Lock className="h-4 w-4" />
-                </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  onFocus={() => setFocusedField('password')}
-                  onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-10 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
-                    errors.password 
-                      ? 'border-red-400 focus:border-red-500' 
-                      : focusedField === 'password'
-                      ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300 hover:border-gray-400'
-                  }`}
-                  placeholder="At least 8 characters"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mt-1.5 text-xs text-red-500 font-medium"
-                >
-                  {errors.password}
-                </motion.p>
-              )}
             </div>
 
             {/* Confirm Password Field */}
@@ -452,12 +425,12 @@ export default function UZAEmpowerSignup() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField('confirmPassword')}
                   onBlur={() => setFocusedField(null)}
-                  className={`block w-full pl-10 pr-10 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 transition-all duration-300 bg-gray-50/50 text-sm ${
+                  className={`block w-full pl-10 pr-10 py-2.5 border-2 focus:outline-none focus:ring-2 focus:ring-[#FBAF43]/20 text-sm ${
                     errors.confirmPassword 
                       ? 'border-red-400 focus:border-red-500' 
                       : focusedField === 'confirmPassword'
                       ? 'border-[#FBAF43] bg-white'
-                      : 'border-gray-300 hover:border-gray-400'
+                      : 'border-gray-300'
                   }`}
                   placeholder="Confirm your password"
                 />
@@ -488,15 +461,13 @@ export default function UZAEmpowerSignup() {
             <motion.button
               type="submit"
               disabled={isLoading}
-              whileHover={{ scale: isLoading ? 1 : 1.01 }}
-              whileTap={{ scale: isLoading ? 1 : 0.99 }}
-              className={`w-full bg-gradient-to-r from-[#FBAF43] to-[#e59e3b] hover:from-[#e59e3b] hover:to-[#FBAF43] text-white font-semibold py-2.5 px-4 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl text-sm flex items-center justify-center gap-2 ${
+              className={`w-full bg-[#FBAF43] text-white font-semibold py-2.5 px-4 text-sm flex items-center justify-center gap-2 ${
                 isLoading ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
               {isLoading ? (
                 <>
-                  <motion.div
+          <motion.div
                     className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -517,19 +488,16 @@ export default function UZAEmpowerSignup() {
           <div className="mt-6 pt-5 border-t border-gray-200 text-center">
             <p className="text-xs text-gray-600">
               Already have an account?{' '}
-              <Link 
+            <Link
                 href="/uzasempower/login" 
                 className="text-[#FBAF43] font-semibold"
-              >
+            >
                 Sign in
-              </Link>
+            </Link>
             </p>
           </div>
         </motion.div>
-      </div>
-      </section>
-
-      <Footer />
+          </motion.div>
     </div>
   )
 }

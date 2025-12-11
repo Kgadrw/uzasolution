@@ -1,0 +1,36 @@
+# This is a template for frontend .gitignore
+# The actual frontend .gitignore is in the root .gitignore
+
+# Frontend Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Frontend Testing
+coverage/
+
+# Frontend Production
+/build
+/.next
+/out
+
+# Frontend Environment
+.env
+.env*.local
+
+# Frontend Logs
+*.log
+
+# Frontend IDE
+.vscode/
+.idea/
+
+# Frontend OS
+.DS_Store
+Thumbs.db
+
+# Frontend Cache
+.next/
+.vercel
+.turbo
+

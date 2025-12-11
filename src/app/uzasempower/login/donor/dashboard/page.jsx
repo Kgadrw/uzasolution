@@ -6,11 +6,12 @@ import { useRouter } from 'next/navigation'
 import { 
   DollarSign, CheckCircle, AlertCircle, Bell,
   Search, Download, MapPin, Heart, Settings, LogOut, 
-  LayoutDashboard, Menu, Info, Wallet, Activity, Target, X
+  LayoutDashboard, Menu, Info, Wallet, Activity, Target, X, Inbox
 } from 'lucide-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
+import { api } from '@/lib/api/config'
 
 export default function DonorDashboard() {
   const router = useRouter()
@@ -91,6 +92,170 @@ export default function DonorDashboard() {
   const [ledgerTypeFilter, setLedgerTypeFilter] = useState('all')
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
 
+  // Data state
+  const [loading, setLoading] = useState(true)
+  const [portfolioSummary, setPortfolioSummary] = useState({
+    totalPledged: 0,
+    totalDistributed: 0,
+    balance: 0,
+    activeProjects: 0,
+    onTrackProjects: 0,
+    atRiskProjects: 0,
+    unreadAlerts: 0
+  })
+  const [projects, setProjects] = useState([])
+  const [milestones, setMilestones] = useState([])
+  const [transactions, setTransactions] = useState([])
+  const [alerts, setAlerts] = useState([])
+  const [notifications, setNotifications] = useState([])
+  const [user, setUser] = useState(null)
+
+  // Load user data from localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('user')
+      if (userData) {
+        try {
+          const parsedUser = JSON.parse(userData)
+          setUser(parsedUser)
+        } catch (error) {
+          console.error('Error parsing user data:', error)
+        }
+      }
+    }
+  }, [])
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+        
+        // Fetch overview
+        const overviewRes = await api.get('/donor/dashboard/overview')
+        if (overviewRes.success && overviewRes.data) {
+          const data = overviewRes.data.portfolioSummary || {}
+          setPortfolioSummary({
+            totalPledged: data.totalPledged || 0,
+            totalDistributed: data.totalDistributed || 0,
+            balance: (data.totalPledged || 0) - (data.totalDistributed || 0),
+            activeProjects: data.activeProjects || 0,
+            onTrackProjects: data.onTrackProjects || 0,
+            atRiskProjects: data.atRiskProjects || 0,
+            unreadAlerts: data.unreadAlerts || 0
+          })
+          
+          // Set projects from overview
+          if (overviewRes.data.recentProjects) {
+            const formattedProjects = overviewRes.data.recentProjects.map((p, idx) => ({
+              id: p._id || idx + 1,
+              title: p.title || 'Untitled Project',
+              beneficiary: p.beneficiary?.name || 'Unknown',
+              location: p.location || 'N/A',
+              category: p.category || 'Other',
+              pledgeAmount: p.pledgeAmount || 0,
+              fundingStatus: p.fundingGoal ? `${Math.round((p.totalFunded || 0) / p.fundingGoal * 100)}%` : '0%',
+              fundingGoal: p.fundingGoal || 0,
+              totalFunded: p.totalFunded || 0,
+              status: p.status === 'active' ? 'On Track' : p.status || 'Pending',
+              date: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+            }))
+            setProjects(formattedProjects)
+          }
+        }
+
+        // Fetch projects
+        const projectsRes = await api.get('/donor/projects')
+        if (projectsRes.success && projectsRes.data) {
+          const formattedProjects = (projectsRes.data.projects || projectsRes.data || []).map((p, idx) => ({
+            id: p._id || idx + 1,
+            title: p.title || 'Untitled Project',
+            beneficiary: p.beneficiary?.name || 'Unknown',
+            location: p.location || 'N/A',
+            category: p.category || 'Other',
+            pledgeAmount: p.pledgeAmount || 0,
+            fundingStatus: p.fundingGoal ? `${Math.round((p.totalFunded || 0) / p.fundingGoal * 100)}%` : '0%',
+            fundingGoal: p.fundingGoal || 0,
+            totalFunded: p.totalFunded || 0,
+            status: p.status === 'active' ? 'On Track' : p.status || 'Pending',
+            date: p.createdAt ? new Date(p.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+          }))
+          setProjects(formattedProjects)
+        }
+
+        // Fetch milestones
+        const milestonesRes = await api.get('/donor/milestones')
+        if (milestonesRes.success && milestonesRes.data) {
+          const formattedMilestones = (milestonesRes.data.milestones || milestonesRes.data || []).map((m, idx) => ({
+            id: m._id || idx + 1,
+            projectName: m.project?.title || 'Unknown Project',
+            milestoneName: m.title || 'Untitled Milestone',
+            description: m.description || '',
+            targetDate: m.targetDate ? new Date(m.targetDate).toISOString().split('T')[0] : '',
+            status: m.status === 'approved' ? 'Approved' : m.status === 'evidence_submitted' ? 'Evidence submitted' : m.status === 'in_progress' ? 'In Progress' : 'Not started',
+            trancheAmount: m.amount || 0,
+            evidenceCount: m.evidence?.length || 0,
+            approvedDate: m.approvedDate ? new Date(m.approvedDate).toISOString().split('T')[0] : null,
+            beneficiary: m.project?.beneficiary?.name || 'Unknown'
+          }))
+          setMilestones(formattedMilestones)
+        }
+
+        // Fetch ledger/transactions
+        const ledgerRes = await api.get('/donor/ledger')
+        if (ledgerRes.success && ledgerRes.data) {
+          const formattedTransactions = (ledgerRes.data.transactions || ledgerRes.data || []).map((t, idx) => ({
+            id: t._id || idx + 1,
+            date: t.date ? new Date(t.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            type: t.type || 'Transaction',
+            category: t.category || 'Funding',
+            description: t.description || '',
+            amount: t.amount || 0,
+            balance: t.balance || 0,
+            project: t.project?.title || 'N/A'
+          }))
+          setTransactions(formattedTransactions)
+        }
+
+        // Fetch alerts
+        const alertsRes = await api.get('/donor/alerts')
+        if (alertsRes.success && alertsRes.data) {
+          const formattedAlerts = (alertsRes.data.alerts || alertsRes.data || []).map((a, idx) => ({
+            id: a._id || idx + 1,
+            type: a.type || 'Info',
+            title: a.title || 'Alert',
+            description: a.message || a.description || '',
+            project: a.project?.title || 'N/A',
+            date: a.createdAt ? new Date(a.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            status: a.read ? 'Read' : 'Active'
+          }))
+          setAlerts(formattedAlerts)
+        }
+
+        // Fetch notifications
+        const notificationsRes = await api.get('/donor/notifications')
+        if (notificationsRes.success && notificationsRes.data) {
+          const formattedNotifications = (notificationsRes.data.notifications || notificationsRes.data || []).map((n, idx) => ({
+            id: n._id || idx + 1,
+            title: n.title || 'Notification',
+            message: n.message || '',
+            type: n.type || 'info',
+            read: n.read || false,
+            date: n.createdAt ? new Date(n.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+          }))
+          setNotifications(formattedNotifications)
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+        showNotification('Failed to load dashboard data', 'error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
+
   const showNotification = (message, type = 'success') => {
     setNotification({ show: true, message, type })
     setTimeout(() => {
@@ -101,8 +266,8 @@ export default function DonorDashboard() {
   const handleLogout = () => {
     showNotification('Donor User logged out successfully', 'success')
     setTimeout(() => {
-      localStorage.removeItem('user')
-      router.push('/uzasempower/login')
+    localStorage.removeItem('user')
+    router.push('/uzasempower/login')
     }, 1500)
   }
 
@@ -115,242 +280,19 @@ export default function DonorDashboard() {
     { id: 'settings', label: 'Settings', icon: Settings },
   ]
 
-  // Mock data
-  const portfolioSummary = {
-    totalPledged: 15000000,
-    totalDistributed: 8500000,
-    balance: 6500000,
-    activeProjects: 8,
-    onTrackProjects: 6,
-    atRiskProjects: 2,
-    unreadAlerts: 5
+  // Loading state check
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
   }
 
-  const projects = [
-    {
-      id: 1,
-      title: 'Vegetable Farming Project',
-      beneficiary: 'John Doe Cooperative',
-      location: 'Kicukiro, Rwanda',
-      category: 'Agriculture',
-      pledgeAmount: 2000000,
-      fundingStatus: '70%',
-      fundingGoal: 5000000,
-      totalFunded: 3500000,
-      status: 'On Track',
-      date: '2024-01-15'
-    },
-    {
-      id: 2,
-      title: 'Poultry Farming Initiative',
-      beneficiary: 'Women Farmers Group',
-      location: 'Gasabo, Rwanda',
-      category: 'Livestock',
-      pledgeAmount: 1500000,
-      fundingStatus: '93%',
-      fundingGoal: 3000000,
-      totalFunded: 2800000,
-      status: 'On Track',
-      date: '2024-01-10'
-    },
-    {
-      id: 3,
-      title: 'Beekeeping Project',
-      beneficiary: 'Youth Cooperative',
-      location: 'Nyarugenge, Rwanda',
-      category: 'Agriculture',
-      pledgeAmount: 1000000,
-      fundingStatus: '60%',
-      fundingGoal: 2000000,
-      totalFunded: 1200000,
-      status: 'At Risk',
-      date: '2024-01-05'
-    },
-    {
-      id: 4,
-      title: 'Fish Farming Project',
-      beneficiary: 'Community Group',
-      location: 'Muhanga, Rwanda',
-      category: 'Aquaculture',
-      pledgeAmount: 2500000,
-      fundingStatus: '100%',
-      fundingGoal: 4000000,
-      totalFunded: 4000000,
-      status: 'Completed',
-      date: '2023-12-20'
-    },
-    {
-      id: 5,
-      title: 'Dairy Farming Project',
-      beneficiary: 'Farmers Union',
-      location: 'Musanze, Rwanda',
-      category: 'Livestock',
-      pledgeAmount: 3000000,
-      fundingStatus: '45%',
-      fundingGoal: 6000000,
-      totalFunded: 2700000,
-      status: 'On Track',
-      date: '2024-01-20'
-    },
-  ]
-
-  const milestones = [
-    {
-      id: 1,
-      projectName: 'Vegetable Farming Project',
-      milestoneName: 'Land Preparation',
-      description: 'Complete land clearing and soil preparation',
-      targetDate: '2024-01-05',
-      status: 'Approved',
-      trancheAmount: 500000,
-      evidenceCount: 5,
-      approvedDate: '2024-01-04',
-      beneficiary: 'John Doe Cooperative'
-    },
-    {
-      id: 2,
-      projectName: 'Poultry Farming Initiative',
-      milestoneName: 'Infrastructure Setup',
-      description: 'Build chicken coops and install equipment',
-      targetDate: '2024-01-20',
-      status: 'Evidence submitted',
-      trancheAmount: 750000,
-      evidenceCount: 8,
-      approvedDate: null,
-      beneficiary: 'Women Farmers Group'
-    },
-    {
-      id: 3,
-      projectName: 'Beekeeping Project',
-      milestoneName: 'Hive Installation',
-      description: 'Install beehives and prepare apiary',
-      targetDate: '2024-02-15',
-      status: 'Not started',
-      trancheAmount: 1000000,
-      evidenceCount: 0,
-      approvedDate: null,
-      beneficiary: 'Youth Cooperative'
-    },
-    {
-      id: 4,
-      projectName: 'Vegetable Farming Project',
-      milestoneName: 'Seed Planting',
-      description: 'Plant all seeds according to plan',
-      targetDate: '2024-01-25',
-      status: 'In Progress',
-      trancheAmount: 600000,
-      evidenceCount: 3,
-      approvedDate: null,
-      beneficiary: 'John Doe Cooperative'
-    },
-  ]
-
-  const transactions = [
-    {
-      id: 1,
-      date: '2024-01-20',
-      type: 'Disbursement',
-      category: 'Funding',
-      description: 'Tranche 2 release - Vegetable Farming Project',
-      amount: 1000000,
-      balance: 7500000,
-      project: 'Vegetable Farming Project'
-    },
-    {
-      id: 2,
-      date: '2024-01-18',
-      type: 'Pledge',
-      category: 'Funding',
-      description: 'New pledge - Poultry Farming Initiative',
-      amount: 1500000,
-      balance: 8500000,
-      project: 'Poultry Farming Initiative'
-    },
-    {
-      id: 3,
-      date: '2024-01-15',
-      type: 'Disbursement',
-      category: 'Funding',
-      description: 'Tranche 1 release - Beekeeping Project',
-      amount: 500000,
-      balance: 7000000,
-      project: 'Beekeeping Project'
-    },
-    {
-      id: 4,
-      date: '2024-01-10',
-      type: 'Pledge',
-      category: 'Funding',
-      description: 'New pledge - Dairy Farming Project',
-      amount: 3000000,
-      balance: 6500000,
-      project: 'Dairy Farming Project'
-    },
-  ]
-
-  const alerts = [
-    {
-      id: 1,
-      type: 'Warning',
-      title: 'Milestone Delay',
-      description: 'Beekeeping Project milestone is behind schedule',
-      project: 'Beekeeping Project',
-      date: '2024-01-16',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      type: 'Info',
-      title: 'Milestone Completed',
-      description: 'Vegetable Farming Project completed Land Preparation milestone',
-      project: 'Vegetable Farming Project',
-      date: '2024-01-05',
-      status: 'Read'
-    },
-  ]
-
-  const notifications = [
-    {
-      id: 1,
-      title: 'Project Milestone Completed',
-      message: 'Vegetable Farming Project has completed the Land Preparation milestone',
-      date: '2024-01-20',
-      read: false,
-      type: 'success'
-    },
-    {
-      id: 2,
-      title: 'New Funding Request',
-      message: 'Poultry Farming Initiative has submitted a new funding request',
-      date: '2024-01-19',
-      read: false,
-      type: 'info'
-    },
-    {
-      id: 3,
-      title: 'Project At Risk',
-      message: 'Beekeeping Project is behind schedule and needs attention',
-      date: '2024-01-18',
-      read: false,
-      type: 'warning'
-    },
-    {
-      id: 4,
-      title: 'Evidence Submitted',
-      message: 'Dairy Farming Project has submitted new evidence documents',
-      date: '2024-01-17',
-      read: true,
-      type: 'info'
-    },
-    {
-      id: 5,
-      title: 'Project Completed',
-      message: 'Fish Farming Project has been successfully completed',
-      date: '2024-01-15',
-      read: true,
-      type: 'success'
-    },
-  ]
+  // All data is now fetched from API and stored in state
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-RW', { 
@@ -621,12 +563,12 @@ export default function DonorDashboard() {
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
       {/* Mobile Overlay */}
-      {sidebarOpen && (
+          {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-20 md:hidden"
           onClick={() => setSidebarOpen(false)}
         />
-      )}
+          )}
       
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
@@ -683,10 +625,10 @@ export default function DonorDashboard() {
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back Donor User</h1>
-            </div>
-          </div>
+              <div>
+              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back {user?.name || 'Donor User'}</h1>
+              </div>
+              </div>
           <div className="flex items-center gap-2 md:gap-4">
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -695,7 +637,7 @@ export default function DonorDashboard() {
                 placeholder="Search something here.."
                 className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
               />
-            </div>
+              </div>
             <div className="flex items-center gap-2 md:gap-3">
               <div className="relative" ref={notificationDropdownRef}>
                 <button
@@ -721,12 +663,12 @@ export default function DonorDashboard() {
                       >
                         <X className="w-4 h-4" />
                       </button>
-                    </div>
+              </div>
                     <div className="divide-y divide-gray-200">
                       {notifications.length === 0 ? (
                         <div className="p-4 text-center text-sm text-gray-500">
                           No notifications
-                        </div>
+              </div>
                       ) : (
                         notifications.map((notif) => (
                           <div
@@ -746,7 +688,7 @@ export default function DonorDashboard() {
                                 ) : (
                                   <Info className="w-4 h-4" />
                                 )}
-                              </div>
+              </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm text-gray-900 mb-1">{notif.title}</p>
                                 <p className="text-xs text-gray-600 mb-1">{notif.message}</p>
@@ -755,8 +697,8 @@ export default function DonorDashboard() {
                               {!notif.read && (
                                 <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-1"></div>
                               )}
-                            </div>
-                          </div>
+              </div>
+            </div>
                         ))
                       )}
                     </div>
@@ -772,11 +714,11 @@ export default function DonorDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white ">
-                  U
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div>
-                  <p className="text-sm  text-gray-900">Donor User</p>
-                  <p className="text-xs text-gray-600">donor@example.com</p>
+                  <p className="text-sm  text-gray-900">{user?.name || 'Donor User'}</p>
+                  <p className="text-xs text-gray-600">{user?.email || 'donor@example.com'}</p>
               </div>
               </div>
               </div>
@@ -895,48 +837,60 @@ export default function DonorDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {filteredOverviewProjects.map((project) => (
-                        <tr 
-                          key={project.id} 
-                          className="hover:bg-gray-50 cursor-pointer"
-                          onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
-                        >
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm  text-gray-900">{project.title}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{project.beneficiary}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-1 text-sm text-gray-700">
-                                <MapPin className="w-4 h-4" />
-                                {project.location}
-                            </div>
-                          </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
-                                {project.category}
-                            </span>
-                          </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <div className="text-sm  text-gray-900">{formatCurrency(project.pledgeAmount)}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm  text-gray-900">{project.fundingStatus}</span>
-                                <div className="w-24 bg-gray-200 h-2">
-                                  <div 
-                                    className="bg-green-500 h-2"
-                                    style={{ width: project.fundingStatus }}
-                                ></div>
+                        {filteredOverviewProjects.length === 0 ? (
+                          <tr>
+                            <td colSpan="6" className="px-6 py-12 text-center">
+                              <div className="flex flex-col items-center justify-center">
+                                <Inbox className="w-12 h-12 text-gray-400 mb-3" />
+                                <p className="text-sm font-medium text-gray-900 mb-1">No projects found</p>
+                                <p className="text-xs text-gray-500">You haven't invested in any projects yet.</p>
                               </div>
-                                <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(project.status)}`}>
-                                  {project.status}
-                                </span>
-                            </div>
-                          </td>
+                            </td>
                           </tr>
-                        ))}
+                        ) : (
+                          filteredOverviewProjects.map((project) => (
+                            <tr 
+                              key={project.id} 
+                              className="hover:bg-gray-50 cursor-pointer"
+                              onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm  text-gray-900">{project.title}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{project.beneficiary}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center gap-1 text-sm text-gray-700">
+                                  <MapPin className="w-4 h-4" />
+                                  {project.location}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
+                                  {project.category}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <div className="text-sm  text-gray-900">{formatCurrency(project.pledgeAmount)}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm  text-gray-900">{project.fundingStatus}</span>
+                                  <div className="w-24 bg-gray-200 h-2">
+                                    <div 
+                                      className="bg-green-500 h-2"
+                                      style={{ width: project.fundingStatus }}
+                                    ></div>
+                                  </div>
+                                  <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(project.status)}`}>
+                                    {project.status}
+                                  </span>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                     </div>
@@ -1056,15 +1010,26 @@ export default function DonorDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {filteredProjects.map((project) => (
-                        <tr 
-                          key={project.id} 
-                          className="hover:bg-gray-50 cursor-pointer"
-                          onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
-                        >
+                      {filteredProjects.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" className="px-6 py-12 text-center">
+                            <div className="flex flex-col items-center justify-center">
+                              <Inbox className="w-12 h-12 text-gray-400 mb-3" />
+                              <p className="text-sm font-medium text-gray-900 mb-1">No projects found</p>
+                              <p className="text-xs text-gray-500">No projects match your search criteria.</p>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredProjects.map((project) => (
+                          <tr 
+                            key={project.id} 
+                            className="hover:bg-gray-50 cursor-pointer"
+                            onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                          >
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm  text-gray-900">{project.title}</div>
-                          </td>
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-700">{project.beneficiary}</div>
                             </td>
@@ -1072,13 +1037,13 @@ export default function DonorDashboard() {
                               <div className="flex items-center gap-1 text-sm text-gray-700">
                                 <MapPin className="w-4 h-4" />
                                 {project.location}
-                            </div>
-                          </td>
+                              </div>
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
                                 {project.category}
-                            </span>
-                          </td>
+                              </span>
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
                               <div className="text-sm  text-gray-900">{formatCurrency(project.pledgeAmount)}</div>
                             </td>
@@ -1089,20 +1054,21 @@ export default function DonorDashboard() {
                                   <div 
                                     className="bg-green-500 h-2"
                                     style={{ width: project.fundingStatus }}
-                                ></div>
-                              </div>
+                                  ></div>
+                                </div>
                                 <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(project.status)}`}>
                                   {project.status}
                                 </span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                     </div>
-                  </div>
                 </div>
+              </div>
             </motion.div>
           )}
 
@@ -1139,11 +1105,11 @@ export default function DonorDashboard() {
                             >
                               Export as PDF
                             </button>
-                          </div>
+                      </div>
                         )}
-                      </div>
-                      </div>
-                    
+                    </div>
+                  </div>
+                  
                     {/* Filters */}
                     <div className="flex flex-wrap items-end gap-2 md:gap-3">
                       <div className="relative flex-1 min-w-[200px]">
@@ -1155,7 +1121,7 @@ export default function DonorDashboard() {
                           onChange={(e) => setMilestonesSearchQuery(e.target.value)}
                           className="w-full pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                         />
-                      </div>
+                    </div>
                       <select
                         value={milestonesStatusFilter}
                         onChange={(e) => setMilestonesStatusFilter(e.target.value)}
@@ -1181,7 +1147,7 @@ export default function DonorDashboard() {
                           onChange={(e) => setMilestonesDateTo(e.target.value)}
                           className="flex-1 min-w-[120px] px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm"
                         />
-                      </div>
+                </div>
                       <button
                         onClick={() => {
                           setMilestonesSearchQuery('')
@@ -1211,34 +1177,46 @@ export default function DonorDashboard() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-200">
-                        {filteredMilestones.map((milestone) => (
-                          <tr key={milestone.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm  text-gray-900">{milestone.projectName}</div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="text-sm font-medium text-gray-900">{milestone.milestoneName}</div>
-                              <div className="text-xs text-gray-500 mt-1">{milestone.description}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{milestone.beneficiary}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{new Date(milestone.targetDate).toLocaleDateString()}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <div className="text-sm  text-gray-900">{formatCurrency(milestone.trancheAmount)}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{milestone.evidenceCount} items</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(milestone.status)}`}>
-                                {milestone.status}
-                              </span>
+                        {filteredMilestones.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="px-6 py-12 text-center">
+                              <div className="flex flex-col items-center justify-center">
+                                <Target className="w-12 h-12 text-gray-400 mb-3" />
+                                <p className="text-sm font-medium text-gray-900 mb-1">No milestones found</p>
+                                <p className="text-xs text-gray-500">No milestones match your search criteria.</p>
+                              </div>
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          filteredMilestones.map((milestone) => (
+                            <tr key={milestone.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm  text-gray-900">{milestone.projectName}</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="text-sm font-medium text-gray-900">{milestone.milestoneName}</div>
+                                <div className="text-xs text-gray-500 mt-1">{milestone.description}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{milestone.beneficiary}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{new Date(milestone.targetDate).toLocaleDateString()}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <div className="text-sm  text-gray-900">{formatCurrency(milestone.trancheAmount)}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{milestone.evidenceCount} items</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(milestone.status)}`}>
+                                  {milestone.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                     </div>
@@ -1263,8 +1241,8 @@ export default function DonorDashboard() {
                           onClick={() => toggleExportDropdown('ledger')}
                           className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
                         >
-                          <Download className="w-4 h-4" />
-                          Export
+                    <Download className="w-4 h-4" />
+                    Export
                         </button>
                         {exportDropdowns['ledger'] && (
                           <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
@@ -1279,10 +1257,10 @@ export default function DonorDashboard() {
                               className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                             >
                               Export as PDF
-                            </button>
+                  </button>
                           </div>
                         )}
-                      </div>
+                </div>
               </div>
               
                     {/* Filters */}
@@ -1352,46 +1330,58 @@ export default function DonorDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                        {filteredTransactions.map((transaction) => (
-                          <tr key={transaction.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{new Date(transaction.date).toLocaleDateString()}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 text-xs font-medium ${
-                                transaction.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
-                                transaction.type === 'Pledge' ? 'bg-green-100 text-green-800' :
-                                'bg-gray-100 text-gray-800'
-                              }`}>
-                                {transaction.type}
-                          </span>
-                        </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{transaction.category}</div>
-                        </td>
-                            <td className="px-6 py-4">
-                              <div className="text-sm text-gray-700">{transaction.description}</div>
-                        </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{transaction.project}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <div className={`text-sm  ${
-                                transaction.type === 'Pledge' ? 'text-green-600' : 'text-blue-600'
-                              }`}>
-                                {transaction.type === 'Pledge' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                        {filteredTransactions.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="px-6 py-12 text-center">
+                              <div className="flex flex-col items-center justify-center">
+                                <Wallet className="w-12 h-12 text-gray-400 mb-3" />
+                                <p className="text-sm font-medium text-gray-900 mb-1">No transactions found</p>
+                                <p className="text-xs text-gray-500">No transactions match your search criteria.</p>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <div className="text-sm  text-gray-900">{formatCurrency(transaction.balance)}</div>
-                        </td>
-                      </tr>
-                    ))}
+                          </tr>
+                        ) : (
+                          filteredTransactions.map((transaction) => (
+                            <tr key={transaction.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{new Date(transaction.date).toLocaleDateString()}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 text-xs font-medium ${
+                                  transaction.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
+                                  transaction.type === 'Pledge' ? 'bg-green-100 text-green-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                  {transaction.type}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{transaction.category}</div>
+                              </td>
+                              <td className="px-6 py-4">
+                                <div className="text-sm text-gray-700">{transaction.description}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{transaction.project}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <div className={`text-sm  ${
+                                  transaction.type === 'Pledge' ? 'text-green-600' : 'text-blue-600'
+                                }`}>
+                                  {transaction.type === 'Pledge' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <div className="text-sm  text-gray-900">{formatCurrency(transaction.balance)}</div>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                   </tbody>
                 </table>
                     </div>
                   </div>
-                </div>
+              </div>
             </motion.div>
           )}
 
@@ -1463,7 +1453,7 @@ export default function DonorDashboard() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                           <input
                             type="text"
-                            defaultValue="Donor User"
+                            defaultValue={user?.name || 'Donor User'}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
                       </div>
@@ -1471,7 +1461,7 @@ export default function DonorDashboard() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                           <input
                             type="email"
-                            defaultValue="donor@example.com"
+                            defaultValue={user?.email || 'donor@example.com'}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
                       </div>
@@ -1479,6 +1469,7 @@ export default function DonorDashboard() {
                           <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                           <input
                             type="tel"
+                            defaultValue={user?.phone || ''}
                             placeholder="+250 XXX XXX XXX"
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                           />
@@ -1529,7 +1520,7 @@ export default function DonorDashboard() {
       {/* Notification Modal */}
       {notification.show && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
-          <motion.div
+            <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -1551,21 +1542,21 @@ export default function DonorDashboard() {
                   <AlertCircle className="w-6 h-6" />
                 ) : (
                   <Info className="w-6 h-6" />
-                )}
-              </div>
+                        )}
+                      </div>
               <div className="flex-1">
                 <p className="text-sm text-gray-900">{notification.message}</p>
-              </div>
+                      </div>
               <button
                 onClick={() => setNotification({ show: false, message: '', type: 'success' })}
                 className="text-gray-400 hover:text-gray-600"
               >
                 <X className="w-5 h-5" />
-              </button>
-            </div>
-          </motion.div>
+                    </button>
+                  </div>
+            </motion.div>
         </div>
-      )}
+          )}
     </div>
   )
 }

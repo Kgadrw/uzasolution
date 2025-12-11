@@ -9,6 +9,7 @@ import {
   LayoutDashboard, Menu, Info, Wallet, Activity, Target,
   Plus, Upload, FileText, BarChart3, Users, TrendingUp, X
 } from 'lucide-react'
+import { api } from '@/lib/api/config'
 
 export default function BeneficiaryDashboard() {
   const router = useRouter()
@@ -20,6 +21,90 @@ export default function BeneficiaryDashboard() {
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
+
+  // Data state
+  const [loading, setLoading] = useState(true)
+  const [summaryData, setSummaryData] = useState({
+    totalFunded: 0,
+    totalDonors: 0,
+    activeProjects: 0,
+    pendingDocuments: 0,
+    onTrackProjects: 0
+  })
+  const [donors, setDonors] = useState([])
+  const [fundingRequests, setFundingRequests] = useState([])
+  const [milestones, setMilestones] = useState([])
+  const [missingDocuments, setMissingDocuments] = useState([])
+  const [notifications, setNotifications] = useState([])
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+        
+        // Fetch overview
+        const overviewRes = await api.get('/beneficiary/dashboard/overview')
+        if (overviewRes.success && overviewRes.data) {
+          const data = overviewRes.data.summaryData || {}
+          setSummaryData({
+            totalFunded: data.totalFunded || 0,
+            totalDonors: data.totalDonors || 0,
+            activeProjects: data.activeProjects || 0,
+            pendingDocuments: data.pendingDocuments || 0,
+            onTrackProjects: data.onTrackProjects || 0
+          })
+        }
+
+        // Fetch donors
+        const donorsRes = await api.get('/beneficiary/donors')
+        if (donorsRes.success && donorsRes.data) {
+          const formattedDonors = (donorsRes.data.donors || donorsRes.data || []).map((d, idx) => ({
+            id: d._id || d.donor?._id || idx + 1,
+            name: d.donor?.name || d.name || 'Unknown',
+            email: d.donor?.email || d.email || '',
+            totalDonated: d.totalAmount || d.amount || 0,
+            projects: d.projects || []
+          }))
+          setDonors(formattedDonors)
+        }
+
+        // Fetch funding requests
+        const fundingRes = await api.get('/beneficiary/funding-requests')
+        if (fundingRes.success && fundingRes.data) {
+          const formattedRequests = (fundingRes.data.requests || fundingRes.data || []).map((r, idx) => ({
+            id: r._id || idx + 1,
+            title: r.title || 'Untitled Request',
+            amount: r.amount || 0,
+            status: r.status || 'pending',
+            date: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            description: r.description || ''
+          }))
+          setFundingRequests(formattedRequests)
+        }
+
+        // Fetch missing documents
+        const missingDocsRes = await api.get('/beneficiary/missing-documents')
+        if (missingDocsRes.success && missingDocsRes.data) {
+          const formattedDocs = (missingDocsRes.data.documents || missingDocsRes.data || []).map((d, idx) => ({
+            id: d._id || idx + 1,
+            projectName: d.project?.title || 'Unknown Project',
+            milestoneName: d.milestone?.title || 'Unknown Milestone',
+            documentType: d.type || 'Evidence',
+            dueDate: d.dueDate ? new Date(d.dueDate).toISOString().split('T')[0] : ''
+          }))
+          setMissingDocuments(formattedDocs)
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+        showNotification('Failed to load dashboard data', 'error')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
 
   // Close sidebar on mobile when clicking outside
   useEffect(() => {
@@ -78,136 +163,19 @@ export default function BeneficiaryDashboard() {
     { id: 'settings', label: 'Settings', icon: Settings },
   ]
 
-  // Mock data
-  const summaryData = {
-    totalFunded: 8500000,
-    totalDonors: 5,
-    activeProjects: 3,
-    pendingDocuments: 2,
-    onTrackProjects: 2
+  // Loading state check
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    )
   }
 
-  const donors = [
-    {
-      id: 1,
-      name: 'John Smith',
-      email: 'john@example.com',
-      totalDonated: 3000000,
-      projects: ['Vegetable Farming Project', 'Poultry Initiative']
-    },
-    {
-      id: 2,
-      name: 'Sarah Johnson',
-      email: 'sarah@example.com',
-      totalDonated: 2500000,
-      projects: ['Beekeeping Project']
-    },
-    {
-      id: 3,
-      name: 'Michael Brown',
-      email: 'michael@example.com',
-      totalDonated: 2000000,
-      projects: ['Vegetable Farming Project']
-    },
-  ]
-
-  const projects = [
-    {
-      id: 1,
-      title: 'Vegetable Farming Project',
-      location: 'Kicukiro, Rwanda',
-      category: 'Agriculture',
-      totalFunded: 5000000,
-      totalRequested: 8000000,
-      status: 'Active',
-      donors: ['John Smith', 'Michael Brown'],
-      missingDocuments: ['Business License', 'Tax Certificate']
-    },
-    {
-      id: 2,
-      title: 'Poultry Farming Initiative',
-      location: 'Gasabo, Rwanda',
-      category: 'Livestock',
-      totalFunded: 2000000,
-      totalRequested: 3000000,
-      status: 'Active',
-      donors: ['John Smith'],
-      missingDocuments: []
-    },
-    {
-      id: 3,
-      title: 'Beekeeping Project',
-      location: 'Nyarugenge, Rwanda',
-      category: 'Agriculture',
-      totalFunded: 1500000,
-      totalRequested: 2000000,
-      status: 'On Hold',
-      donors: ['Sarah Johnson'],
-      missingDocuments: ['Environmental Impact Assessment']
-    },
-  ]
-
-  const fundingRequests = [
-    {
-      id: 1,
-      project: 'Vegetable Farming Project',
-      amount: 3000000,
-      status: 'Pending',
-      submittedDate: '2024-01-15',
-      reviewedBy: null
-    },
-    {
-      id: 2,
-      project: 'Poultry Farming Initiative',
-      amount: 1000000,
-      status: 'Approved',
-      submittedDate: '2024-01-10',
-      reviewedBy: 'Admin User'
-    },
-    {
-      id: 3,
-      project: 'Beekeeping Project',
-      amount: 500000,
-      status: 'Rejected',
-      submittedDate: '2024-01-05',
-      reviewedBy: 'Admin User'
-    },
-  ]
-
-  const notifications = [
-    {
-      id: 1,
-      title: 'Funding Request Approved',
-      message: 'Your funding request for Poultry Farming Initiative has been approved',
-      date: '2024-01-20',
-      read: false,
-      type: 'success'
-    },
-    {
-      id: 2,
-      title: 'Missing Documents',
-      message: 'You have 2 missing documents that need to be uploaded',
-      date: '2024-01-19',
-      read: false,
-      type: 'warning'
-    },
-    {
-      id: 3,
-      title: 'Milestone Reminder',
-      message: 'Land Preparation milestone is due in 3 days',
-      date: '2024-01-18',
-      read: true,
-      type: 'info'
-    },
-    {
-      id: 4,
-      title: 'New Donor',
-      message: 'John Smith has pledged to your Vegetable Farming Project',
-      date: '2024-01-17',
-      read: true,
-      type: 'info'
-    },
-  ]
+  // All data is now fetched from API and stored in state
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-RW', { 
@@ -229,9 +197,10 @@ export default function BeneficiaryDashboard() {
     return colors[status] || 'bg-gray-100 text-gray-800'
   }
 
-  const filteredOverviewProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
-                         project.location.toLowerCase().includes(overviewSearchQuery.toLowerCase())
+  // Note: Projects data would come from API if needed
+  const filteredDonors = donors.filter(donor => {
+    const matchesSearch = donor.name.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
+                         donor.email.toLowerCase().includes(overviewSearchQuery.toLowerCase())
     return matchesSearch
   })
 

@@ -17,6 +17,7 @@ import {
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
+import { api } from '@/lib/api/config'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -27,6 +28,70 @@ export default function AdminDashboard() {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
   const [exportDropdowns, setExportDropdowns] = useState({})
+
+  // Data state
+  const [loading, setLoading] = useState(true)
+  const [summaryData, setSummaryData] = useState({
+    totalProjects: 0,
+    pendingReview: 0,
+    activeProjects: 0,
+    totalFunds: 0,
+    totalDisbursed: 0,
+    pendingTranches: 0,
+    alertsCount: 0,
+    kycPending: 0
+  })
+  const [projects, setProjects] = useState([])
+  const [reportsData, setReportsData] = useState({})
+
+  // Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true)
+        
+        // Fetch dashboard overview
+        const dashboardRes = await api.get('/admin/dashboard')
+        if (dashboardRes.success && dashboardRes.data) {
+          const data = dashboardRes.data.summaryData || {}
+          setSummaryData({
+            totalProjects: data.totalProjects || 0,
+            pendingReview: data.pendingReview || 0,
+            activeProjects: data.activeProjects || 0,
+            totalFunds: data.totalFunds || 0,
+            totalDisbursed: data.totalDisbursed || 0,
+            pendingTranches: data.pendingTranches || 0,
+            alertsCount: data.alertsCount || 0,
+            kycPending: data.kycPending || 0
+          })
+          
+          if (dashboardRes.data.recentProjects) {
+            const formattedProjects = dashboardRes.data.recentProjects.map((p, idx) => ({
+              id: p._id || idx + 1,
+              title: p.title || 'Untitled Project',
+              beneficiary: p.beneficiary?.name || 'Unknown',
+              status: p.status || 'pending',
+              fundingGoal: p.fundingGoal || 0,
+              totalFunded: p.totalFunded || 0
+            }))
+            setProjects(formattedProjects)
+          }
+        }
+
+        // Fetch reports data
+        const reportsRes = await api.get('/admin/reports/user-registration')
+        if (reportsRes.success && reportsRes.data) {
+          setReportsData(reportsRes.data)
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
 
   // Close sidebar on mobile when clicking outside
   useEffect(() => {
