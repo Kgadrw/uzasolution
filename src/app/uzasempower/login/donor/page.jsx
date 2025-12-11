@@ -75,7 +75,7 @@ export default function DonorLogin() {
       // Backend API returns: { success, message, data: { user, token, refreshToken } }
       if (!data.success || !data.data) {
         setErrors({ 
-          general: data.message || data.errors?.[0] || 'Invalid email or password' 
+          general: data.message || data.error || data.errors?.[0] || 'Invalid email or password' 
         })
         setIsLoading(false)
         return

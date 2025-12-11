@@ -57,15 +57,27 @@ async function handleRequest(request, params, method) {
           options.body = body
         }
       } catch (e) {
-        // No body
+        console.error('Error reading request body:', e)
       }
     }
     
     // Make request to backend
     const response = await fetch(url, options)
     
-    // Get response data
-    const data = await response.json().catch(() => ({}))
+    // Get response data - handle both JSON and text responses
+    let data
+    const contentType = response.headers.get('content-type')
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json()
+      } catch (e) {
+        console.error('Error parsing JSON response:', e)
+        data = { success: false, message: 'Failed to parse response' }
+      }
+    } else {
+      const text = await response.text()
+      data = { success: false, message: text || 'Request failed' }
+    }
     
     // Return response with proper status
     return NextResponse.json(data, {
@@ -78,10 +90,17 @@ async function handleRequest(request, params, method) {
     })
   } catch (error) {
     console.error('Proxy error:', error)
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      url: request.url,
+      method,
+    })
     return NextResponse.json(
       { 
         success: false, 
-        message: error.message || 'Proxy request failed' 
+        message: error.message || 'Proxy request failed',
+        error: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     )

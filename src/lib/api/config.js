@@ -44,16 +44,37 @@ export const apiFetch = async (endpoint, options = {}) => {
       headers,
     })
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Request failed' }))
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
+    // Try to parse response as JSON
+    let data
+    try {
+      const text = await response.text()
+      if (text) {
+        data = JSON.parse(text)
+      } else {
+        data = {}
+      }
+    } catch (parseError) {
+      console.error('Error parsing response:', parseError)
+      data = { 
+        success: false, 
+        message: `Server error (${response.status})` 
+      }
     }
 
-    const data = await response.json()
+    if (!response.ok) {
+      const errorMessage = data.message || data.error || `HTTP error! status: ${response.status}`
+      throw new Error(errorMessage)
+    }
+
     return data
   } catch (error) {
     console.error('API Error:', error)
-    throw error
+    // If it's already an Error object, throw it as is
+    if (error instanceof Error) {
+      throw error
+    }
+    // Otherwise, wrap it in an Error
+    throw new Error(error.message || 'Request failed')
   }
 }
 
