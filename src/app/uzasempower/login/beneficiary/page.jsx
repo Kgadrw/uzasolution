@@ -73,6 +73,18 @@ export default function BeneficiaryLogin() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+      {/* Top Loading Bar */}
+      {isLoading && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
+          <motion.div
+            className="h-full bg-[#FBAF43]"
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
+      
       <Navbar />
       
       <section className="py-8 sm:py-10 md:py-12 px-4 sm:px-6 md:px-8 relative overflow-hidden">
@@ -252,14 +264,7 @@ export default function BeneficiaryLogin() {
                 }`}
               >
                 {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <motion.div
-                      className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                      animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    />
-                    Signing in...
-                  </span>
+                  'Signing in...'
                 ) : (
                   'Sign In'
                 )}

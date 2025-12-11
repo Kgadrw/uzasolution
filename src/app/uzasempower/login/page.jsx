@@ -98,6 +98,17 @@ export default function UZAEmpowerLogin() {
 
   return (
     <div className="h-screen bg-white flex items-center justify-center p-4 relative" style={{ overflow: 'hidden', height: '100vh' }}>
+      {/* Top Loading Bar */}
+      {isLoading && (
+        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
+          <motion.div
+            className="h-full bg-[#FBAF43]"
+            initial={{ width: '0%' }}
+            animate={{ width: '100%' }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          />
+        </div>
+      )}
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -246,11 +257,6 @@ export default function UZAEmpowerLogin() {
             >
               {isLoading ? (
                 <>
-          <motion.div
-                    className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  />
                   Signing in...
                 </>
               ) : (

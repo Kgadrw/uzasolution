@@ -33,6 +33,7 @@ export default function BeneficiaryDashboard() {
   })
   const [donors, setDonors] = useState([])
   const [fundingRequests, setFundingRequests] = useState([])
+  const [projects, setProjects] = useState([])
   const [milestones, setMilestones] = useState([])
   const [missingDocuments, setMissingDocuments] = useState([])
   const [notifications, setNotifications] = useState([])
@@ -81,6 +82,21 @@ export default function BeneficiaryDashboard() {
             description: r.description || ''
           }))
           setFundingRequests(formattedRequests)
+        }
+
+        // Fetch projects
+        const projectsRes = await api.get('/beneficiary/projects')
+        if (projectsRes.success && projectsRes.data) {
+          const formattedProjects = (projectsRes.data.projects || projectsRes.data || []).map((p, idx) => ({
+            id: p._id || idx + 1,
+            title: p.title || 'Untitled Project',
+            location: p.location || 'N/A',
+            category: p.category || 'Other',
+            totalFunded: p.totalFunded || 0,
+            totalRequested: p.fundingGoal || p.amount || 0,
+            status: p.status || 'pending'
+          }))
+          setProjects(formattedProjects)
         }
 
         // Fetch missing documents
@@ -197,10 +213,18 @@ export default function BeneficiaryDashboard() {
     return colors[status] || 'bg-gray-100 text-gray-800'
   }
 
-  // Note: Projects data would come from API if needed
+  // Filter donors
   const filteredDonors = donors.filter(donor => {
     const matchesSearch = donor.name.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
                          donor.email.toLowerCase().includes(overviewSearchQuery.toLowerCase())
+    return matchesSearch
+  })
+
+  // Filter projects
+  const filteredOverviewProjects = projects.filter(project => {
+    const matchesSearch = project.title.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
+                         project.location.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
+                         project.category.toLowerCase().includes(overviewSearchQuery.toLowerCase())
     return matchesSearch
   })
 

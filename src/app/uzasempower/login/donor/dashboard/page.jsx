@@ -849,46 +849,46 @@ export default function DonorDashboard() {
                           </tr>
                         ) : (
                           filteredOverviewProjects.map((project) => (
-                            <tr 
-                              key={project.id} 
-                              className="hover:bg-gray-50 cursor-pointer"
-                              onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
-                            >
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm  text-gray-900">{project.title}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{project.beneficiary}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center gap-1 text-sm text-gray-700">
-                                  <MapPin className="w-4 h-4" />
-                                  {project.location}
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
-                                  {project.category}
+                        <tr 
+                          key={project.id} 
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                        >
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm  text-gray-900">{project.title}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{project.beneficiary}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-1 text-sm text-gray-700">
+                                <MapPin className="w-4 h-4" />
+                                {project.location}
+                            </div>
+                          </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
+                                {project.category}
+                            </span>
+                          </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className="text-sm  text-gray-900">{formatCurrency(project.pledgeAmount)}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm  text-gray-900">{project.fundingStatus}</span>
+                                <div className="w-24 bg-gray-200 h-2">
+                                  <div 
+                                    className="bg-green-500 h-2"
+                                    style={{ width: project.fundingStatus }}
+                                ></div>
+                              </div>
+                                <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(project.status)}`}>
+                                  {project.status}
                                 </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right">
-                                <div className="text-sm  text-gray-900">{formatCurrency(project.pledgeAmount)}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center gap-2">
-                                  <span className="text-sm  text-gray-900">{project.fundingStatus}</span>
-                                  <div className="w-24 bg-gray-200 h-2">
-                                    <div 
-                                      className="bg-green-500 h-2"
-                                      style={{ width: project.fundingStatus }}
-                                    ></div>
-                                  </div>
-                                  <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(project.status)}`}>
-                                    {project.status}
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
+                            </div>
+                          </td>
+                          </tr>
                           ))
                         )}
                       </tbody>
@@ -1022,14 +1022,14 @@ export default function DonorDashboard() {
                         </tr>
                       ) : (
                         filteredProjects.map((project) => (
-                          <tr 
-                            key={project.id} 
-                            className="hover:bg-gray-50 cursor-pointer"
-                            onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
-                          >
+                        <tr 
+                          key={project.id} 
+                          className="hover:bg-gray-50 cursor-pointer"
+                          onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                        >
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm  text-gray-900">{project.title}</div>
-                            </td>
+                          </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-700">{project.beneficiary}</div>
                             </td>
@@ -1037,13 +1037,13 @@ export default function DonorDashboard() {
                               <div className="flex items-center gap-1 text-sm text-gray-700">
                                 <MapPin className="w-4 h-4" />
                                 {project.location}
-                              </div>
-                            </td>
+                            </div>
+                          </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
                                 {project.category}
-                              </span>
-                            </td>
+                            </span>
+                          </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
                               <div className="text-sm  text-gray-900">{formatCurrency(project.pledgeAmount)}</div>
                             </td>
@@ -1054,14 +1054,14 @@ export default function DonorDashboard() {
                                   <div 
                                     className="bg-green-500 h-2"
                                     style={{ width: project.fundingStatus }}
-                                  ></div>
-                                </div>
+                                ></div>
+                              </div>
                                 <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(project.status)}`}>
                                   {project.status}
                                 </span>
-                              </div>
-                            </td>
-                          </tr>
+                            </div>
+                          </td>
+                        </tr>
                         ))
                       )}
                     </tbody>
@@ -1189,32 +1189,32 @@ export default function DonorDashboard() {
                           </tr>
                         ) : (
                           filteredMilestones.map((milestone) => (
-                            <tr key={milestone.id} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm  text-gray-900">{milestone.projectName}</div>
-                              </td>
-                              <td className="px-6 py-4">
-                                <div className="text-sm font-medium text-gray-900">{milestone.milestoneName}</div>
-                                <div className="text-xs text-gray-500 mt-1">{milestone.description}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{milestone.beneficiary}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{new Date(milestone.targetDate).toLocaleDateString()}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right">
-                                <div className="text-sm  text-gray-900">{formatCurrency(milestone.trancheAmount)}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{milestone.evidenceCount} items</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(milestone.status)}`}>
-                                  {milestone.status}
-                                </span>
-                              </td>
-                            </tr>
+                          <tr key={milestone.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm  text-gray-900">{milestone.projectName}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm font-medium text-gray-900">{milestone.milestoneName}</div>
+                              <div className="text-xs text-gray-500 mt-1">{milestone.description}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{milestone.beneficiary}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{new Date(milestone.targetDate).toLocaleDateString()}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className="text-sm  text-gray-900">{formatCurrency(milestone.trancheAmount)}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{milestone.evidenceCount} items</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs font-medium ${getStatusColor(milestone.status)}`}>
+                                {milestone.status}
+                              </span>
+                            </td>
+                          </tr>
                           ))
                         )}
                       </tbody>
@@ -1342,39 +1342,39 @@ export default function DonorDashboard() {
                           </tr>
                         ) : (
                           filteredTransactions.map((transaction) => (
-                            <tr key={transaction.id} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{new Date(transaction.date).toLocaleDateString()}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 py-1 text-xs font-medium ${
-                                  transaction.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
-                                  transaction.type === 'Pledge' ? 'bg-green-100 text-green-800' :
-                                  'bg-gray-100 text-gray-800'
-                                }`}>
-                                  {transaction.type}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{transaction.category}</div>
-                              </td>
-                              <td className="px-6 py-4">
-                                <div className="text-sm text-gray-700">{transaction.description}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm text-gray-700">{transaction.project}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right">
-                                <div className={`text-sm  ${
-                                  transaction.type === 'Pledge' ? 'text-green-600' : 'text-blue-600'
-                                }`}>
-                                  {transaction.type === 'Pledge' ? '+' : '-'}{formatCurrency(transaction.amount)}
-                                </div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-right">
-                                <div className="text-sm  text-gray-900">{formatCurrency(transaction.balance)}</div>
-                              </td>
-                            </tr>
+                          <tr key={transaction.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{new Date(transaction.date).toLocaleDateString()}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 text-xs font-medium ${
+                                transaction.type === 'Disbursement' ? 'bg-blue-100 text-blue-800' :
+                                transaction.type === 'Pledge' ? 'bg-green-100 text-green-800' :
+                                'bg-gray-100 text-gray-800'
+                              }`}>
+                                {transaction.type}
+                          </span>
+                        </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{transaction.category}</div>
+                        </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-gray-700">{transaction.description}</div>
+                        </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-gray-700">{transaction.project}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className={`text-sm  ${
+                                transaction.type === 'Pledge' ? 'text-green-600' : 'text-blue-600'
+                              }`}>
+                                {transaction.type === 'Pledge' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right">
+                              <div className="text-sm  text-gray-900">{formatCurrency(transaction.balance)}</div>
+                        </td>
+                      </tr>
                           ))
                         )}
                   </tbody>
