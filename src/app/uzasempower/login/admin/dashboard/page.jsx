@@ -156,57 +156,6 @@ export default function AdminDashboard() {
     { id: 'reports', label: 'Reports', icon: BarChart3 },
   ]
 
-  // Mock data
-  const summaryData = {
-    totalProjects: 45,
-    pendingReview: 8,
-    activeProjects: 32,
-    totalFunds: 125000000,
-    totalDisbursed: 85000000,
-    pendingTranches: 5,
-    alertsCount: 12,
-    kycPending: 6
-  }
-
-  const projects = [
-    {
-      id: 1,
-      title: 'Vegetable Farming Project',
-      beneficiary: 'John Doe Cooperative',
-      location: 'Kicukiro, Rwanda',
-      category: 'Agriculture',
-      status: 'Pending Review',
-      requestedAmount: 5000000,
-      kycStatus: 'Verified',
-      submittedDate: '2024-01-20',
-      health: 'N/A'
-    },
-    {
-      id: 2,
-      title: 'Poultry Farming Initiative',
-      beneficiary: 'Women Farmers Group',
-      location: 'Gasabo, Rwanda',
-      category: 'Livestock',
-      status: 'Active',
-      requestedAmount: 3000000,
-      kycStatus: 'Verified',
-      submittedDate: '2024-01-15',
-      health: 'On Track'
-    },
-    {
-      id: 3,
-      title: 'Beekeeping Project',
-      beneficiary: 'Youth Cooperative',
-      location: 'Nyarugenge, Rwanda',
-      category: 'Agriculture',
-      status: 'At Risk',
-      requestedAmount: 2000000,
-      kycStatus: 'Pending',
-      submittedDate: '2024-01-18',
-      health: 'At Risk'
-    },
-  ]
-
   const milestones = [
     {
       id: 1,
