@@ -37,9 +37,12 @@ export default function BeneficiaryDashboard() {
   const [uploadEvidenceForm, setUploadEvidenceForm] = useState({
     documentType: '',
     projectId: '',
+    milestoneId: '',
     file: null,
     description: ''
   })
+  const [projectMilestones, setProjectMilestones] = useState([])
+  const [loadingMilestones, setLoadingMilestones] = useState(false)
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -62,6 +65,33 @@ export default function BeneficiaryDashboard() {
   const [user, setUser] = useState(null)
   const [submittedEvidence, setSubmittedEvidence] = useState([])
   const [loadingEvidence, setLoadingEvidence] = useState(false)
+  const [projectMilestonesList, setProjectMilestonesList] = useState({})
+  const [showCreateMilestoneModal, setShowCreateMilestoneModal] = useState(false)
+  const [milestoneForm, setMilestoneForm] = useState({
+    projectId: '',
+    title: '',
+    description: '',
+    targetDate: '',
+    trancheAmount: ''
+  })
+  const [reportForm, setReportForm] = useState({
+    title: '',
+    projectId: '',
+    startDate: '',
+    endDate: '',
+    executiveSummary: '',
+    keyAchievements: '',
+    totalSpent: '',
+    remainingBudget: '',
+    impactMetrics: '',
+    challenges: '',
+    nextSteps: '',
+    mediaFiles: []
+  })
+  const reportMediaInputRef = useRef(null)
+  const [reports, setReports] = useState([])
+  const [loadingReports, setLoadingReports] = useState(false)
+  const [showCreateReportModal, setShowCreateReportModal] = useState(false)
 
   // Load user data from localStorage
   useEffect(() => {
@@ -172,27 +202,50 @@ export default function BeneficiaryDashboard() {
     const fetchSubmittedEvidence = async () => {
       if (activeTab !== 'submit-evidence') return
       
+      // Don't fetch if projects are still loading or empty
+      if (!projects || projects.length === 0 || loading) {
+        return
+      }
+      
       try {
         setLoadingEvidence(true)
         const evidenceByProject = []
         
         // Fetch milestones for each project to get evidence
+        // Process sequentially to avoid overwhelming the server
         for (const project of projects) {
+          if (!project.id) continue
+          
           try {
+            // Validate project ID before making API call
+            if (!project.id || typeof project.id !== 'string') {
+              console.warn(`Invalid project ID for project:`, project)
+              continue
+            }
+
             const milestonesRes = await api.get(`/beneficiary/projects/${project.id}/milestones`)
+            
+            // Check if response is valid
+            if (!milestonesRes) {
+              console.warn(`No response received for project ${project.id}`)
+              continue
+            }
+
             if (milestonesRes.success && milestonesRes.data?.milestones) {
               const projectEvidence = []
               milestonesRes.data.milestones.forEach((milestone) => {
                 if (milestone.evidence && Array.isArray(milestone.evidence) && milestone.evidence.length > 0) {
                   milestone.evidence.forEach((ev) => {
-                    projectEvidence.push({
-                      id: `${milestone._id}-${ev.url}`,
-                      milestoneTitle: milestone.title,
-                      type: ev.type || 'document',
-                      url: ev.url,
-                      uploadedAt: ev.uploadedAt || milestone.createdAt,
-                      milestoneId: milestone._id
-                    })
+                    if (ev && ev.url) {
+                      projectEvidence.push({
+                        id: `${milestone._id || Date.now()}-${ev.url}`,
+                        milestoneTitle: milestone.title || 'Unknown Milestone',
+                        type: ev.type || 'document',
+                        url: ev.url,
+                        uploadedAt: ev.uploadedAt || milestone.createdAt || new Date(),
+                        milestoneId: milestone._id
+                      })
+                    }
                   })
                 }
               })
@@ -200,28 +253,101 @@ export default function BeneficiaryDashboard() {
               if (projectEvidence.length > 0) {
                 evidenceByProject.push({
                   projectId: project.id,
-                  projectTitle: project.title,
+                  projectTitle: project.title || 'Unknown Project',
                   evidence: projectEvidence
                 })
               }
             }
           } catch (error) {
-            console.error(`Error fetching milestones for project ${project.id}:`, error)
+            // Silently skip projects that fail - don't show error for each one
+            // Only log if it's not a network error (network errors are expected in some cases)
+            if (error.message && !error.message.includes('Network error')) {
+              console.warn(`Error fetching milestones for project ${project.id}:`, error.message || error)
+            }
+            // Continue with next project
+            continue
           }
         }
         
         setSubmittedEvidence(evidenceByProject)
       } catch (error) {
         console.error('Error fetching submitted evidence:', error)
+        // Don't show notification as this is a background operation
+        setSubmittedEvidence([])
       } finally {
         setLoadingEvidence(false)
       }
     }
 
-    if (projects.length > 0) {
+    // Add a small delay to avoid race conditions with initial data load
+    const timer = setTimeout(() => {
       fetchSubmittedEvidence()
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [activeTab, projects, loading])
+
+  // Fetch reports when reports tab is active
+  useEffect(() => {
+    const fetchReports = async () => {
+      if (activeTab !== 'reports') return
+
+      try {
+        setLoadingReports(true)
+        const reportsRes = await api.get('/beneficiary/reports/list')
+        if (reportsRes && reportsRes.success && reportsRes.data) {
+          const reportsArray = reportsRes.data.data || reportsRes.data.reports || reportsRes.data || []
+          setReports(Array.isArray(reportsArray) ? reportsArray : [])
+        } else {
+          setReports([])
+        }
+      } catch (error) {
+        console.error('Error fetching reports:', error)
+        setReports([])
+      } finally {
+        setLoadingReports(false)
+      }
     }
-  }, [activeTab, projects])
+
+    const timer = setTimeout(() => {
+      fetchReports()
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [activeTab])
+
+  // Fetch milestones for all projects when milestones tab is active
+  useEffect(() => {
+    const fetchAllMilestones = async () => {
+      if (activeTab !== 'milestones') return
+      if (!projects || projects.length === 0 || loading) return
+
+      try {
+        const milestonesByProject = {}
+        for (const project of projects) {
+          if (!project.id) continue
+          try {
+            const milestonesRes = await api.get(`/beneficiary/projects/${project.id}/milestones`)
+            if (milestonesRes && milestonesRes.success && milestonesRes.data?.milestones) {
+              milestonesByProject[project.id] = milestonesRes.data.milestones
+            }
+          } catch (error) {
+            console.warn(`Error fetching milestones for project ${project.id}:`, error.message || error)
+            milestonesByProject[project.id] = []
+          }
+        }
+        setProjectMilestonesList(milestonesByProject)
+      } catch (error) {
+        console.error('Error fetching milestones:', error)
+      }
+    }
+
+    const timer = setTimeout(() => {
+      fetchAllMilestones()
+    }, 100)
+
+    return () => clearTimeout(timer)
+  }, [activeTab, projects, loading])
 
   // Close sidebar on mobile when clicking outside
   useEffect(() => {
@@ -275,6 +401,7 @@ export default function BeneficiaryDashboard() {
   const menuItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'funding-request', label: 'Funding Request', icon: DollarSign },
+    { id: 'milestones', label: 'Milestones', icon: Target },
     { id: 'submit-evidence', label: 'Submit Evidence', icon: Upload },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'settings', label: 'Settings', icon: Settings },
@@ -291,7 +418,17 @@ export default function BeneficiaryDashboard() {
   }
 
   const getStatusColor = (status) => {
-    const colors = {
+    if (!status) return 'bg-gray-100 text-gray-800'
+    
+    // Report statuses (lowercase)
+    const reportStatuses = {
+      'submitted': 'bg-blue-100 text-blue-700',
+      'published': 'bg-green-100 text-green-700',
+      'draft': 'bg-gray-100 text-gray-700',
+    }
+    
+    // Project/Milestone statuses (capitalized)
+    const projectStatuses = {
       'Active': 'bg-green-100 text-green-800',
       'On Hold': 'bg-yellow-100 text-yellow-800',
       'Pending': 'bg-yellow-100 text-yellow-800',
@@ -299,7 +436,19 @@ export default function BeneficiaryDashboard() {
       'Rejected': 'bg-red-100 text-red-800',
       'Completed': 'bg-blue-100 text-blue-800',
     }
-    return colors[status] || 'bg-gray-100 text-gray-800'
+    
+    // Check report statuses first (case-sensitive lowercase)
+    if (reportStatuses[status]) {
+      return reportStatuses[status]
+    }
+    
+    // Check project statuses (case-sensitive capitalized)
+    if (projectStatuses[status]) {
+      return projectStatuses[status]
+    }
+    
+    // Default fallback
+    return 'bg-gray-100 text-gray-800'
   }
 
   // Filter donors
@@ -776,18 +925,18 @@ export default function BeneficiaryDashboard() {
                             <div key={project.id} className="bg-yellow-50 border border-yellow-200 p-3 rounded">
                               <p className="text-sm font-medium text-gray-900 mb-2">{project.title}</p>
                               <div className="flex flex-wrap gap-2 mb-2">
-                                {project.missingDocuments.map((doc, idx) => (
+                              {project.missingDocuments.map((doc, idx) => (
                                   <span key={idx} className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
-                                    {doc}
-                                  </span>
-                                ))}
-                              </div>
-                              <button 
-                                onClick={() => setShowUploadEvidenceModal(true)}
+                                  {doc}
+                                </span>
+                              ))}
+                            </div>
+                            <button 
+                              onClick={() => setShowUploadEvidenceModal(true)}
                                 className="text-xs text-green-600 hover:text-green-700 font-medium"
-                              >
-                                Upload Documents
-                              </button>
+                            >
+                              Upload Documents
+                            </button>
                             </div>
                           ))
                         ) : (
@@ -837,9 +986,9 @@ export default function BeneficiaryDashboard() {
                                         View
                                       </a>
                                     </div>
-                                  </div>
-                                ))}
-                              </div>
+                          </div>
+                        ))}
+                      </div>
                             </div>
                           ))}
                         </div>
@@ -869,36 +1018,270 @@ export default function BeneficiaryDashboard() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-6"
               >
-                <div className="bg-white border border-gray-100 p-6">
-                  <h2 className="text-xl text-gray-900 mb-4">Prepare Reports for Donors</h2>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Create comprehensive reports to share with your donors about project progress and impact.
-                  </p>
+                <div className="bg-white border border-gray-100">
+                  <div className="p-4 md:p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h2 className="text-xl text-gray-900">Reports</h2>
+                        <p className="text-sm text-gray-600 mt-1">
+                          View and create reports to share with your donors
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowCreateReportModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Create Report
+                      </button>
+                    </div>
+                  </div>
 
+                  <div className="p-4 md:p-6">
+                    {loadingReports ? (
+                      <div className="text-center py-8">
+                        <p className="text-sm text-gray-500">Loading reports...</p>
+                      </div>
+                    ) : reports.length > 0 ? (
                   <div className="space-y-4">
+                        {reports.map((report) => (
+                          <div key={report._id || report.id} className="border border-gray-200 rounded-lg p-4 hover:border-green-300 transition-colors">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2">
+                                  <h3 className="text-lg font-semibold text-gray-900">{report.title}</h3>
+                                  <span className={`px-2 py-1 text-xs rounded ${getStatusColor(report.status)}`}>
+                                    {report.status || 'draft'}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
+                                  <span>Project: {report.project?.title || 'Unknown'}</span>
+                                  {report.startDate && report.endDate && (
+                                    <>
+                                      <span>•</span>
+                                      <span>
+                                        {new Date(report.startDate).toLocaleDateString()} - {new Date(report.endDate).toLocaleDateString()}
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                                {report.executiveSummary && (
+                                  <p className="text-sm text-gray-700 mb-2 line-clamp-2">{report.executiveSummary}</p>
+                                )}
+                                {report.media && report.media.length > 0 && (
+                                  <div className="flex items-center gap-2 mt-2">
+                                    <FileText className="w-4 h-4 text-gray-400" />
+                                    <span className="text-xs text-gray-500">{report.media.length} media file(s)</span>
+                                  </div>
+                                )}
+                                <p className="text-xs text-gray-500 mt-2">
+                                  Created: {report.createdAt ? new Date(report.createdAt).toLocaleDateString() : 'N/A'}
+                                </p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-4">
+                                <button
+                                  className="px-3 py-1.5 text-xs font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors"
+                                >
+                                  View
+                                </button>
+                                <button
+                                  className="px-3 py-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <FileText className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                        <p className="text-sm text-gray-500 mb-2">No reports created yet</p>
+                        <p className="text-xs text-gray-400 mb-4">Create your first report to share project progress with donors</p>
+                        <button
+                          onClick={() => setShowCreateReportModal(true)}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Create Report
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Create Report Modal */}
+            {showCreateReportModal && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="bg-white max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+                >
+                  <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                    <h3 className="text-xl text-gray-900">Create New Report</h3>
+                    <button
+                      onClick={() => {
+                        setShowCreateReportModal(false)
+                        setReportForm({
+                          title: '',
+                          projectId: '',
+                          startDate: '',
+                          endDate: '',
+                          executiveSummary: '',
+                          keyAchievements: '',
+                          totalSpent: '',
+                          remainingBudget: '',
+                          impactMetrics: '',
+                          challenges: '',
+                          nextSteps: '',
+                          mediaFiles: []
+                        })
+                        if (reportMediaInputRef.current) {
+                          reportMediaInputRef.current.value = ''
+                        }
+                      }}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  
+                  <div className="p-6">
                     <div className="border border-gray-200 p-4">
-                      <h3 className="text-sm text-gray-900 mb-4">Create New Report</h3>
+                      <h3 className="text-sm text-gray-900 mb-4">Report Details</h3>
                       <form 
                         className="space-y-4"
-                        onSubmit={(e) => {
+                        onSubmit={async (e) => {
                           e.preventDefault()
-                          showNotification('Report submitted successfully', 'success')
+                          
+                          if (!reportForm.title || !reportForm.projectId) {
+                            showNotification('Please fill in required fields (Title and Project)', 'error')
+                            return
+                          }
+
+                          setIsSubmitting(true)
+                          try {
+                            // First, upload media files if any
+                            const mediaUrls = []
+                            if (reportForm.mediaFiles.length > 0) {
+                              for (const file of reportForm.mediaFiles) {
+                                try {
+                                  const formData = new FormData()
+                                  formData.append('file', file)
+                                  
+                                  const token = getAuthToken()
+                                  const headers = {}
+                                  if (token) {
+                                    headers['Authorization'] = `Bearer ${token}`
+                                  }
+
+                                  const uploadResponse = await fetch(`${API_BASE_URL}/upload`, {
+                                    method: 'POST',
+                                    headers,
+                                    body: formData,
+                                  })
+
+                                  const uploadData = await uploadResponse.json()
+                                  
+                                  if (uploadResponse.ok && uploadData.url) {
+                                    mediaUrls.push({
+                                      url: uploadData.url,
+                                      type: file.type.startsWith('image/') ? 'image' : 'video',
+                                      fileName: file.name
+                                    })
+                                  }
+                                } catch (error) {
+                                  console.error('Error uploading media file:', error)
+                                }
+                              }
+                            }
+
+                            // Create report with media URLs
+                            const reportData = {
+                              title: reportForm.title,
+                              projectId: reportForm.projectId,
+                              startDate: reportForm.startDate || null,
+                              endDate: reportForm.endDate || null,
+                              executiveSummary: reportForm.executiveSummary,
+                              keyAchievements: reportForm.keyAchievements,
+                              financialSummary: {
+                                totalSpent: reportForm.totalSpent ? Number(reportForm.totalSpent) : null,
+                                remainingBudget: reportForm.remainingBudget ? Number(reportForm.remainingBudget) : null,
+                              },
+                              impactMetrics: reportForm.impactMetrics,
+                              challenges: reportForm.challenges,
+                              nextSteps: reportForm.nextSteps,
+                              media: mediaUrls,
+                            }
+
+                            const response = await api.post('/beneficiary/reports', reportData)
+                            
+                            if (response.success) {
+                              showNotification('Report created successfully', 'success')
+                              setShowCreateReportModal(false)
+                              
+                              // Refresh reports list
+                              const reportsRes = await api.get('/beneficiary/reports/list')
+                              if (reportsRes && reportsRes.success && reportsRes.data) {
+                                const reportsArray = reportsRes.data.data || reportsRes.data.reports || reportsRes.data || []
+                                setReports(Array.isArray(reportsArray) ? reportsArray : [])
+                              }
+                            } else {
+                              showNotification(response.message || 'Failed to create report', 'error')
+                            }
+                            
+                            // Reset form
+                            setReportForm({
+                              title: '',
+                              projectId: '',
+                              startDate: '',
+                              endDate: '',
+                              executiveSummary: '',
+                              keyAchievements: '',
+                              totalSpent: '',
+                              remainingBudget: '',
+                              impactMetrics: '',
+                              challenges: '',
+                              nextSteps: '',
+                              mediaFiles: []
+                            })
+                            if (reportMediaInputRef.current) {
+                              reportMediaInputRef.current.value = ''
+                            }
+                          } catch (error) {
+                            console.error('Error submitting report:', error)
+                            showNotification(error.message || 'Failed to submit report', 'error')
+                          } finally {
+                            setIsSubmitting(false)
+                          }
                         }}
                       >
                         <div>
-                          <label className="block text-xs text-gray-700 mb-2">Report Title</label>
+                          <label className="block text-xs text-gray-700 mb-2">Report Title *</label>
                           <input
                             type="text"
+                            value={reportForm.title}
+                            onChange={(e) => setReportForm({ ...reportForm, title: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="e.g., Q1 2024 Progress Report"
+                            required
                           />
                         </div>
                         <div>
-                          <label className="block text-xs text-gray-700 mb-2">Project</label>
-                          <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                            <option>Select project...</option>
+                          <label className="block text-xs text-gray-700 mb-2">Project *</label>
+                          <select 
+                            value={reportForm.projectId}
+                            onChange={(e) => setReportForm({ ...reportForm, projectId: e.target.value })}
+                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                            required
+                          >
+                            <option value="">Select project...</option>
                             {projects.map((project) => (
-                              <option key={project.id}>{project.title}</option>
+                              <option key={project.id} value={project.id}>{project.title}</option>
                             ))}
                           </select>
                         </div>
@@ -907,11 +1290,15 @@ export default function BeneficiaryDashboard() {
                           <div className="grid grid-cols-2 gap-4">
                             <input
                               type="date"
+                              value={reportForm.startDate}
+                              onChange={(e) => setReportForm({ ...reportForm, startDate: e.target.value })}
                               className="px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                               placeholder="Start Date"
                             />
                             <input
                               type="date"
+                              value={reportForm.endDate}
+                              onChange={(e) => setReportForm({ ...reportForm, endDate: e.target.value })}
                               className="px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                               placeholder="End Date"
                             />
@@ -921,6 +1308,8 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-xs text-gray-700 mb-2">Executive Summary</label>
                           <textarea
                             rows={4}
+                            value={reportForm.executiveSummary}
+                            onChange={(e) => setReportForm({ ...reportForm, executiveSummary: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Provide a high-level overview of project progress, achievements, and challenges..."
                           />
@@ -929,6 +1318,8 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-xs text-gray-700 mb-2">Key Achievements</label>
                           <textarea
                             rows={3}
+                            value={reportForm.keyAchievements}
+                            onChange={(e) => setReportForm({ ...reportForm, keyAchievements: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="List major milestones and accomplishments..."
                           />
@@ -940,6 +1331,8 @@ export default function BeneficiaryDashboard() {
                               <label className="block text-xs text-gray-600 mb-1">Total Spent</label>
                               <input
                                 type="number"
+                                value={reportForm.totalSpent}
+                                onChange={(e) => setReportForm({ ...reportForm, totalSpent: e.target.value })}
                                 className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 placeholder="Amount in RWF"
                               />
@@ -948,6 +1341,8 @@ export default function BeneficiaryDashboard() {
                               <label className="block text-xs text-gray-600 mb-1">Remaining Budget</label>
                               <input
                                 type="number"
+                                value={reportForm.remainingBudget}
+                                onChange={(e) => setReportForm({ ...reportForm, remainingBudget: e.target.value })}
                                 className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 placeholder="Amount in RWF"
                               />
@@ -958,6 +1353,8 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-xs text-gray-700 mb-2">Impact Metrics</label>
                           <textarea
                             rows={3}
+                            value={reportForm.impactMetrics}
+                            onChange={(e) => setReportForm({ ...reportForm, impactMetrics: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Describe the impact: beneficiaries reached, income generated, jobs created, etc..."
                           />
@@ -966,6 +1363,8 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-xs text-gray-700 mb-2">Challenges & Solutions</label>
                           <textarea
                             rows={3}
+                            value={reportForm.challenges}
+                            onChange={(e) => setReportForm({ ...reportForm, challenges: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Describe any challenges faced and how they were addressed..."
                           />
@@ -974,35 +1373,242 @@ export default function BeneficiaryDashboard() {
                           <label className="block text-xs text-gray-700 mb-2">Next Steps</label>
                           <textarea
                             rows={3}
+                            value={reportForm.nextSteps}
+                            onChange={(e) => setReportForm({ ...reportForm, nextSteps: e.target.value })}
                             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                             placeholder="Outline future plans and upcoming milestones..."
                           />
                         </div>
                         <div>
                           <label className="block text-xs text-gray-700 mb-2">Supporting Media (Photos, Videos)</label>
-                          <div className="border-2 border-dashed border-gray-300 p-6 text-center hover:border-green-500 transition-colors cursor-pointer">
+                          <input
+                            ref={reportMediaInputRef}
+                            type="file"
+                            accept="image/*,video/*"
+                            multiple
+                            onChange={(e) => {
+                              const files = Array.from(e.target.files || [])
+                              const validFiles = []
+                              
+                              files.forEach(file => {
+                                // Validate file size (50MB)
+                                if (file.size > 50 * 1024 * 1024) {
+                                  showNotification(`${file.name} is too large. Maximum size is 50MB`, 'error')
+                                  return
+                                }
+                                
+                                // Validate file type
+                                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'video/mp4', 'video/quicktime']
+                                if (!validTypes.includes(file.type)) {
+                                  showNotification(`${file.name} is not a supported format. Please use JPG, PNG, GIF, or MP4`, 'error')
+                                  return
+                                }
+                                
+                                validFiles.push(file)
+                              })
+                              
+                              if (validFiles.length > 0) {
+                                setReportForm({
+                                  ...reportForm,
+                                  mediaFiles: [...reportForm.mediaFiles, ...validFiles]
+                                })
+                              }
+                            }}
+                            className="hidden"
+                          />
+                          <div
+                            onClick={() => reportMediaInputRef.current?.click()}
+                            onDrop={(e) => {
+                              e.preventDefault()
+                              const files = Array.from(e.dataTransfer.files || [])
+                              const validFiles = []
+                              
+                              files.forEach(file => {
+                                if (file.size > 50 * 1024 * 1024) {
+                                  showNotification(`${file.name} is too large. Maximum size is 50MB`, 'error')
+                                  return
+                                }
+                                
+                                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'video/mp4', 'video/quicktime']
+                                if (!validTypes.includes(file.type)) {
+                                  showNotification(`${file.name} is not a supported format`, 'error')
+                                  return
+                                }
+                                
+                                validFiles.push(file)
+                              })
+                              
+                              if (validFiles.length > 0) {
+                                setReportForm({
+                                  ...reportForm,
+                                  mediaFiles: [...reportForm.mediaFiles, ...validFiles]
+                                })
+                              }
+                            }}
+                            onDragOver={(e) => {
+                              e.preventDefault()
+                            }}
+                            className={`border-2 border-dashed p-6 text-center transition-colors cursor-pointer ${
+                              reportForm.mediaFiles.length > 0 
+                                ? 'border-green-500 bg-green-50' 
+                                : 'border-gray-300 hover:border-green-500'
+                            }`}
+                          >
                             <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                            <p className="text-sm text-gray-600">Upload images or videos</p>
-                            <p className="text-xs text-gray-500 mt-1">JPG, PNG, MP4 up to 50MB</p>
+                            <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
+                            <p className="text-xs text-gray-500 mt-1">JPG, PNG, GIF, MP4 up to 50MB each</p>
+                            {reportForm.mediaFiles.length > 0 && (
+                              <p className="text-xs text-green-600 mt-2 font-medium">
+                                {reportForm.mediaFiles.length} file(s) selected
+                              </p>
+                            )}
                           </div>
+                          
+                          {/* Display selected files */}
+                          {reportForm.mediaFiles.length > 0 && (
+                            <div className="mt-4 space-y-2">
+                              {reportForm.mediaFiles.map((file, index) => (
+                                <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded border border-gray-200">
+                                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                                    <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-sm text-gray-900 font-medium truncate">{file.name}</p>
+                                      <p className="text-xs text-gray-500">
+                                        {(file.size / 1024 / 1024).toFixed(2)} MB • {file.type.startsWith('image/') ? 'Image' : 'Video'}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newFiles = reportForm.mediaFiles.filter((_, i) => i !== index)
+                                      setReportForm({ ...reportForm, mediaFiles: newFiles })
+                                    }}
+                                    className="ml-2 text-red-600 hover:text-red-700"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                         <div className="flex gap-4">
                           <button
                             type="button"
-                            onClick={() => showNotification('Report draft saved successfully', 'success')}
-                            className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                            onClick={() => {
+                              setShowCreateReportModal(false)
+                              setReportForm({
+                                title: '',
+                                projectId: '',
+                                startDate: '',
+                                endDate: '',
+                                executiveSummary: '',
+                                keyAchievements: '',
+                                totalSpent: '',
+                                remainingBudget: '',
+                                impactMetrics: '',
+                                challenges: '',
+                                nextSteps: '',
+                                mediaFiles: []
+                              })
+                              if (reportMediaInputRef.current) {
+                                reportMediaInputRef.current.value = ''
+                              }
+                            }}
+                            disabled={isSubmitting}
+                            className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
                           >
-                            Save Draft
+                            Cancel
                           </button>
                           <button
                             type="submit"
-                            className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                            disabled={isSubmitting}
+                            className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                           >
-                            Submit Report
+                            {isSubmitting ? 'Submitting...' : 'Submit Report'}
                           </button>
                         </div>
                       </form>
                     </div>
+                  </div>
+                </motion.div>
+              </div>
+            )}
+
+
+            {/* Milestones Tab */}
+            {activeTab === 'milestones' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-6"
+              >
+                <div className="bg-white border border-gray-100">
+                  <div className="p-4 md:p-6 border-b border-gray-200">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-xl text-gray-900">Project Milestones</h2>
+                      <button
+                        onClick={() => setShowCreateMilestoneModal(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Create Milestone
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 md:p-6">
+                    {projects.length === 0 ? (
+                      <p className="text-sm text-gray-500">No projects found. Please create a project first.</p>
+                    ) : (
+                      <div className="space-y-6">
+                        {projects.map((project) => {
+                          const projectMilestones = projectMilestonesList[project.id] || []
+                          return (
+                            <div key={project.id} className="border border-gray-200 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-gray-900">{project.title}</h3>
+                                <span className="text-sm text-gray-500">{projectMilestones.length} milestone(s)</span>
+                              </div>
+                              
+                              {projectMilestones.length > 0 ? (
+                                <div className="space-y-3">
+                                  {projectMilestones.map((milestone) => (
+                                    <div key={milestone._id || milestone.id} className="border border-gray-200 rounded p-4 bg-gray-50">
+                                      <div className="flex items-start justify-between">
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2 mb-2">
+                                            <span className="text-sm font-semibold text-gray-900">
+                                              Milestone {milestone.number}: {milestone.title}
+                                            </span>
+                                            <span className={`px-2 py-1 text-xs rounded ${getStatusColor(milestone.status)}`}>
+                                              {milestone.status}
+                                            </span>
+                                          </div>
+                                          {milestone.description && (
+                                            <p className="text-sm text-gray-600 mb-2">{milestone.description}</p>
+                                          )}
+                                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                                            <span>Target Date: {milestone.targetDate ? new Date(milestone.targetDate).toLocaleDateString() : 'N/A'}</span>
+                                            <span>Tranche: {formatCurrency(milestone.trancheAmount || 0)}</span>
+                                            {milestone.evidence && milestone.evidence.length > 0 && (
+                                              <span>{milestone.evidence.length} evidence file(s)</span>
+                                            )}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-sm text-gray-500">No milestones for this project yet.</p>
+                              )}
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               </motion.div>
@@ -1427,10 +2033,11 @@ export default function BeneficiaryDashboard() {
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
               <h3 className="text-xl text-gray-900">Upload Evidence</h3>
               <button
-                onClick={() => {
-                  setShowUploadEvidenceModal(false)
-                  setUploadEvidenceForm({ documentType: '', projectId: '', file: null, description: '' })
-                }}
+                  onClick={() => {
+                    setShowUploadEvidenceModal(false)
+                    setUploadEvidenceForm({ documentType: '', projectId: '', milestoneId: '', file: null, description: '' })
+                    setProjectMilestones([])
+                  }}
                 className="text-gray-400 hover:text-gray-600"
               >
                 ×
@@ -1442,7 +2049,7 @@ export default function BeneficiaryDashboard() {
               onSubmit={async (e) => {
                 e.preventDefault()
                 
-                if (!uploadEvidenceForm.documentType || !uploadEvidenceForm.projectId || !uploadEvidenceForm.file) {
+                if (!uploadEvidenceForm.documentType || !uploadEvidenceForm.projectId || !uploadEvidenceForm.milestoneId || !uploadEvidenceForm.file) {
                   showNotification('Please fill in all required fields and select a file', 'error')
                   return
                 }
@@ -1451,8 +2058,7 @@ export default function BeneficiaryDashboard() {
                 try {
                   const formData = new FormData()
                   formData.append('file', uploadEvidenceForm.file)
-                  formData.append('documentType', uploadEvidenceForm.documentType)
-                  formData.append('projectId', uploadEvidenceForm.projectId)
+                  // Optionally add documentType and description as form fields if backend needs them
                   if (uploadEvidenceForm.description) {
                     formData.append('description', uploadEvidenceForm.description)
                   }
@@ -1465,7 +2071,8 @@ export default function BeneficiaryDashboard() {
                   }
                   // Don't set Content-Type - browser will set it with boundary for FormData
 
-                  const response = await fetch(`${API_BASE_URL}/upload`, {
+                  // Use the correct endpoint: /beneficiary/milestones/:id/evidence
+                  const response = await fetch(`${API_BASE_URL}/beneficiary/milestones/${uploadEvidenceForm.milestoneId}/evidence`, {
                     method: 'POST',
                     headers,
                     body: formData,
@@ -1474,12 +2081,12 @@ export default function BeneficiaryDashboard() {
                   const data = await response.json()
                   
                   if (!response.ok) {
-                    throw new Error(data.message || 'Failed to upload document')
+                    throw new Error(data.message || 'Failed to upload evidence')
                   }
                   
                   if (data.success !== false) {
-                    showNotification('Document submitted successfully', 'success')
-                    setShowUploadEvidenceModal(false)
+                showNotification('Document submitted successfully', 'success')
+                setShowUploadEvidenceModal(false)
                     setUploadEvidenceForm({ documentType: '', projectId: '', file: null, description: '' })
                     
                     // Refresh submitted evidence list if we're on the submit-evidence tab
@@ -1551,7 +2158,30 @@ export default function BeneficiaryDashboard() {
                 <label className="block text-sm text-gray-700 mb-2">Project *</label>
                 <select 
                   value={uploadEvidenceForm.projectId}
-                  onChange={(e) => setUploadEvidenceForm({ ...uploadEvidenceForm, projectId: e.target.value })}
+                  onChange={async (e) => {
+                    const projectId = e.target.value
+                    setUploadEvidenceForm({ ...uploadEvidenceForm, projectId, milestoneId: '' })
+                    setProjectMilestones([])
+                    
+                    if (projectId) {
+                      setLoadingMilestones(true)
+                      try {
+                        const milestonesRes = await api.get(`/beneficiary/projects/${projectId}/milestones`)
+                        if (milestonesRes.success && milestonesRes.data?.milestones) {
+                          setProjectMilestones(milestonesRes.data.milestones)
+                          // Auto-select first milestone if available
+                          if (milestonesRes.data.milestones.length > 0) {
+                            setUploadEvidenceForm(prev => ({ ...prev, milestoneId: milestonesRes.data.milestones[0]._id }))
+                          }
+                        }
+                      } catch (error) {
+                        console.error('Error fetching milestones:', error)
+                        showNotification('Failed to load milestones for this project', 'error')
+                      } finally {
+                        setLoadingMilestones(false)
+                      }
+                    }
+                  }}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   required
                 >
@@ -1561,6 +2191,34 @@ export default function BeneficiaryDashboard() {
                   ))}
                 </select>
               </div>
+              {uploadEvidenceForm.projectId && (
+              <div>
+                  <label className="block text-sm text-gray-700 mb-2">Milestone *</label>
+                  {loadingMilestones ? (
+                    <div className="px-4 py-2 border border-gray-300 bg-gray-50 text-sm text-gray-500">
+                      Loading milestones...
+                    </div>
+                  ) : projectMilestones.length > 0 ? (
+                    <select 
+                      value={uploadEvidenceForm.milestoneId}
+                      onChange={(e) => setUploadEvidenceForm({ ...uploadEvidenceForm, milestoneId: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      required
+                    >
+                      <option value="">Select milestone...</option>
+                      {projectMilestones.map((milestone) => (
+                        <option key={milestone._id} value={milestone._id}>
+                          {milestone.title || `Milestone ${milestone.number}`} {milestone.status ? `(${milestone.status})` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="px-4 py-2 border border-yellow-300 bg-yellow-50 text-sm text-yellow-700">
+                      No milestones found for this project. Please create milestones first.
+                    </div>
+                  )}
+                </div>
+              )}
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Upload File *</label>
                 <input
@@ -1640,9 +2298,9 @@ export default function BeneficiaryDashboard() {
                     </div>
                   ) : (
                     <>
-                      <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                      <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-                      <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                  <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
                     </>
                   )}
                 </div>
@@ -1662,7 +2320,8 @@ export default function BeneficiaryDashboard() {
                   type="button"
                   onClick={() => {
                     setShowUploadEvidenceModal(false)
-                    setUploadEvidenceForm({ documentType: '', projectId: '', file: null, description: '' })
+                    setUploadEvidenceForm({ documentType: '', projectId: '', milestoneId: '', file: null, description: '' })
+                    setProjectMilestones([])
                   }}
                   disabled={isSubmitting}
                   className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
@@ -1675,6 +2334,154 @@ export default function BeneficiaryDashboard() {
                   className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? 'Uploading...' : 'Submit Document'}
+                </button>
+              </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Create Milestone Modal */}
+      {showCreateMilestoneModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Create Milestone</h3>
+              <button
+                onClick={() => {
+                  setShowCreateMilestoneModal(false)
+                  setMilestoneForm({ projectId: '', title: '', description: '', targetDate: '', trancheAmount: '' })
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ×
+              </button>
+            </div>
+            
+            <form 
+              className="p-6 space-y-4"
+              onSubmit={async (e) => {
+                e.preventDefault()
+                
+                if (!milestoneForm.projectId || !milestoneForm.title || !milestoneForm.targetDate || !milestoneForm.trancheAmount) {
+                  showNotification('Please fill in all required fields', 'error')
+                  return
+                }
+
+                setIsSubmitting(true)
+                try {
+                  const response = await api.post(`/beneficiary/projects/${milestoneForm.projectId}/milestones`, {
+                    title: milestoneForm.title,
+                    description: milestoneForm.description,
+                    targetDate: milestoneForm.targetDate,
+                    trancheAmount: Number(milestoneForm.trancheAmount)
+                  })
+
+                  if (response.success) {
+                    showNotification('Milestone created successfully', 'success')
+                    setShowCreateMilestoneModal(false)
+                    setMilestoneForm({ projectId: '', title: '', description: '', targetDate: '', trancheAmount: '' })
+                    
+                    // Refresh milestones for the project
+                    const milestonesRes = await api.get(`/beneficiary/projects/${milestoneForm.projectId}/milestones`)
+                    if (milestonesRes && milestonesRes.success && milestonesRes.data?.milestones) {
+                      setProjectMilestonesList(prev => ({
+                        ...prev,
+                        [milestoneForm.projectId]: milestonesRes.data.milestones
+                      }))
+                    }
+                  } else {
+                    showNotification(response.message || 'Failed to create milestone', 'error')
+                  }
+                } catch (error) {
+                  console.error('Error creating milestone:', error)
+                  showNotification(error.message || 'Failed to create milestone', 'error')
+                } finally {
+                  setIsSubmitting(false)
+                }
+              }}
+            >
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Project *</label>
+                <select 
+                  value={milestoneForm.projectId}
+                  onChange={(e) => setMilestoneForm({ ...milestoneForm, projectId: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select project...</option>
+                  {projects.map((project) => (
+                    <option key={project.id} value={project.id}>{project.title}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Milestone Title *</label>
+                <input
+                  type="text"
+                  value={milestoneForm.title}
+                  onChange={(e) => setMilestoneForm({ ...milestoneForm, title: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="e.g., Phase 1: Initial Setup"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-2">Description</label>
+                <textarea
+                  rows={3}
+                  value={milestoneForm.description}
+                  onChange={(e) => setMilestoneForm({ ...milestoneForm, description: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  placeholder="Describe what this milestone entails..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-700 mb-2">Target Date *</label>
+                  <input
+                    type="date"
+                    value={milestoneForm.targetDate}
+                    onChange={(e) => setMilestoneForm({ ...milestoneForm, targetDate: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-700 mb-2">Tranche Amount (RWF) *</label>
+                  <input
+                    type="number"
+                    value={milestoneForm.trancheAmount}
+                    onChange={(e) => setMilestoneForm({ ...milestoneForm, trancheAmount: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    placeholder="Amount for this milestone"
+                    min="0"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex gap-4 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateMilestoneModal(false)
+                    setMilestoneForm({ projectId: '', title: '', description: '', targetDate: '', trancheAmount: '' })
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Creating...' : 'Create Milestone'}
                 </button>
               </div>
             </form>
