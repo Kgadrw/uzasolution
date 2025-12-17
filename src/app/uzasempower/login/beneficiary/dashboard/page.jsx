@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Menu, Info, Wallet, Activity, Target,
   Plus, Upload, FileText, BarChart3, Users, TrendingUp, X
 } from 'lucide-react'
-import { api } from '@/lib/api/config'
+import { api, getAuthToken, API_BASE_URL } from '@/lib/api/config'
 
 export default function BeneficiaryDashboard() {
   const router = useRouter()
@@ -34,8 +34,15 @@ export default function BeneficiaryDashboard() {
     amount: '',
     reason: ''
   })
+  const [uploadEvidenceForm, setUploadEvidenceForm] = useState({
+    documentType: '',
+    projectId: '',
+    file: null,
+    description: ''
+  })
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
+  const fileInputRef = useRef(null)
 
   // Data state
   const [loading, setLoading] = useState(true)
@@ -53,6 +60,8 @@ export default function BeneficiaryDashboard() {
   const [missingDocuments, setMissingDocuments] = useState([])
   const [notifications, setNotifications] = useState([])
   const [user, setUser] = useState(null)
+  const [submittedEvidence, setSubmittedEvidence] = useState([])
+  const [loadingEvidence, setLoadingEvidence] = useState(false)
 
   // Load user data from localStorage
   useEffect(() => {
@@ -127,7 +136,8 @@ export default function BeneficiaryDashboard() {
             category: p.category || 'Other',
             totalFunded: p.totalFunded || 0,
             totalRequested: p.fundingGoal || p.amount || 0,
-            status: p.status || 'pending'
+            status: p.status || 'pending',
+            missingDocuments: p.missingDocuments || []
           }))
           setProjects(formattedProjects)
         }
@@ -135,7 +145,9 @@ export default function BeneficiaryDashboard() {
         // Fetch missing documents
         const missingDocsRes = await api.get('/beneficiary/missing-documents')
         if (missingDocsRes.success && missingDocsRes.data) {
-          const formattedDocs = (missingDocsRes.data.documents || missingDocsRes.data || []).map((d, idx) => ({
+          // Handle different response structures (data.documents, data.data, or direct array)
+          const docsArray = missingDocsRes.data.documents || missingDocsRes.data.data || missingDocsRes.data || []
+          const formattedDocs = (Array.isArray(docsArray) ? docsArray : []).map((d, idx) => ({
             id: d._id || idx + 1,
             projectName: d.project?.title || 'Unknown Project',
             milestoneName: d.milestone?.title || 'Unknown Milestone',
@@ -154,6 +166,62 @@ export default function BeneficiaryDashboard() {
 
     fetchDashboardData()
   }, [])
+
+  // Fetch submitted evidence when submit-evidence tab is active
+  useEffect(() => {
+    const fetchSubmittedEvidence = async () => {
+      if (activeTab !== 'submit-evidence') return
+      
+      try {
+        setLoadingEvidence(true)
+        const evidenceByProject = []
+        
+        // Fetch milestones for each project to get evidence
+        for (const project of projects) {
+          try {
+            const milestonesRes = await api.get(`/beneficiary/projects/${project.id}/milestones`)
+            if (milestonesRes.success && milestonesRes.data?.milestones) {
+              const projectEvidence = []
+              milestonesRes.data.milestones.forEach((milestone) => {
+                if (milestone.evidence && Array.isArray(milestone.evidence) && milestone.evidence.length > 0) {
+                  milestone.evidence.forEach((ev) => {
+                    projectEvidence.push({
+                      id: `${milestone._id}-${ev.url}`,
+                      milestoneTitle: milestone.title,
+                      type: ev.type || 'document',
+                      url: ev.url,
+                      uploadedAt: ev.uploadedAt || milestone.createdAt,
+                      milestoneId: milestone._id
+                    })
+                  })
+                }
+              })
+              
+              if (projectEvidence.length > 0) {
+                evidenceByProject.push({
+                  projectId: project.id,
+                  projectTitle: project.title,
+                  evidence: projectEvidence
+                })
+              }
+            }
+          } catch (error) {
+            console.error(`Error fetching milestones for project ${project.id}:`, error)
+          }
+        }
+        
+        setSubmittedEvidence(evidenceByProject)
+      } catch (error) {
+        console.error('Error fetching submitted evidence:', error)
+      } finally {
+        setLoadingEvidence(false)
+      }
+    }
+
+    if (projects.length > 0) {
+      fetchSubmittedEvidence()
+    }
+  }, [activeTab, projects])
 
   // Close sidebar on mobile when clicking outside
   useEffect(() => {
@@ -604,7 +672,7 @@ export default function BeneficiaryDashboard() {
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              {project.missingDocuments.length > 0 ? (
+                              {project.missingDocuments && project.missingDocuments.length > 0 ? (
                                 <span className="px-2 py-1 text-xs bg-red-100 text-red-800">
                                   {project.missingDocuments.length} missing
                                 </span>
@@ -698,29 +766,86 @@ export default function BeneficiaryDashboard() {
                     Upload required documents and evidence to support your funding requests and project milestones.
                   </p>
 
-                  <div className="space-y-4">
+                  <div className="space-y-6">
+                    {/* Missing Documents Section */}
                     <div className="border border-gray-200 p-4">
-                      <h3 className="text-sm text-gray-900 mb-2">Missing Documents</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3">Missing Documents</h3>
                       <div className="space-y-2">
-                        {projects.filter(p => p.missingDocuments.length > 0).map((project) => (
-                          <div key={project.id} className="bg-yellow-50 border border-yellow-200 p-3">
-                            <p className="text-xs text-gray-900 mb-2">{project.title}</p>
-                            <div className="flex flex-wrap gap-2">
-                              {project.missingDocuments.map((doc, idx) => (
-                                <span key={idx} className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800">
-                                  {doc}
-                                </span>
-                              ))}
+                        {projects.filter(p => p.missingDocuments && p.missingDocuments.length > 0).length > 0 ? (
+                          projects.filter(p => p.missingDocuments && p.missingDocuments.length > 0).map((project) => (
+                            <div key={project.id} className="bg-yellow-50 border border-yellow-200 p-3 rounded">
+                              <p className="text-sm font-medium text-gray-900 mb-2">{project.title}</p>
+                              <div className="flex flex-wrap gap-2 mb-2">
+                                {project.missingDocuments.map((doc, idx) => (
+                                  <span key={idx} className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
+                                    {doc}
+                                  </span>
+                                ))}
+                              </div>
+                              <button 
+                                onClick={() => setShowUploadEvidenceModal(true)}
+                                className="text-xs text-green-600 hover:text-green-700 font-medium"
+                              >
+                                Upload Documents
+                              </button>
                             </div>
-                            <button 
-                              onClick={() => setShowUploadEvidenceModal(true)}
-                              className="mt-2 text-xs text-green-600 hover:text-green-700"
-                            >
-                              Upload Documents
-                            </button>
-                          </div>
-                        ))}
+                          ))
+                        ) : (
+                          <p className="text-sm text-gray-500">No missing documents</p>
+                        )}
                       </div>
+                    </div>
+
+                    {/* Submitted Evidence Section */}
+                    <div className="border border-gray-200 p-4">
+                      <h3 className="text-sm font-semibold text-gray-900 mb-3">Previously Submitted Evidence</h3>
+                      {loadingEvidence ? (
+                        <div className="text-center py-4">
+                          <p className="text-sm text-gray-500">Loading evidence...</p>
+                        </div>
+                      ) : submittedEvidence.length > 0 ? (
+                        <div className="space-y-4">
+                          {submittedEvidence.map((projectGroup) => (
+                            <div key={projectGroup.projectId} className="border border-gray-200 rounded-lg p-4">
+                              <h4 className="text-sm font-semibold text-gray-900 mb-3">{projectGroup.projectTitle}</h4>
+                              <div className="space-y-2">
+                                {projectGroup.evidence.map((ev) => (
+                                  <div key={ev.id} className="flex items-center justify-between bg-gray-50 p-3 rounded border border-gray-200">
+                                    <div className="flex items-center gap-3 flex-1">
+                                      <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm text-gray-900 font-medium truncate">
+                                          {ev.milestoneTitle}
+                                        </p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                          <span className="text-xs text-gray-500 capitalize">{ev.type}</span>
+                                          <span className="text-xs text-gray-400">•</span>
+                                          <span className="text-xs text-gray-500">
+                                            {ev.uploadedAt ? new Date(ev.uploadedAt).toLocaleDateString() : 'N/A'}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <a
+                                        href={ev.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors"
+                                      >
+                                        <Download className="w-4 h-4" />
+                                        View
+                                      </a>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500">No evidence submitted yet</p>
+                      )}
                     </div>
 
                     <div className="flex justify-end">
@@ -1177,7 +1302,8 @@ export default function BeneficiaryDashboard() {
                         category: p.category || 'Other',
                         totalFunded: p.totalFunded || 0,
                         totalRequested: p.fundingGoal || p.amount || 0,
-                        status: p.status || 'pending'
+                        status: p.status || 'pending',
+                        missingDocuments: p.missingDocuments || []
                       }))
                       setProjects(formattedProjects)
                     }
@@ -1301,7 +1427,10 @@ export default function BeneficiaryDashboard() {
             <div className="p-6 border-b border-gray-200 flex justify-between items-center">
               <h3 className="text-xl text-gray-900">Upload Evidence</h3>
               <button
-                onClick={() => setShowUploadEvidenceModal(false)}
+                onClick={() => {
+                  setShowUploadEvidenceModal(false)
+                  setUploadEvidenceForm({ documentType: '', projectId: '', file: null, description: '' })
+                }}
                 className="text-gray-400 hover:text-gray-600"
               >
                 ×
@@ -1310,46 +1439,220 @@ export default function BeneficiaryDashboard() {
             
             <form 
               className="p-6 space-y-4"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault()
-                showNotification('Document submitted successfully', 'success')
-                setShowUploadEvidenceModal(false)
+                
+                if (!uploadEvidenceForm.documentType || !uploadEvidenceForm.projectId || !uploadEvidenceForm.file) {
+                  showNotification('Please fill in all required fields and select a file', 'error')
+                  return
+                }
+
+                setIsSubmitting(true)
+                try {
+                  const formData = new FormData()
+                  formData.append('file', uploadEvidenceForm.file)
+                  formData.append('documentType', uploadEvidenceForm.documentType)
+                  formData.append('projectId', uploadEvidenceForm.projectId)
+                  if (uploadEvidenceForm.description) {
+                    formData.append('description', uploadEvidenceForm.description)
+                  }
+
+                  // Use direct fetch for FormData since api.post uses JSON.stringify
+                  const token = getAuthToken()
+                  const headers = {}
+                  if (token) {
+                    headers['Authorization'] = `Bearer ${token}`
+                  }
+                  // Don't set Content-Type - browser will set it with boundary for FormData
+
+                  const response = await fetch(`${API_BASE_URL}/upload`, {
+                    method: 'POST',
+                    headers,
+                    body: formData,
+                  })
+
+                  const data = await response.json()
+                  
+                  if (!response.ok) {
+                    throw new Error(data.message || 'Failed to upload document')
+                  }
+                  
+                  if (data.success !== false) {
+                    showNotification('Document submitted successfully', 'success')
+                    setShowUploadEvidenceModal(false)
+                    setUploadEvidenceForm({ documentType: '', projectId: '', file: null, description: '' })
+                    
+                    // Refresh submitted evidence list if we're on the submit-evidence tab
+                    if (activeTab === 'submit-evidence' && projects.length > 0) {
+                      const evidenceByProject = []
+                      for (const project of projects) {
+                        try {
+                          const milestonesRes = await api.get(`/beneficiary/projects/${project.id}/milestones`)
+                          if (milestonesRes.success && milestonesRes.data?.milestones) {
+                            const projectEvidence = []
+                            milestonesRes.data.milestones.forEach((milestone) => {
+                              if (milestone.evidence && Array.isArray(milestone.evidence) && milestone.evidence.length > 0) {
+                                milestone.evidence.forEach((ev) => {
+                                  projectEvidence.push({
+                                    id: `${milestone._id}-${ev.url}`,
+                                    milestoneTitle: milestone.title,
+                                    type: ev.type || 'document',
+                                    url: ev.url,
+                                    uploadedAt: ev.uploadedAt || milestone.createdAt,
+                                    milestoneId: milestone._id
+                                  })
+                                })
+                              }
+                            })
+                            if (projectEvidence.length > 0) {
+                              evidenceByProject.push({
+                                projectId: project.id,
+                                projectTitle: project.title,
+                                evidence: projectEvidence
+                              })
+                            }
+                          }
+                        } catch (error) {
+                          console.error(`Error fetching milestones for project ${project.id}:`, error)
+                        }
+                      }
+                      setSubmittedEvidence(evidenceByProject)
+                    }
+                  } else {
+                    showNotification(data.message || 'Failed to upload document', 'error')
+                  }
+                } catch (error) {
+                  console.error('Error uploading document:', error)
+                  showNotification(error.message || 'Failed to upload document', 'error')
+                } finally {
+                  setIsSubmitting(false)
+                }
               }}
             >
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Document Type</label>
-                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                  <option>Select document type...</option>
-                  <option>Business License</option>
-                  <option>Tax Certificate</option>
-                  <option>Environmental Impact Assessment</option>
-                  <option>Project Proposal</option>
-                  <option>Budget Breakdown</option>
-                  <option>Milestone Evidence</option>
-                  <option>Other</option>
+                <label className="block text-sm text-gray-700 mb-2">Document Type *</label>
+                <select 
+                  value={uploadEvidenceForm.documentType}
+                  onChange={(e) => setUploadEvidenceForm({ ...uploadEvidenceForm, documentType: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select document type...</option>
+                  <option value="Business License">Business License</option>
+                  <option value="Tax Certificate">Tax Certificate</option>
+                  <option value="Environmental Impact Assessment">Environmental Impact Assessment</option>
+                  <option value="Project Proposal">Project Proposal</option>
+                  <option value="Budget Breakdown">Budget Breakdown</option>
+                  <option value="Milestone Evidence">Milestone Evidence</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Project</label>
-                <select className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                  <option>Select project...</option>
+                <label className="block text-sm text-gray-700 mb-2">Project *</label>
+                <select 
+                  value={uploadEvidenceForm.projectId}
+                  onChange={(e) => setUploadEvidenceForm({ ...uploadEvidenceForm, projectId: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="">Select project...</option>
                   {projects.map((project) => (
-                    <option key={project.id}>{project.title}</option>
+                    <option key={project.id} value={project.id}>{project.title}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-700 mb-2">Upload File</label>
-                <div className="border-2 border-dashed border-gray-300 p-6 text-center hover:border-green-500 transition-colors cursor-pointer">
-                  <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
-                  <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                <label className="block text-sm text-gray-700 mb-2">Upload File *</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      // Validate file size (10MB)
+                      if (file.size > 10 * 1024 * 1024) {
+                        showNotification('File size must be less than 10MB', 'error')
+                        e.target.value = ''
+                        return
+                      }
+                      // Validate file type
+                      const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
+                      if (!validTypes.includes(file.type)) {
+                        showNotification('Please upload a PDF, JPG, or PNG file', 'error')
+                        e.target.value = ''
+                        return
+                      }
+                      setUploadEvidenceForm({ ...uploadEvidenceForm, file })
+                    }
+                  }}
+                  className="hidden"
+                />
+                <div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    const file = e.dataTransfer.files?.[0]
+                    if (file) {
+                      // Validate file size (10MB)
+                      if (file.size > 10 * 1024 * 1024) {
+                        showNotification('File size must be less than 10MB', 'error')
+                        return
+                      }
+                      // Validate file type
+                      const validTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png']
+                      if (!validTypes.includes(file.type)) {
+                        showNotification('Please upload a PDF, JPG, or PNG file', 'error')
+                        return
+                      }
+                      setUploadEvidenceForm({ ...uploadEvidenceForm, file })
+                    }
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault()
+                  }}
+                  className={`border-2 border-dashed p-6 text-center transition-colors cursor-pointer ${
+                    uploadEvidenceForm.file 
+                      ? 'border-green-500 bg-green-50' 
+                      : 'border-gray-300 hover:border-green-500'
+                  }`}
+                >
+                  {uploadEvidenceForm.file ? (
+                    <div className="space-y-2">
+                      <FileText className="w-8 h-8 mx-auto text-green-600 mb-2" />
+                      <p className="text-sm text-gray-900 font-medium">{uploadEvidenceForm.file.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {(uploadEvidenceForm.file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          setUploadEvidenceForm({ ...uploadEvidenceForm, file: null })
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = ''
+                          }
+                        }}
+                        className="text-xs text-red-600 hover:text-red-700 mt-2"
+                      >
+                        Remove file
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
+                      <p className="text-sm text-gray-600">Click to upload or drag and drop</p>
+                      <p className="text-xs text-gray-500 mt-1">PDF, JPG, PNG up to 10MB</p>
+                    </>
+                  )}
                 </div>
               </div>
               <div>
                 <label className="block text-sm text-gray-700 mb-2">Description (Optional)</label>
                 <textarea
                   rows={3}
+                  value={uploadEvidenceForm.description}
+                  onChange={(e) => setUploadEvidenceForm({ ...uploadEvidenceForm, description: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   placeholder="Add any additional notes about this document..."
                 />
@@ -1357,16 +1660,21 @@ export default function BeneficiaryDashboard() {
               <div className="flex gap-4 pt-4">
                 <button
                   type="button"
-                  onClick={() => setShowUploadEvidenceModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    setShowUploadEvidenceModal(false)
+                    setUploadEvidenceForm({ documentType: '', projectId: '', file: null, description: '' })
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                 >
-                  Submit Document
+                  {isSubmitting ? 'Uploading...' : 'Submit Document'}
                 </button>
               </div>
             </form>

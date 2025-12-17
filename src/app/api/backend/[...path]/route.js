@@ -3,23 +3,28 @@ import { NextResponse } from 'next/server'
 const BACKEND_URL = 'https://uza-backend.onrender.com/api/v1'
 
 export async function GET(request, { params }) {
-  return handleRequest(request, params, 'GET')
+  const resolvedParams = await params
+  return handleRequest(request, resolvedParams, 'GET')
 }
 
 export async function POST(request, { params }) {
-  return handleRequest(request, params, 'POST')
+  const resolvedParams = await params
+  return handleRequest(request, resolvedParams, 'POST')
 }
 
 export async function PUT(request, { params }) {
-  return handleRequest(request, params, 'PUT')
+  const resolvedParams = await params
+  return handleRequest(request, resolvedParams, 'PUT')
 }
 
 export async function PATCH(request, { params }) {
-  return handleRequest(request, params, 'PATCH')
+  const resolvedParams = await params
+  return handleRequest(request, resolvedParams, 'PATCH')
 }
 
 export async function DELETE(request, { params }) {
-  return handleRequest(request, params, 'DELETE')
+  const resolvedParams = await params
+  return handleRequest(request, resolvedParams, 'DELETE')
 }
 
 async function handleRequest(request, params, method) {
@@ -145,10 +150,21 @@ async function handleRequest(request, params, method) {
       if (!data || Object.keys(data).length === 0) {
         data = {
           success: false,
-          message: `Request failed with status ${response.status}`,
+          message: `Request failed with status ${response.status} ${response.statusText || ''}`,
         }
       } else if (!data.message && !data.error) {
-        data.message = data.message || `Request failed with status ${response.status}`
+        // If data exists but no message, add one
+        if (responseText && responseText.trim() && !responseText.startsWith('{')) {
+          // If response is plain text, use it as message
+          data.message = responseText.substring(0, 200)
+        } else {
+          data.message = `Request failed with status ${response.status}`
+        }
+      }
+      
+      // Ensure success field is set
+      if (data.success === undefined) {
+        data.success = false
       }
     }
     

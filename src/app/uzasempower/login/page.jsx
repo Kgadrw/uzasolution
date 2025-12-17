@@ -76,6 +76,7 @@ export default function UZAEmpowerLogin() {
 
       // Store authentication data
       const { user, token, refreshToken } = result.data
+      
       storeAuthData(user, token, refreshToken)
 
       // Get dashboard route based on role
