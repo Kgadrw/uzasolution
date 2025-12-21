@@ -55,18 +55,18 @@ export default function Navbar({ initialSolid = false }) {
   const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News']
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-30 w-full">
+    <nav className="relative z-30 w-full">
       <div
-        className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 sm:py-2.5 md:py-3 border-b border-gray-100 transition-all duration-500 ${
+        className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 sm:py-2.5 md:py-3 transition-all duration-500 ${
           scrolled
-            ? 'bg-white/95 backdrop-blur-md text-[#00142B]'
-            : 'bg-white/95 backdrop-blur-md text-[#00142B]'
+            ? 'bg-[#F8FAFC]/95 backdrop-blur-md text-[#00142B]'
+            : 'bg-[#F8FAFC]/95 backdrop-blur-md text-[#00142B]'
         }`}
       >
         {/* Logo */}
         <Link href="/" className="flex items-center group transition-transform duration-300 hover:scale-105">
           <Image 
-            src="/uza.png" 
+            src="/X-logo.png" 
             alt="UZA Solutions Logo" 
             width={120} 
             height={60} 
@@ -75,7 +75,7 @@ export default function Navbar({ initialSolid = false }) {
         </Link>
 
         {/* Desktop Nav Links - Centered */}
-        <div className="hidden lg:flex space-x-6 xl:space-x-8">
+        <div className="hidden lg:flex space-x-8 xl:space-x-12">
           {links.map((href, i) => (
             <Link
               key={i}
@@ -144,7 +144,7 @@ export default function Navbar({ initialSolid = false }) {
         }`}
       >
         <div
-          className={`px-4 sm:px-6 py-4 sm:py-5 rounded-xl sm:rounded-2xl flex flex-col space-y-2 shadow-2xl backdrop-blur-xl border border-gray-200/50 bg-white/95 max-h-[calc(100vh-100px)] overflow-y-auto ${
+          className={`px-4 sm:px-6 py-4 sm:py-5 rounded-xl sm:rounded-2xl flex flex-col space-y-2 shadow-2xl backdrop-blur-xl border border-gray-200/50 bg-[#F8FAFC]/95 max-h-[calc(100vh-100px)] overflow-y-auto ${
             scrolled ? 'text-[#00142B]' : 'text-[#00142B]'
           }`}
         >

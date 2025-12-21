@@ -9,7 +9,7 @@ export default function WhoAreWe() {
   const images = [
     { id: 1, src: '/21.jpg', alt: 'Businessman with a laptop', className: 'col-span-1 row-span-1' },
     { id: 2, src: '/22.jpg', alt: 'Two professionals discussing', className: 'col-span-1 row-span-1' },
-    { id: 3, src: '/23.jpg', alt: 'Person behind transparent interface', className: 'col-span-1 row-span-2 relative', hasVideo: true, videoSrc: '/24.mp4' },
+    { id: 3, src: '/23.jpg', alt: 'Person behind transparent interface', className: 'col-span-1 row-span-1 relative', hasVideo: true, videoSrc: '/24.mp4' },
     { id: 4, src: '/23.jpg', alt: 'Pharmacist or warehouse worker smiling', className: 'col-span-1 row-span-1' }
   ]
 
@@ -65,7 +65,7 @@ export default function WhoAreWe() {
             </div>
 
             {/* Image Grid */}
-            <div className="grid grid-cols-2 grid-rows-3 gap-3 h-80 md:h-[420px] relative z-10">
+            <div className="grid grid-cols-2 grid-rows-2 gap-3 h-80 md:h-[420px] relative z-10">
               {images.map((image) => (
                 <div
                   key={image.id}

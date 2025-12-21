@@ -17,9 +17,6 @@ export default function AboutUs() {
             <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-4">
               Discover Our Tech-Driven Solutions
             </h2>
-            <p className="text-base md:text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
-              UZA Solutions streamlines trade with platforms for sourcing, logistics, and cloud services, enabling business growth in the digital age.
-            </p>
           </div>
 
           {/* UZA Platforms imagery grid (with photos) - Enhanced */}
@@ -70,9 +67,6 @@ export default function AboutUs() {
             </h2>
           </div>
           <div className="space-y-4">
-            <p className="text-base md:text-lg text-gray-700 leading-relaxed">
-              UZA Solutions streamlines trade with platforms for sourcing, logistics, and cloud services, enabling business growth in the digital age.
-            </p>
             <Link
               href="https://www.uzabulk.com/"
               target="_blank"

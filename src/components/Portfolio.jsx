@@ -1,5 +1,5 @@
 'use client'
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ArrowRight } from "lucide-react";
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -21,57 +21,6 @@ export default function Portfolio() {
   ];
 
   const [currentVideo, setCurrentVideo] = useState(0);
-
-  const faqs = [
-    {
-      question: "Company Overview",
-      answer: (
-        <ul className="list-disc pl-5 space-y-1 text-sm">
-          <li><strong>Name:</strong> UZA Solutions Ltd</li>
-          <li><strong>HK:</strong> New City, 2 Lei Yue Mun Rd</li>
-          <li><strong>Rwanda:</strong> Nyarurembo, Kiyovu, Kigali</li>
-          <li><strong>TIN:</strong> 122907893</li>
-        </ul>
-      ),
-    },
-    {
-      question: "Banking – HK",
-      answer: <p className="text-sm">JP Morgan Chase HK <br />Acc: UZA SOLUTIONS Limited <br />No: 63115235394 <br />SWIFT: CHASHKHHXXX <br />Charter House, 8 Connaught Rd</p>,
-    },
-    {
-      question: "Banking – Rwanda",
-      answer: <p className="text-sm">Equity Bank <br />Acc: UZA SOLUTIONS Ltd <br />No (USD): 4013201237332</p>,
-    },
-    {
-      question: "Products",
-      answer: <p className="text-sm"><strong>Construction:</strong> Steel, Cement, Tiles, Pipes <br /><strong>Finishing:</strong> Cabinets, Wardrobes, Lighting <br /><strong>Industrial:</strong> Mixers, Pumps, Generators, Fuji Elevators</p>,
-    },
-    {
-      question: "Why Choose Us",
-      answer: <p className="text-sm">Direct from manufacturers <br />Any order size <br />Customization & branding <br />Proven supply <br />Trusted logistics</p>,
-    },
-    {
-      question: "Experience",
-      answer: <p className="text-sm">Delivered construction equipment, finishing products & machines in Rwanda. Fuji Elevators partnership for high-value orders.</p>,
-    },
-    {
-      question: "Contact",
-      answer: <p className="text-sm">info@uzasolutionsltd.com <br />+250 788 371 081 <br />uzasolutionsltd.com • uzabulk.com <br />Kigali, Rwanda</p>,
-    },
-    {
-      question: "Legal",
-      answer: <p className="text-sm">Registered in Rwanda <br />Tax compliant (TIN: 122907893) <br />Meets quality standards <br />CoC, warranties, compliance docs</p>,
-    },
-  ];
-
-  const [openFAQs, setOpenFAQs] = useState({})
-
-  const toggleFAQ = (index) => {
-    setOpenFAQs(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }))
-  }
 
   return (
     <section className="w-full bg-white text-gray-900 pt-24">
@@ -138,45 +87,6 @@ export default function Portfolio() {
             ))}
           </motion.div>
         </div>
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="py-16 px-6 md:px-12 lg:px-20 bg-white">
-        <h2 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent text-center mb-12">
-          FAQs
-        </h2>
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-lg border border-gray-200 divide-y divide-gray-200">
-            {faqs.map((faq, index) => (
-              <div key={index}>
-                <button
-                  onClick={() => toggleFAQ(index)}
-                  className="w-full text-left px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900 text-sm md:text-base">
-                    {faq.question}
-                  </span>
-                  <ChevronRight 
-                    className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
-                      openFAQs[index] ? 'rotate-90' : ''
-                    }`}
-                  />
-                </button>
-                {openFAQs[index] && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="px-6 pb-4 text-gray-700 text-sm leading-relaxed"
-                  >
-                    {faq.answer}
-                  </motion.div>
-                )}
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

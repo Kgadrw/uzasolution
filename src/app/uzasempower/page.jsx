@@ -9,7 +9,6 @@ import dynamic from 'next/dynamic'
 
 const Navbar = dynamic(() => import('../../components/navbar'))
 const Footer = dynamic(() => import('../../components/footer'))
-const ImpactCardsSection = dynamic(() => import('../../components/ImpactCardsSection'))
 const MagicBento = dynamic(() => import('../../components/MagicBento'))
 
 export default function UZAEmpowerPage() {
@@ -172,57 +171,80 @@ export default function UZAEmpowerPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
-      
       {/* Hero Section - Matching Homepage Hero Structure */}
-      <section className="relative min-h-[500px] sm:min-h-[550px] md:h-[600px] w-full overflow-hidden group rounded-l-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
-        {heroImages.map((imageData, index) => (
-          <div key={index} className={`absolute inset-0 transition-opacity duration-1000 ${
-            index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-          }`}>
-            <Image
-              src={imageData.src}
-              alt="UZA Empower - Transforming Lives"
-              fill
-              className="object-cover"
-              priority={index === 0}
-            />
-            
-            {/* Gradient overlay - matching homepage */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent md:bg-gradient-to-r md:from-[#00142B]/95 md:via-[#00142B]/80 md:to-transparent" />
-            
-            {/* Hero Content Left-Aligned with responsive padding - matching homepage */}
-            <div className="relative z-10 flex min-h-[500px] sm:min-h-[550px] md:h-full items-center px-4 py-8 sm:px-8 sm:py-12 md:px-32 md:py-32">
-              <div className="max-w-xs sm:max-w-md md:max-w-xl text-left w-full">
-                <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold leading-tight text-white mb-3 sm:mb-4">
-                  Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
-                </h1>
-                <p className="mt-3 sm:mt-4 md:mt-6 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-200 leading-relaxed">
-                  Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
-                </p>
-                <div className="mt-4 sm:mt-6 md:mt-8">
-                  <Link href="/uzasempower/login">
-                    <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-5 py-2.5 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base touch-manipulation">
-                      Get Started
-                    </button>
-                  </Link>
-                </div>
+      <section className="relative w-full font-sans px-4 md:px-16 lg:px-24 bg-[#F8FAFC]">
+        {/* Navbar Component */}
+        <Navbar initialSolid={false} />
+
+        {/* -------- Hero Section -------- */}
+        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full md:max-w-[90%] md:mx-auto overflow-hidden group rounded-l-[3rem] rounded-tr-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
+          {/* Background Image */}
+          {heroImages.map((imageData, index) => (
+            <motion.div
+              key={index}
+              className="absolute inset-0"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: index === currentImageIndex ? 1 : 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <Image
+                src={imageData.src}
+                alt="UZA Empower - Transforming Lives"
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </motion.div>
+          ))}
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent md:bg-gradient-to-r md:from-[#00142B]/95 md:via-[#00142B]/80 md:to-transparent" />
+
+          {/* Hero Content Left-Aligned with responsive padding */}
+          <div className="relative z-10 flex h-full items-center px-3 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-32 lg:py-32">
+            <div className="max-w-xs sm:max-w-md md:max-w-xl text-left">
+              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold leading-tight text-white">
+                Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
+              </h1>
+              <p className="mt-2 sm:mt-4 md:mt-6 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-200 leading-relaxed">
+                Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
+              </p>
+              <div className="mt-3 sm:mt-6 md:mt-8">
+                <Link href="/uzasempower/login">
+                  <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base touch-manipulation">
+                    Get Started
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
-        ))}
-        
-        {/* Slider Dots - matching homepage */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-          {heroImages.map((_, idx) => (
-            <span
-              key={idx}
-              onClick={() => setCurrentImageIndex(idx)}
-              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all touch-manipulation ${
-                idx === currentImageIndex ? 'bg-[#FBAF43]' : 'bg-white/50'
-              }`}
-            />
-          ))}
+
+          {/* -------- Slider Arrows -------- */}
+          <button
+            onClick={() => setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
+            className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 text-white rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button
+            onClick={() => setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)}
+            className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 text-white rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
+
+          {/* -------- Slider Dots -------- */}
+          <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+            {heroImages.map((_, idx) => (
+              <span
+                key={idx}
+                onClick={() => setCurrentImageIndex(idx)}
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all touch-manipulation ${
+                  idx === currentImageIndex ? 'bg-[#FBAF43]' : 'bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -504,9 +526,6 @@ export default function UZAEmpowerPage() {
           </div>
         </div>
       </section>
-
-      {/* Impact Cards Section */}
-      <ImpactCardsSection />
 
       {/* Real Voices - Client Success Stories */}
       <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">

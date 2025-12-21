@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { 
   DollarSign, CheckCircle, AlertCircle, Bell,
   Search, Download, MapPin, Heart, Settings, LogOut, 
@@ -197,95 +198,92 @@ export default function BeneficiaryDashboard() {
     fetchDashboardData()
   }, [])
 
-  // Fetch submitted evidence when submit-evidence tab is active
+  // Memoize project IDs to prevent unnecessary re-fetches
+  const projectIds = useMemo(() => {
+    return projects.map(p => p.id).filter(Boolean)
+  }, [projects])
+
+  // Fetch submitted evidence when submit-evidence tab is active - optimized
   useEffect(() => {
+    if (activeTab !== 'submit-evidence') return
+    if (!projectIds.length || loading) return
+    
+    let cancelled = false
+    
     const fetchSubmittedEvidence = async () => {
-      if (activeTab !== 'submit-evidence') return
-      
-      // Don't fetch if projects are still loading or empty
-      if (!projects || projects.length === 0 || loading) {
-        return
-      }
-      
       try {
         setLoadingEvidence(true)
         const evidenceByProject = []
         
         // Fetch milestones for each project to get evidence
         // Process sequentially to avoid overwhelming the server
-        for (const project of projects) {
-          if (!project.id) continue
+        for (const projectId of projectIds) {
+          if (cancelled) break
           
           try {
-            // Validate project ID before making API call
-            if (!project.id || typeof project.id !== 'string') {
-              console.warn(`Invalid project ID for project:`, project)
-              continue
-            }
-
-            const milestonesRes = await api.get(`/beneficiary/projects/${project.id}/milestones`)
+            const milestonesRes = await api.get(`/beneficiary/projects/${projectId}/milestones`)
             
-            // Check if response is valid
-            if (!milestonesRes) {
-              console.warn(`No response received for project ${project.id}`)
-              continue
-            }
+            if (cancelled) break
+            if (!milestonesRes?.success || !milestonesRes.data?.milestones) continue
 
-            if (milestonesRes.success && milestonesRes.data?.milestones) {
-              const projectEvidence = []
-              milestonesRes.data.milestones.forEach((milestone) => {
-                if (milestone.evidence && Array.isArray(milestone.evidence) && milestone.evidence.length > 0) {
-                  milestone.evidence.forEach((ev) => {
-                    if (ev && ev.url) {
-                      projectEvidence.push({
-                        id: `${milestone._id || Date.now()}-${ev.url}`,
-                        milestoneTitle: milestone.title || 'Unknown Milestone',
-                        type: ev.type || 'document',
-                        url: ev.url,
-                        uploadedAt: ev.uploadedAt || milestone.createdAt || new Date(),
-                        milestoneId: milestone._id
-                      })
-                    }
-                  })
-                }
-              })
-              
-              if (projectEvidence.length > 0) {
-                evidenceByProject.push({
-                  projectId: project.id,
-                  projectTitle: project.title || 'Unknown Project',
-                  evidence: projectEvidence
+            const project = projects.find(p => p.id === projectId)
+            const projectEvidence = []
+            
+            milestonesRes.data.milestones.forEach((milestone) => {
+              if (milestone.evidence && Array.isArray(milestone.evidence) && milestone.evidence.length > 0) {
+                milestone.evidence.forEach((ev) => {
+                  if (ev && ev.url) {
+                    projectEvidence.push({
+                      id: `${milestone._id || Date.now()}-${ev.url}`,
+                      milestoneTitle: milestone.title || 'Unknown Milestone',
+                      type: ev.type || 'document',
+                      url: ev.url,
+                      uploadedAt: ev.uploadedAt || milestone.createdAt || new Date(),
+                      milestoneId: milestone._id
+                    })
+                  }
                 })
               }
+            })
+            
+            if (projectEvidence.length > 0 && project) {
+              evidenceByProject.push({
+                projectId: project.id,
+                projectTitle: project.title || 'Unknown Project',
+                evidence: projectEvidence
+              })
             }
           } catch (error) {
-            // Silently skip projects that fail - don't show error for each one
-            // Only log if it's not a network error (network errors are expected in some cases)
             if (error.message && !error.message.includes('Network error')) {
-              console.warn(`Error fetching milestones for project ${project.id}:`, error.message || error)
+              console.warn(`Error fetching milestones for project ${projectId}:`, error.message || error)
             }
-            // Continue with next project
-            continue
           }
         }
         
-        setSubmittedEvidence(evidenceByProject)
+        if (!cancelled) {
+          setSubmittedEvidence(evidenceByProject)
+        }
       } catch (error) {
-        console.error('Error fetching submitted evidence:', error)
-        // Don't show notification as this is a background operation
-        setSubmittedEvidence([])
+        if (!cancelled) {
+          console.error('Error fetching submitted evidence:', error)
+          setSubmittedEvidence([])
+        }
       } finally {
-        setLoadingEvidence(false)
+        if (!cancelled) {
+          setLoadingEvidence(false)
+        }
       }
     }
 
-    // Add a small delay to avoid race conditions with initial data load
     const timer = setTimeout(() => {
       fetchSubmittedEvidence()
     }, 100)
 
-    return () => clearTimeout(timer)
-  }, [activeTab, projects, loading])
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [activeTab, projectIds, loading, projects])
 
   // Fetch reports when reports tab is active
   useEffect(() => {
@@ -316,29 +314,49 @@ export default function BeneficiaryDashboard() {
     return () => clearTimeout(timer)
   }, [activeTab])
 
-  // Fetch milestones for all projects when milestones tab is active
+  // Fetch milestones for all projects when milestones tab is active - optimized
   useEffect(() => {
-    const fetchAllMilestones = async () => {
-      if (activeTab !== 'milestones') return
-      if (!projects || projects.length === 0 || loading) return
+    if (activeTab !== 'milestones') return
+    if (!projectIds.length || loading) return
 
+    let cancelled = false
+
+    const fetchAllMilestones = async () => {
       try {
         const milestonesByProject = {}
-        for (const project of projects) {
-          if (!project.id) continue
+        
+        // Use Promise.allSettled for parallel fetching with better error handling
+        const promises = projectIds.map(async (projectId) => {
+          if (cancelled) return null
           try {
-            const milestonesRes = await api.get(`/beneficiary/projects/${project.id}/milestones`)
-            if (milestonesRes && milestonesRes.success && milestonesRes.data?.milestones) {
-              milestonesByProject[project.id] = milestonesRes.data.milestones
+            const milestonesRes = await api.get(`/beneficiary/projects/${projectId}/milestones`)
+            if (cancelled) return null
+            if (milestonesRes?.success && milestonesRes.data?.milestones) {
+              return { projectId, milestones: milestonesRes.data.milestones }
             }
+            return { projectId, milestones: [] }
           } catch (error) {
-            console.warn(`Error fetching milestones for project ${project.id}:`, error.message || error)
-            milestonesByProject[project.id] = []
+            if (!cancelled && error.message && !error.message.includes('Network error')) {
+              console.warn(`Error fetching milestones for project ${projectId}:`, error.message || error)
+            }
+            return { projectId, milestones: [] }
           }
+        })
+
+        const results = await Promise.allSettled(promises)
+        
+        if (!cancelled) {
+          results.forEach((result) => {
+            if (result.status === 'fulfilled' && result.value) {
+              milestonesByProject[result.value.projectId] = result.value.milestones
+            }
+          })
+          setProjectMilestonesList(milestonesByProject)
         }
-        setProjectMilestonesList(milestonesByProject)
       } catch (error) {
-        console.error('Error fetching milestones:', error)
+        if (!cancelled) {
+          console.error('Error fetching milestones:', error)
+        }
       }
     }
 
@@ -346,34 +364,44 @@ export default function BeneficiaryDashboard() {
       fetchAllMilestones()
     }, 100)
 
-    return () => clearTimeout(timer)
-  }, [activeTab, projects, loading])
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [activeTab, projectIds, loading])
 
-  // Close sidebar on mobile when clicking outside
+  // Close sidebar on mobile when clicking outside - optimized with debounce
   useEffect(() => {
+    let timeoutId
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setSidebarOpen(true)
-      } else {
-        setSidebarOpen(false)
-      }
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        if (window.innerWidth >= 768) {
+          setSidebarOpen(true)
+        } else {
+          setSidebarOpen(false)
+        }
+      }, 150)
     }
     handleResize()
     window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('resize', handleResize)
+    }
   }, [])
   
   // Overview filters
   const [overviewSearchQuery, setOverviewSearchQuery] = useState('')
 
-  // Close notification dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
-        setShowNotificationDropdown(false)
-      }
+  // Close notification dropdown when clicking outside - memoized handler
+  const handleClickOutside = useCallback((event) => {
+    if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
+      setShowNotificationDropdown(false)
     }
+  }, [])
 
+  useEffect(() => {
     if (showNotificationDropdown) {
       document.addEventListener('mousedown', handleClickOutside)
     }
@@ -381,43 +409,87 @@ export default function BeneficiaryDashboard() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [showNotificationDropdown])
+  }, [showNotificationDropdown, handleClickOutside])
 
-  const showNotification = (message, type = 'success') => {
+  const showNotification = useCallback((message, type = 'success') => {
     setNotification({ show: true, message, type })
     setTimeout(() => {
       setNotification({ show: false, message: '', type: 'success' })
     }, 3000)
-  }
+  }, [])
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     showNotification('Beneficiary User logged out successfully', 'success')
     setTimeout(() => {
       localStorage.removeItem('user')
       router.push('/uzasempower/login')
     }, 1500)
-  }
+  }, [showNotification, router])
 
-  const menuItems = [
+  // Memoize common handlers
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev)
+  }, [])
+
+  const handleTabChange = useCallback((tabId) => {
+    setActiveTab(tabId)
+  }, [])
+
+  const handleCloseSidebar = useCallback(() => {
+    setSidebarOpen(false)
+  }, [])
+
+  const handleToggleNotificationDropdown = useCallback(() => {
+    setShowNotificationDropdown(prev => !prev)
+  }, [])
+
+  const handleCloseNotificationDropdown = useCallback(() => {
+    setShowNotificationDropdown(false)
+  }, [])
+
+  // Memoize unread notifications count
+  const unreadNotificationsCount = useMemo(() => {
+    return notifications.filter(n => !n.read).length
+  }, [notifications])
+
+  // Memoize user display name
+  const userDisplayName = useMemo(() => {
+    return user?.name || 'Beneficiary User'
+  }, [user?.name])
+
+  // Memoize user initial
+  const userInitial = useMemo(() => {
+    return user?.name ? user.name.charAt(0).toUpperCase() : 'B'
+  }, [user?.name])
+
+  // Optimize search handler
+  const handleSearchChange = useCallback((e) => {
+    setOverviewSearchQuery(e.target.value)
+  }, [])
+
+  // Memoize menu items to prevent recreation on every render
+  const menuItems = useMemo(() => [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'funding-request', label: 'Funding Request', icon: DollarSign },
     { id: 'milestones', label: 'Milestones', icon: Target },
     { id: 'submit-evidence', label: 'Submit Evidence', icon: Upload },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'settings', label: 'Settings', icon: Settings },
-  ]
+  ], [])
 
   // All data is now fetched from API and stored in state
 
-  const formatCurrency = (amount) => {
+  // Memoize currency formatter
+  const formatCurrency = useCallback((amount) => {
     return new Intl.NumberFormat('en-RW', { 
       style: 'currency',
       currency: 'RWF',
       minimumFractionDigits: 0 
     }).format(amount)
-  }
+  }, [])
 
-  const getStatusColor = (status) => {
+  // Memoize status color function
+  const getStatusColor = useCallback((status) => {
     if (!status) return 'bg-gray-100 text-gray-800'
     
     // Report statuses (lowercase)
@@ -449,42 +521,47 @@ export default function BeneficiaryDashboard() {
     
     // Default fallback
     return 'bg-gray-100 text-gray-800'
+  }, [])
+
+  // Filter donors - memoized for performance
+  const filteredDonors = useMemo(() => {
+    if (!overviewSearchQuery) return donors
+    const query = overviewSearchQuery.toLowerCase()
+    return donors.filter(donor => {
+      const matchesSearch = donor.name.toLowerCase().includes(query) ||
+                           donor.email.toLowerCase().includes(query)
+      return matchesSearch
+    })
+  }, [donors, overviewSearchQuery])
+
+  // Filter projects - memoized for performance
+  const filteredOverviewProjects = useMemo(() => {
+    if (!overviewSearchQuery) return projects
+    const query = overviewSearchQuery.toLowerCase()
+    return projects.filter(project => {
+      const matchesSearch = project.title.toLowerCase().includes(query) ||
+                           project.location.toLowerCase().includes(query) ||
+                           project.category.toLowerCase().includes(query)
+      return matchesSearch
+    })
+  }, [projects, overviewSearchQuery])
+
+  // Show loader while loading
+  if (loading) {
+    return (
+      <div className="h-screen bg-gray-50 flex items-center justify-center">
+        <Image src="/loader.gif" alt="Loading" width={100} height={100} />
+      </div>
+    )
   }
-
-  // Filter donors
-  const filteredDonors = donors.filter(donor => {
-    const matchesSearch = donor.name.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
-                         donor.email.toLowerCase().includes(overviewSearchQuery.toLowerCase())
-    return matchesSearch
-  })
-
-  // Filter projects
-  const filteredOverviewProjects = projects.filter(project => {
-    const matchesSearch = project.title.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
-                         project.location.toLowerCase().includes(overviewSearchQuery.toLowerCase()) ||
-                         project.category.toLowerCase().includes(overviewSearchQuery.toLowerCase())
-    return matchesSearch
-  })
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
-      {/* Top Loading Bar */}
-      {loading && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
-          <motion.div
-            className="h-full bg-[#FBAF43]"
-            initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-          />
-        </div>
-      )}
-      
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 bg-black/50 z-20 md:hidden"
-          onClick={() => setSidebarOpen(false)}
+          onClick={handleCloseSidebar}
         />
       )}
       
@@ -492,7 +569,7 @@ export default function BeneficiaryDashboard() {
       <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
+            onClick={toggleSidebar}
             className="p-2 hover:bg-gray-100 transition-colors"
           >
             <Menu className="w-5 h-5" />
@@ -505,7 +582,7 @@ export default function BeneficiaryDashboard() {
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveTab(item.id)}
+                onClick={() => handleTabChange(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 transition-colors ${
                   activeTab === item.id
                     ? 'bg-green-50 text-green-700 border border-green-200'
@@ -538,13 +615,13 @@ export default function BeneficiaryDashboard() {
         <div className="bg-white border-b border-gray-200 px-4 md:px-6 py-4 flex items-center justify-between h-[80px]">
           <div className="flex items-center gap-3 md:gap-0">
             <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={toggleSidebar}
               className="md:hidden p-2 hover:bg-gray-100 transition-colors"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back {user?.name || 'Beneficiary User'}</h1>
+              <h1 className="text-lg md:text-2xl text-gray-900">Welcome back {userDisplayName}</h1>
             </div>
           </div>
           <div className="flex items-center gap-2 md:gap-4">
@@ -559,13 +636,13 @@ export default function BeneficiaryDashboard() {
             <div className="flex items-center gap-2 md:gap-3">
               <div className="relative" ref={notificationDropdownRef}>
                 <button
-                  onClick={() => setShowNotificationDropdown(!showNotificationDropdown)}
+                  onClick={handleToggleNotificationDropdown}
                   className="relative"
                 >
                   <Bell className="w-6 h-6 text-gray-600 cursor-pointer hover:text-green-600" />
-                  {notifications.filter(n => !n.read).length > 0 && (
+                  {unreadNotificationsCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                      {notifications.filter(n => !n.read).length}
+                      {unreadNotificationsCount}
                     </span>
                   )}
                 </button>
@@ -576,7 +653,7 @@ export default function BeneficiaryDashboard() {
                     <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                       <h3 className="text-sm text-gray-900">Notifications</h3>
                       <button
-                        onClick={() => setShowNotificationDropdown(false)}
+                        onClick={handleCloseNotificationDropdown}
                         className="text-gray-400 hover:text-gray-600"
                       >
                         <X className="w-4 h-4" />
@@ -632,10 +709,10 @@ export default function BeneficiaryDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'B'}
+                  {userInitial}
                 </div>
                 <div>
-                  <p className="text-sm text-gray-900">{user?.name || 'Beneficiary User'}</p>
+                  <p className="text-sm text-gray-900">{userDisplayName}</p>
                   <p className="text-xs text-gray-600">{user?.email || 'beneficiary@example.com'}</p>
                 </div>
               </div>
@@ -753,7 +830,7 @@ export default function BeneficiaryDashboard() {
                             type="text"
                             placeholder="Search projects..."
                             value={overviewSearchQuery}
-                            onChange={(e) => setOverviewSearchQuery(e.target.value)}
+                            onChange={handleSearchChange}
                             className="pl-10 pr-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent w-64"
                           />
                         </div>
@@ -950,7 +1027,7 @@ export default function BeneficiaryDashboard() {
                       <h3 className="text-sm font-semibold text-gray-900 mb-3">Previously Submitted Evidence</h3>
                       {loadingEvidence ? (
                         <div className="text-center py-4">
-                          <p className="text-sm text-gray-500">Loading evidence...</p>
+                          <Image src="/loader.gif" alt="Loading" width={80} height={80} className="mx-auto" />
                         </div>
                       ) : submittedEvidence.length > 0 ? (
                         <div className="space-y-4">
@@ -1040,7 +1117,7 @@ export default function BeneficiaryDashboard() {
                   <div className="p-4 md:p-6">
                     {loadingReports ? (
                       <div className="text-center py-8">
-                        <p className="text-sm text-gray-500">Loading reports...</p>
+                        <Image src="/loader.gif" alt="Loading" width={80} height={80} className="mx-auto" />
                       </div>
                     ) : reports.length > 0 ? (
                   <div className="space-y-4">
@@ -2195,8 +2272,8 @@ export default function BeneficiaryDashboard() {
               <div>
                   <label className="block text-sm text-gray-700 mb-2">Milestone *</label>
                   {loadingMilestones ? (
-                    <div className="px-4 py-2 border border-gray-300 bg-gray-50 text-sm text-gray-500">
-                      Loading milestones...
+                    <div className="px-4 py-2 border border-gray-300 bg-gray-50 flex items-center justify-center">
+                      <Image src="/loader.gif" alt="Loading" width={50} height={50} />
                     </div>
                   ) : projectMilestones.length > 0 ? (
                     <select 

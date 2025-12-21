@@ -18,6 +18,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 import { api } from '@/lib/api/config'
+import { DashboardSkeleton } from '@/components/Skeleton'
 
 export default function AdminDashboard() {
   const router = useRouter()

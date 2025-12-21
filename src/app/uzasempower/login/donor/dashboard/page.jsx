@@ -12,6 +12,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 import { api } from '@/lib/api/config'
+import { DashboardSkeleton } from '@/components/Skeleton'
 
 export default function DonorDashboard() {
   const router = useRouter()
@@ -548,20 +549,13 @@ export default function DonorDashboard() {
     return matchesSearch && matchesType && matchesDate
   })
 
+  // Show skeleton loader while loading
+  if (loading) {
+    return <DashboardSkeleton />
+  }
+
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden font-opensans" style={{ fontFamily: '"Open Sans", sans-serif', fontOpticalSizing: 'auto', fontStyle: 'normal', fontVariationSettings: '"wdth" 100' }}>
-      {/* Top Loading Bar */}
-      {loading && (
-        <div className="fixed top-0 left-0 right-0 z-50 h-1 bg-gray-200">
-          <motion.div
-            className="h-full bg-[#FBAF43]"
-            initial={{ width: '0%' }}
-            animate={{ width: '100%' }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-          />
-        </div>
-      )}
-      
       {/* Mobile Overlay */}
           {sidebarOpen && (
         <div 

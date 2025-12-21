@@ -1,25 +1,9 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import LoadingPage from "../components/loading";
 import "../app/globals.css";
+import Snow from '../components/Snow';
 
 export default function RootLayout({ children }) {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const hasVisited = sessionStorage.getItem("hasVisited");
-
-    if (hasVisited) {
-      setLoading(false);
-    } else {
-      sessionStorage.setItem("hasVisited", "true");
-      setTimeout(() => {
-        setLoading(false);
-      }, 3000);
-    }
-  }, []);
-
   return (
     <html lang="en">
       <head>
@@ -139,13 +123,10 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="bg-gray-100 relative custom-scrollbar">
-        {loading ? (
-          <LoadingPage />
-        ) : (
-          <div className="min-h-screen bg-white text-gray-800 relative">
-            {children}
-          </div>
-        )}
+        <Snow />
+        <div className="min-h-screen bg-white text-gray-800 relative">
+          {children}
+        </div>
       </body>
     </html>
   );

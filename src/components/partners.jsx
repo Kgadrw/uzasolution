@@ -40,37 +40,39 @@ export default function Partners() {
           </div>
         </div>
 
-        {/* Partners Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {partners.map((partner, index) => (
-            <motion.div
-              key={partner.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.2 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className="group relative  p-8  border border-gray-100 transition-all duration-300"
-            >
-              {/* Logo Container */}
-              <div className="flex justify-center mb-6">
-                <div className="relative w-48 h-28 group-hover:scale-110 transition-transform duration-300">
-                  <Image
-                    src={partner.logo}
-                    alt={`${partner.name} logo`}
-                    fill
-                    className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                  />
+        {/* Partners Sliding Animation */}
+        <div className="overflow-hidden pb-4">
+          <motion.div 
+            className="flex gap-4"
+            animate={{ 
+              x: [0, -((192 + 16) * partners.length)]
+            }}
+            transition={{ 
+              x: {
+                repeat: Infinity,
+                repeatType: "loop",
+                duration: 40,
+                ease: "linear"
+              }
+            }}
+          >
+            {/* Duplicate partners for seamless loop */}
+            {[...partners, ...partners].map((partner, index) => (
+              <div key={`${partner.name}-${index}`} className="flex-shrink-0 w-48 group cursor-pointer">
+                <div className="rounded-2xl overflow-hidden transition-all duration-300">
+                  <div className="relative w-full h-48 flex items-center justify-center p-6">
+                    <Image
+                      src={partner.logo}
+                      alt={`${partner.name} logo`}
+                      width={120}
+                      height={120}
+                      className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                    />
+                  </div>
                 </div>
               </div>
-
-              {/* Partner Info */}
-              
-
-              {/* Hover Effect Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-[#FBAF43]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            </motion.div>
-          ))}
+            ))}
+          </motion.div>
         </div>
 
         {/* Additional Info */}

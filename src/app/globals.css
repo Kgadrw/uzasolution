@@ -99,6 +99,26 @@ body {
   }
 }
 
+/* Snowfall animation for Christmas */
+@keyframes snowfall {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(25vh) translateX(20px) rotate(90deg);
+  }
+  50% {
+    transform: translateY(50vh) translateX(-20px) rotate(180deg);
+  }
+  75% {
+    transform: translateY(75vh) translateX(15px) rotate(270deg);
+  }
+  100% {
+    transform: translateY(100vh) translateX(-15px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 /* Text animation class */
 .text-animate {
   display: inline-block;
