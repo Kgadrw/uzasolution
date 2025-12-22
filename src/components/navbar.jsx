@@ -51,8 +51,8 @@ export default function Navbar({ initialSolid = false }) {
     return pathname.startsWith(href)
   }
 
-  const links = ['/', '/about', '/portfolio', '/uzasempower', '/news']
-  const linkNames = ['Home', 'About', 'Portfolio', 'UZA Empower', 'News']
+  const links = ['/', '/about', '/portfolio', '/catalogues', '/uzasempower', '/news']
+  const linkNames = ['Home', 'About', 'Portfolio', 'Catalogues', 'UZA Empower', 'News']
 
   return (
     <nav className="relative z-30 w-full">
