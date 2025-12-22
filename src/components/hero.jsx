@@ -1,38 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion } from 'framer-motion'
 import Navbar from './navbar'
 
 export default function HeroSection() {
-  const slides = [
-    { image: '/hero.jpg' },
-    { image: '/hero2.jpg' },
-    { image: '/hero3.jpg' },
-  ]
-
-  const [currentIndex, setCurrentIndex] = useState(0)
-
   const heroText = {
-    title: "Africa’s Gateway to Global Trade",
+    title: "Africa's Gateway to Global Trade",
     description:
       "We empower African businesses with tech-driven solutions that simplify sourcing, logistics, and scaling globally.",
     cta: "Get Started",
   }
-
-  // Automatic slideshow
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % slides.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
-
-  const handleNextSlide = () => setCurrentIndex((prev) => (prev + 1) % slides.length)
-  const handlePrevSlide = () => setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length)
 
   return (
     <section className="relative w-full font-sans px-4 md:px-16 lg:px-24 bg-[#F8FAFC]">
@@ -40,17 +18,11 @@ export default function HeroSection() {
       <Navbar initialSolid={false} />
 
       {/* -------- Hero Section -------- */}
-      <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full md:max-w-[90%] md:mx-auto overflow-hidden group rounded-l-[3rem] rounded-tr-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
+      <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full md:max-w-[90%] md:mx-auto overflow-hidden rounded-l-[3rem] rounded-tr-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
         {/* Background Image */}
-        <motion.div
-          key={currentIndex}
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <Image src={slides[currentIndex].image} alt="Hero Slide" fill className="object-cover" priority />
-        </motion.div>
+        <div className="absolute inset-0">
+          <Image src="/hero2.jpg" alt="Hero" fill className="object-cover" priority />
+        </div>
 
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent md:bg-gradient-to-r md:from-[#00142B]/95 md:via-[#00142B]/80 md:to-transparent" />
@@ -74,32 +46,6 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* -------- Slider Arrows -------- */}
-        <button
-          onClick={handlePrevSlide}
-          className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 text-white  rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
-        >
-          
-        </button>
-        <button
-          onClick={handleNextSlide}
-          className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 text-white  rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
-        >
-          
-        </button>
-
-        {/* -------- Slider Dots -------- */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-          {slides.map((_, idx) => (
-            <span
-              key={idx}
-              onClick={() => setCurrentIndex(idx)}
-              className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all touch-manipulation ${
-                idx === currentIndex ? 'bg-[#FBAF43]' : 'bg-white/50'
-              }`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   )
