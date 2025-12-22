@@ -54,9 +54,20 @@ export default function ProjectDetailsPage() {
         const response = await api.get(`/donor/projects/${projectId}`)
         if (response.success && response.data) {
           setProject(response.data.project || response.data)
+        } else {
+          console.error('Failed to fetch project:', response)
         }
       } catch (error) {
         console.error('Error fetching project:', error)
+        // Try alternative endpoint if the first one fails
+        try {
+          const altResponse = await api.get(`/projects/${projectId}`)
+          if (altResponse.success && altResponse.data) {
+            setProject(altResponse.data.project || altResponse.data)
+          }
+        } catch (altError) {
+          console.error('Alternative endpoint also failed:', altError)
+        }
       } finally {
         setLoading(false)
       }

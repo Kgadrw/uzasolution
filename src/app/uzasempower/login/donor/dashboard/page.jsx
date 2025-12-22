@@ -149,7 +149,7 @@ export default function DonorDashboard() {
           // Set projects from overview
           if (overviewRes.data.recentProjects) {
             const formattedProjects = overviewRes.data.recentProjects.map((p, idx) => ({
-              id: p._id || idx + 1,
+              id: p._id || p.id,
               title: p.title || 'Untitled Project',
               beneficiary: p.beneficiary?.name || 'Unknown',
               location: p.location || 'N/A',
@@ -169,7 +169,7 @@ export default function DonorDashboard() {
         const projectsRes = await api.get('/donor/projects')
         if (projectsRes.success && projectsRes.data) {
           const formattedProjects = (projectsRes.data.projects || projectsRes.data || []).map((p, idx) => ({
-            id: p._id || idx + 1,
+            id: p._id || p.id,
             title: p.title || 'Untitled Project',
             beneficiary: p.beneficiary?.name || 'Unknown',
             location: p.location || 'N/A',
@@ -190,7 +190,7 @@ export default function DonorDashboard() {
           const formattedMilestones = (milestonesRes.data.milestones || milestonesRes.data || []).map((m, idx) => ({
             id: m._id || idx + 1,
             projectName: m.project?.title || 'Unknown Project',
-            projectId: m.project?._id || m.project?.id || null,
+            projectId: m.project?._id || m.project?.id,
             milestoneName: m.title || 'Untitled Milestone',
             description: m.description || '',
             targetDate: m.targetDate ? new Date(m.targetDate).toISOString().split('T')[0] : '',
@@ -215,7 +215,7 @@ export default function DonorDashboard() {
             amount: t.amount || 0,
             balance: t.balance || 0,
             project: t.project?.title || 'N/A',
-            projectId: t.project?._id || t.project?.id || null
+            projectId: t.project?._id || t.project?.id
           }))
           setTransactions(formattedTransactions)
         }
@@ -229,7 +229,7 @@ export default function DonorDashboard() {
             title: a.title || 'Alert',
             description: a.message || a.description || '',
             project: a.project?.title || 'N/A',
-            projectId: a.project?._id || a.project?.id || null,
+            projectId: a.project?._id || a.project?.id,
             date: a.createdAt ? new Date(a.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             status: a.read ? 'Read' : 'Active'
           }))
