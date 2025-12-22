@@ -8,7 +8,7 @@ import {
   DollarSign, CheckCircle, AlertCircle, Bell,
   Search, Download, MapPin, Heart, Settings, LogOut, 
   LayoutDashboard, Menu, Info, Wallet, Activity, Target,
-  Plus, Upload, FileText, BarChart3, Users, TrendingUp, X
+  Plus, Upload, FileText, BarChart3, Users, TrendingUp, X, Trash2, Edit2, Save
 } from 'lucide-react'
 import { api, getAuthToken, API_BASE_URL } from '@/lib/api/config'
 
@@ -19,8 +19,16 @@ export default function BeneficiaryDashboard() {
   const [showRequestFundModal, setShowRequestFundModal] = useState(false)
   const [showAddProjectModal, setShowAddProjectModal] = useState(false)
   const [showUploadEvidenceModal, setShowUploadEvidenceModal] = useState(false)
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState({ show: false, projectId: null, projectTitle: '' })
+  const [deleteFundingRequestModal, setDeleteFundingRequestModal] = useState({ show: false, requestId: null, requestTitle: '', requestAmount: 0 })
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isEditingProfile, setIsEditingProfile] = useState(false)
+  const [profileForm, setProfileForm] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  })
   
   // Form states
   const [projectForm, setProjectForm] = useState({
@@ -102,6 +110,11 @@ export default function BeneficiaryDashboard() {
         try {
           const parsedUser = JSON.parse(userData)
           setUser(parsedUser)
+          setProfileForm({
+            name: parsedUser?.name || '',
+            email: parsedUser?.email || '',
+            phone: parsedUser?.phone || ''
+          })
         } catch (error) {
           console.error('Error parsing user data:', error)
         }
@@ -150,7 +163,10 @@ export default function BeneficiaryDashboard() {
             amount: r.amount || 0,
             status: r.status || 'pending',
             date: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-            description: r.description || ''
+            submittedDate: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            description: r.description || '',
+            project: r.project?.title || r.projectName || 'Unknown Project',
+            reviewedBy: r.reviewedBy || null
           }))
           setFundingRequests(formattedRequests)
         }
@@ -425,6 +441,91 @@ export default function BeneficiaryDashboard() {
       router.push('/uzasempower/login')
     }, 1500)
   }, [showNotification, router])
+
+  // Delete project function
+  const handleDeleteProject = useCallback(async (projectId) => {
+    setIsSubmitting(true)
+    try {
+      const response = await api.delete(`/beneficiary/projects/${projectId}`)
+
+      if (response.success) {
+        showNotification('Project deleted successfully', 'success')
+        setDeleteConfirmModal({ show: false, projectId: null, projectTitle: '' })
+        
+        // Refresh projects list
+        const projectsRes = await api.get('/beneficiary/projects')
+        if (projectsRes.success && projectsRes.data) {
+          const projectsArray = projectsRes.data.data || projectsRes.data.projects || projectsRes.data || []
+          const formattedProjects = (Array.isArray(projectsArray) ? projectsArray : []).map((p, idx) => ({
+            id: p._id || p.id || idx + 1,
+            title: p.title || 'Untitled Project',
+            location: p.location || 'N/A',
+            category: p.category || 'Other',
+            totalFunded: p.totalFunded || 0,
+            totalRequested: p.fundingGoal || p.amount || 0,
+            status: p.status || 'pending',
+            missingDocuments: p.missingDocuments || []
+          }))
+          setProjects(formattedProjects)
+        }
+        
+        // Refresh dashboard overview
+        const overviewRes = await api.get('/beneficiary/dashboard/overview')
+        if (overviewRes.success && overviewRes.data) {
+          const data = overviewRes.data.summaryData || {}
+          setSummaryData({
+            totalFunded: data.totalFunded || 0,
+            totalDonors: data.totalDonors || 0,
+            activeProjects: data.activeProjects || 0,
+            pendingDocuments: data.pendingDocuments || 0,
+            onTrackProjects: data.onTrackProjects || 0
+          })
+        }
+      } else {
+        showNotification(response.message || 'Failed to delete project', 'error')
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error)
+      showNotification(error.message || 'Failed to delete project', 'error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [showNotification])
+
+  // Delete funding request function
+  const handleDeleteFundingRequest = useCallback(async (requestId) => {
+    setIsSubmitting(true)
+    try {
+      const response = await api.delete(`/beneficiary/funding-requests/${requestId}`)
+
+      if (response.success) {
+        showNotification('Funding request deleted successfully', 'success')
+        setDeleteFundingRequestModal({ show: false, requestId: null, requestTitle: '', requestAmount: 0 })
+        
+        // Refresh funding requests list
+        const fundingRes = await api.get('/beneficiary/funding-requests')
+        if (fundingRes.success && fundingRes.data) {
+          const formattedRequests = (fundingRes.data.requests || fundingRes.data || []).map((r, idx) => ({
+            id: r._id || idx + 1,
+            title: r.title || 'Untitled Request',
+            amount: r.amount || 0,
+            status: r.status || 'pending',
+            date: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            description: r.description || '',
+            project: r.project?.title || r.projectName || 'Unknown Project'
+          }))
+          setFundingRequests(formattedRequests)
+        }
+      } else {
+        showNotification(response.message || 'Failed to delete funding request', 'error')
+      }
+    } catch (error) {
+      console.error('Error deleting funding request:', error)
+      showNotification(error.message || 'Failed to delete funding request', 'error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [showNotification])
 
   // Memoize common handlers
   const toggleSidebar = useCallback(() => {
@@ -845,73 +946,103 @@ export default function BeneficiaryDashboard() {
                     </div>
                   </div>
                   
-                  <div className="overflow-x-auto -mx-4 md:mx-0">
-                    <div className="min-w-full inline-block align-middle">
-                      <table className="w-full min-w-[600px]">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project Name</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Location</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Category</th>
-                          <th className="px-6 py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Funded</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Funding Status</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Missing Docs</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {filteredOverviewProjects.map((project) => (
-                          <tr key={project.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{project.title}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-1 text-sm text-gray-700">
-                                <MapPin className="w-4 h-4" />
-                                {project.location}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">
-                                {project.category}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <div className="text-sm text-gray-900">{formatCurrency(project.totalFunded)}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-2">
-                                <span className="text-sm text-gray-900">
-                                  {Math.round((project.totalFunded / project.totalRequested) * 100)}%
-                                </span>
-                                <div className="w-24 bg-gray-200 h-2">
-                                  <div 
-                                    className="bg-green-500 h-2"
-                                    style={{ width: `${(project.totalFunded / project.totalRequested) * 100}%` }}
-                                  ></div>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 text-xs ${getStatusColor(project.status)}`}>
-                                {project.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {project.missingDocuments && project.missingDocuments.length > 0 ? (
-                                <span className="px-2 py-1 text-xs bg-red-100 text-red-800">
-                                  {project.missingDocuments.length} missing
-                                </span>
-                              ) : (
-                                <span className="text-xs text-gray-500">Complete</span>
-                              )}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  {filteredOverviewProjects.length === 0 ? (
+                    <div className="p-12 text-center">
+                      <p className="text-gray-500 text-lg">No projects found. Projects are empty.</p>
+                      <p className="text-gray-400 text-sm mt-2">Click "Add Project" to create your first project.</p>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="overflow-x-auto -mx-4 md:mx-0">
+                      <div className="min-w-full inline-block align-middle">
+                        <table className="w-full min-w-[600px]">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project Name</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Location</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Category</th>
+                            <th className="px-6 py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Funded</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Funding Status</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Status</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Missing Docs</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {filteredOverviewProjects.map((project) => (
+                            <tr 
+                              key={project.id} 
+                              className="hover:bg-green-50 cursor-pointer transition-colors border-b border-gray-200"
+                              onClick={() => router.push(`/uzasempower/login/beneficiary/projects/${project.id}`)}
+                              title="Click to view project details"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900 font-medium">{project.title}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center gap-1 text-sm text-gray-700">
+                                  <MapPin className="w-4 h-4" />
+                                  {project.location}
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800">
+                                  {project.category}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <div className="text-sm text-gray-900">{formatCurrency(project.totalFunded)}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm text-gray-900">
+                                    {Math.round((project.totalFunded / project.totalRequested) * 100)}%
+                                  </span>
+                                  <div className="w-24 bg-gray-200 h-2">
+                                    <div 
+                                      className="bg-green-500 h-2"
+                                      style={{ width: `${(project.totalFunded / project.totalRequested) * 100}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 text-xs ${getStatusColor(project.status)}`}>
+                                  {project.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                {project.missingDocuments && project.missingDocuments.length > 0 ? (
+                                  <span className="px-2 py-1 text-xs bg-red-100 text-red-800">
+                                    {project.missingDocuments.length} missing
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-gray-500">Complete</span>
+                                )}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                                {project.status === 'pending' ? (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      setDeleteConfirmModal({ show: true, projectId: project.id, projectTitle: project.title })
+                                    }}
+                                    className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors"
+                                    title="Delete project"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete
+                                  </button>
+                                ) : (
+                                  <span className="text-xs text-gray-400">Cannot delete</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -937,44 +1068,71 @@ export default function BeneficiaryDashboard() {
                     </div>
                   </div>
                   
-                  <div className="overflow-x-auto -mx-4 md:mx-0">
-                    <div className="min-w-full inline-block align-middle">
-                      <table className="w-full min-w-[600px]">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project</th>
-                          <th className="px-6 py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Amount</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Status</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Submitted Date</th>
-                          <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Reviewed By</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-200">
-                        {fundingRequests.map((request) => (
-                          <tr key={request.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-900">{request.project}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right">
-                              <div className="text-sm text-gray-900">{formatCurrency(request.amount)}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 text-xs ${getStatusColor(request.status)}`}>
-                                {request.status}
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{new Date(request.submittedDate).toLocaleDateString()}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{request.reviewedBy || 'Pending'}</div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                  {fundingRequests.length === 0 ? (
+                    <div className="p-12 text-center">
+                      <p className="text-gray-500 text-lg">No funding requests found. Funding requests are empty.</p>
+                      <p className="text-gray-400 text-sm mt-2">Click "Request Fund" to create your first funding request.</p>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="overflow-x-auto -mx-4 md:mx-0">
+                      <div className="min-w-full inline-block align-middle">
+                        <table className="w-full min-w-[600px]">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Project</th>
+                            <th className="px-6 py-3 text-right text-xs text-gray-600 uppercase tracking-wider">Amount</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Status</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Submitted Date</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Reviewed By</th>
+                            <th className="px-6 py-3 text-left text-xs text-gray-600 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                          {fundingRequests.map((request) => (
+                            <tr key={request.id} className="hover:bg-gray-50">
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-900">{request.project}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right">
+                                <div className="text-sm text-gray-900">{formatCurrency(request.amount)}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 text-xs ${getStatusColor(request.status)}`}>
+                                  {request.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{new Date(request.submittedDate).toLocaleDateString()}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm text-gray-700">{request.reviewedBy || 'Pending'}</div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                {request.status === 'pending' ? (
+                                  <button
+                                    onClick={() => setDeleteFundingRequestModal({ 
+                                      show: true, 
+                                      requestId: request.id, 
+                                      requestTitle: request.project || request.title || 'Funding Request',
+                                      requestAmount: request.amount 
+                                    })}
+                                    className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors"
+                                    title="Delete funding request"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                    Delete
+                                  </button>
+                                ) : (
+                                  <span className="text-xs text-gray-400">Cannot delete</span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -1000,7 +1158,12 @@ export default function BeneficiaryDashboard() {
                         {projects.filter(p => p.missingDocuments && p.missingDocuments.length > 0).length > 0 ? (
                           projects.filter(p => p.missingDocuments && p.missingDocuments.length > 0).map((project) => (
                             <div key={project.id} className="bg-yellow-50 border border-yellow-200 p-3 rounded">
-                              <p className="text-sm font-medium text-gray-900 mb-2">{project.title}</p>
+                              <p 
+                                className="text-sm font-medium text-gray-900 mb-2 cursor-pointer hover:text-green-600 transition-colors"
+                                onClick={() => router.push(`/uzasempower/login/beneficiary/projects/${project.id}`)}
+                              >
+                                {project.title}
+                              </p>
                               <div className="flex flex-wrap gap-2 mb-2">
                               {project.missingDocuments.map((doc, idx) => (
                                   <span key={idx} className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
@@ -1033,7 +1196,12 @@ export default function BeneficiaryDashboard() {
                         <div className="space-y-4">
                           {submittedEvidence.map((projectGroup) => (
                             <div key={projectGroup.projectId} className="border border-gray-200 rounded-lg p-4">
-                              <h4 className="text-sm font-semibold text-gray-900 mb-3">{projectGroup.projectTitle}</h4>
+                              <h4 
+                                className="text-sm font-semibold text-gray-900 mb-3 cursor-pointer hover:text-green-600 transition-colors"
+                                onClick={() => router.push(`/uzasempower/login/beneficiary/projects/${projectGroup.projectId}`)}
+                              >
+                                {projectGroup.projectTitle}
+                              </h4>
                               <div className="space-y-2">
                                 {projectGroup.evidence.map((ev) => (
                                   <div key={ev.id} className="flex items-center justify-between bg-gray-50 p-3 rounded border border-gray-200">
@@ -1132,7 +1300,19 @@ export default function BeneficiaryDashboard() {
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
-                                  <span>Project: {report.project?.title || 'Unknown'}</span>
+                                  <span>
+                                    Project: {' '}
+                                    {report.projectId || report.project?._id || report.project?.id ? (
+                                      <span 
+                                        className="text-green-600 hover:text-green-700 cursor-pointer underline"
+                                        onClick={() => router.push(`/uzasempower/login/beneficiary/projects/${report.projectId || report.project?._id || report.project?.id}`)}
+                                      >
+                                        {report.project?.title || 'Unknown'}
+                                      </span>
+                                    ) : (
+                                      <span>{report.project?.title || 'Unknown'}</span>
+                                    )}
+                                  </span>
                                   {report.startDate && report.endDate && (
                                     <>
                                       <span>•</span>
@@ -1645,8 +1825,30 @@ export default function BeneficiaryDashboard() {
                           return (
                             <div key={project.id} className="border border-gray-200 rounded-lg p-4">
                               <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-semibold text-gray-900">{project.title}</h3>
-                                <span className="text-sm text-gray-500">{projectMilestones.length} milestone(s)</span>
+                                <h3 
+                                  className="text-lg font-semibold text-gray-900 cursor-pointer hover:text-green-600 transition-colors"
+                                  onClick={() => router.push(`/uzasempower/login/beneficiary/projects/${project.id}`)}
+                                >
+                                  {project.title}
+                                </h3>
+                                <div className="flex items-center gap-4">
+                                  <span className="text-sm text-gray-500">{projectMilestones.length} milestone(s)</span>
+                                  {project.status === 'pending' ? (
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setDeleteConfirmModal({ show: true, projectId: project.id, projectTitle: project.title })
+                                      }}
+                                      className="flex items-center gap-1 px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 transition-colors"
+                                      title="Delete project"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                      Delete
+                                    </button>
+                                  ) : (
+                                    <span className="text-xs text-gray-400">Cannot delete</span>
+                                  )}
+                                </div>
                               </div>
                               
                               {projectMilestones.length > 0 ? (
@@ -1699,102 +1901,155 @@ export default function BeneficiaryDashboard() {
                 className="space-y-6"
               >
                 <div className="bg-white border border-gray-100 p-6">
-                  <h2 className="text-xl text-gray-900 mb-6">Settings</h2>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl text-gray-900">Settings</h2>
+                    {!isEditingProfile && (
+                      <button
+                        onClick={() => setIsEditingProfile(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                        Edit Profile
+                      </button>
+                    )}
+                  </div>
                   
                   <div className="space-y-6">
+                    {/* Profile Display/Edit Section */}
                     <div>
-                      <h3 className="text-lg text-gray-900 mb-4">Profile Settings</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm text-gray-700 mb-2">Full Name</label>
-                          <input
-                            type="text"
-                            defaultValue={user?.name || 'Beneficiary User'}
-                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          />
+                      {!isEditingProfile ? (
+                        // Profile Display View (Social Platform Style)
+                        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 border border-green-200">
+                          <div className="flex items-start gap-6">
+                            {/* Profile Avatar */}
+                            <div className="flex-shrink-0">
+                              <div className="w-24 h-24 bg-green-600 rounded-full flex items-center justify-center text-white text-3xl font-semibold shadow-lg">
+                                {user?.name ? user.name.charAt(0).toUpperCase() : 'B'}
+                              </div>
+                            </div>
+                            
+                            {/* Profile Information */}
+                            <div className="flex-1">
+                              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                                {user?.name || 'Beneficiary User'}
+                              </h3>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <span className="font-medium">Email:</span>
+                                  <span>{user?.email || 'beneficiary@example.com'}</span>
+                                </div>
+                                {user?.phone && (
+                                  <div className="flex items-center gap-2 text-gray-700">
+                                    <span className="font-medium">Phone:</span>
+                                    <span>{user.phone}</span>
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-2 text-gray-700">
+                                  <span className="font-medium">Role:</span>
+                                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Beneficiary</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
+                      ) : (
+                        // Profile Edit View
                         <div>
-                          <label className="block text-sm text-gray-700 mb-2">Email</label>
-                          <input
-                            type="email"
-                            defaultValue={user?.email || 'beneficiary@example.com'}
-                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm text-gray-700 mb-2">Phone Number</label>
-                          <input
-                            type="tel"
-                            defaultValue={user?.phone || ''}
-                            placeholder="+250 XXX XXX XXX"
-                            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-200 pt-6">
-                      <h3 className="text-lg text-gray-900 mb-4">Notification Settings</h3>
-                      <div className="space-y-3">
-                        <label className="flex items-center gap-3">
-                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" />
-                          <span className="text-sm text-gray-700">Email notifications for funding approvals</span>
-                        </label>
-                        <label className="flex items-center gap-3">
-                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" />
-                          <span className="text-sm text-gray-700">SMS notifications for milestone deadlines</span>
-                        </label>
-                        <label className="flex items-center gap-3">
-                          <input type="checkbox" defaultChecked className="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" />
-                          <span className="text-sm text-gray-700">Weekly project summary reports</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-gray-200 pt-6">
-                      <button 
-                        onClick={async (e) => {
-                          e.preventDefault()
-                          const nameInput = e.target.closest('.space-y-4').querySelector('input[type="text"]')
-                          const emailInput = e.target.closest('.space-y-4').querySelector('input[type="email"]')
-                          const phoneInput = e.target.closest('.space-y-4').querySelector('input[type="tel"]')
+                          <h3 className="text-lg text-gray-900 mb-4">Edit Profile</h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm text-gray-700 mb-2">Full Name</label>
+                              <input
+                                type="text"
+                                value={profileForm.name}
+                                onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
+                                className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm text-gray-700 mb-2">Email</label>
+                              <input
+                                type="email"
+                                value={profileForm.email}
+                                onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                                className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-sm text-gray-700 mb-2">Phone Number</label>
+                              <input
+                                type="tel"
+                                value={profileForm.phone}
+                                onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
+                                placeholder="+250 XXX XXX XXX"
+                                className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                              />
+                            </div>
+                          </div>
                           
-                          const updateData = {}
-                          if (nameInput?.value) updateData.name = nameInput.value
-                          if (emailInput?.value) updateData.email = emailInput.value
-                          if (phoneInput?.value) updateData.phone = phoneInput.value
+                          <div className="flex gap-4 mt-6">
+                            <button
+                              onClick={async () => {
+                                const updateData = {}
+                                if (profileForm.name) updateData.name = profileForm.name
+                                if (profileForm.email) updateData.email = profileForm.email
+                                if (profileForm.phone) updateData.phone = profileForm.phone
 
-                          if (Object.keys(updateData).length === 0) {
-                            showNotification('No changes to save', 'error')
-                            return
-                          }
+                                if (Object.keys(updateData).length === 0) {
+                                  showNotification('No changes to save', 'error')
+                                  return
+                                }
 
-                          setIsSubmitting(true)
-                          try {
-                            const response = await api.put('/auth/profile', updateData)
-                            if (response.success) {
-                              showNotification('Profile updated successfully', 'success')
-                              // Update user in localStorage
-                              if (response.data?.user) {
-                                const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
-                                localStorage.setItem('user', JSON.stringify({ ...currentUser, ...response.data.user }))
-                                setUser({ ...user, ...response.data.user })
-                              }
-                            } else {
-                              showNotification(response.message || 'Failed to update profile', 'error')
-                            }
-                          } catch (error) {
-                            console.error('Error updating profile:', error)
-                            showNotification(error.message || 'Failed to update profile', 'error')
-                          } finally {
-                            setIsSubmitting(false)
-                          }
-                        }}
-                        disabled={isSubmitting}
-                        className="px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
-                      >
-                        {isSubmitting ? 'Saving...' : 'Save Settings'}
-                      </button>
+                                setIsSubmitting(true)
+                                try {
+                                  const response = await api.put('/auth/profile', updateData)
+                                  if (response.success) {
+                                    showNotification('Profile updated successfully', 'success')
+                                    // Update user in localStorage
+                                    if (response.data?.user) {
+                                      const currentUser = JSON.parse(localStorage.getItem('user') || '{}')
+                                      localStorage.setItem('user', JSON.stringify({ ...currentUser, ...response.data.user }))
+                                      setUser({ ...user, ...response.data.user })
+                                      setProfileForm({
+                                        name: response.data.user.name || profileForm.name,
+                                        email: response.data.user.email || profileForm.email,
+                                        phone: response.data.user.phone || profileForm.phone
+                                      })
+                                    }
+                                    setIsEditingProfile(false)
+                                  } else {
+                                    showNotification(response.message || 'Failed to update profile', 'error')
+                                  }
+                                } catch (error) {
+                                  console.error('Error updating profile:', error)
+                                  showNotification(error.message || 'Failed to update profile', 'error')
+                                } finally {
+                                  setIsSubmitting(false)
+                                }
+                              }}
+                              disabled={isSubmitting}
+                              className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50"
+                            >
+                              <Save className="w-4 h-4" />
+                              {isSubmitting ? 'Saving...' : 'Save Changes'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setIsEditingProfile(false)
+                                setProfileForm({
+                                  name: user?.name || '',
+                                  email: user?.email || '',
+                                  phone: user?.phone || ''
+                                })
+                              }}
+                              disabled={isSubmitting}
+                              className="px-6 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1854,7 +2109,10 @@ export default function BeneficiaryDashboard() {
                         amount: r.amount || 0,
                         status: r.status || 'pending',
                         date: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
-                        description: r.description || ''
+                        submittedDate: r.createdAt ? new Date(r.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+                        description: r.description || '',
+                        project: r.project?.title || r.projectName || 'Unknown Project',
+                        reviewedBy: r.reviewedBy || null
                       }))
                       setFundingRequests(formattedRequests)
                     }
@@ -2602,6 +2860,107 @@ export default function BeneficiaryDashboard() {
               >
                 <X className="w-5 h-5" />
               </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmModal.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-md w-full"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Delete Project</h3>
+              <button
+                onClick={() => setDeleteConfirmModal({ show: false, projectId: null, projectTitle: '' })}
+                className="text-gray-400 hover:text-gray-600"
+                disabled={isSubmitting}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-sm text-gray-700 mb-4">
+                Are you sure you want to delete the project <strong>"{deleteConfirmModal.projectTitle}"</strong>? 
+                This action cannot be undone.
+              </p>
+              <p className="text-xs text-red-600 mb-4">
+                Note: Only pending projects can be deleted.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setDeleteConfirmModal({ show: false, projectId: null, projectTitle: '' })}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteProject(deleteConfirmModal.projectId)}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Deleting...' : 'Delete Project'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete Funding Request Confirmation Modal */}
+      {deleteFundingRequestModal.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-md w-full"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Delete Funding Request</h3>
+              <button
+                onClick={() => setDeleteFundingRequestModal({ show: false, requestId: null, requestTitle: '', requestAmount: 0 })}
+                className="text-gray-400 hover:text-gray-600"
+                disabled={isSubmitting}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-sm text-gray-700 mb-4">
+                Are you sure you want to delete the funding request for <strong>"{deleteFundingRequestModal.requestTitle}"</strong> 
+                ({formatCurrency(deleteFundingRequestModal.requestAmount)})? 
+                This action cannot be undone.
+              </p>
+              <p className="text-xs text-red-600 mb-4">
+                Note: Only pending funding requests can be deleted.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setDeleteFundingRequestModal({ show: false, requestId: null, requestTitle: '', requestAmount: 0 })}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteFundingRequest(deleteFundingRequestModal.requestId)}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Deleting...' : 'Delete Request'}
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>

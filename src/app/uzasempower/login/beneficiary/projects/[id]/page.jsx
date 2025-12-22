@@ -5,26 +5,27 @@ import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import { 
   MapPin, DollarSign, Users, Menu, LogOut, Search, Bell,
-  LayoutDashboard, Heart, CheckCircle, AlertCircle, Settings, ArrowLeft
+  LayoutDashboard, Target, Upload, FileText, Settings, X, ArrowLeft
 } from 'lucide-react'
 import { api } from '@/lib/api/config'
 
-export default function ProjectDetailsPage() {
+export default function BeneficiaryProjectDetailsPage() {
   const router = useRouter()
   const params = useParams()
   const projectId = params.id
   const [project, setProject] = useState(null)
+  const [milestones, setMilestones] = useState([])
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [user, setUser] = useState(null)
 
   const menuItems = [
-    { id: 'overview', label: 'Overview', icon: LayoutDashboard, path: '/uzasempower/login/donor/dashboard' },
-    { id: 'projects', label: 'Projects', icon: Heart, path: '/uzasempower/login/donor/dashboard?tab=projects' },
-    { id: 'milestones', label: 'Milestones', icon: CheckCircle, path: '/uzasempower/login/donor/dashboard?tab=milestones' },
-    { id: 'ledger', label: 'Ledger', icon: DollarSign, path: '/uzasempower/login/donor/dashboard?tab=ledger' },
-    { id: 'alerts', label: 'Alerts', icon: AlertCircle, path: '/uzasempower/login/donor/dashboard?tab=alerts' },
-    { id: 'settings', label: 'Settings', icon: Settings, path: '/uzasempower/login/donor/dashboard?tab=settings' },
+    { id: 'overview', label: 'Overview', icon: LayoutDashboard, path: '/uzasempower/login/beneficiary/dashboard' },
+    { id: 'funding-request', label: 'Funding Request', icon: DollarSign, path: '/uzasempower/login/beneficiary/dashboard?tab=funding-request' },
+    { id: 'milestones', label: 'Milestones', icon: Target, path: '/uzasempower/login/beneficiary/dashboard?tab=milestones' },
+    { id: 'submit-evidence', label: 'Submit Evidence', icon: Upload, path: '/uzasempower/login/beneficiary/dashboard?tab=submit-evidence' },
+    { id: 'reports', label: 'Reports', icon: FileText, path: '/uzasempower/login/beneficiary/dashboard?tab=reports' },
+    { id: 'settings', label: 'Settings', icon: Settings, path: '/uzasempower/login/beneficiary/dashboard?tab=settings' },
   ]
 
   // Load user data from localStorage
@@ -42,18 +43,19 @@ export default function ProjectDetailsPage() {
     }
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('user')
-    router.push('/uzasempower/login')
-  }
-
   useEffect(() => {
     const fetchProject = async () => {
       try {
         setLoading(true)
-        const response = await api.get(`/donor/projects/${projectId}`)
+        const response = await api.get(`/beneficiary/projects/${projectId}`)
         if (response.success && response.data) {
           setProject(response.data.project || response.data)
+        }
+        
+        // Fetch milestones for this project
+        const milestonesRes = await api.get(`/beneficiary/projects/${projectId}/milestones`)
+        if (milestonesRes.success && milestonesRes.data) {
+          setMilestones(milestonesRes.data.milestones || [])
         }
       } catch (error) {
         console.error('Error fetching project:', error)
@@ -67,12 +69,30 @@ export default function ProjectDetailsPage() {
     }
   }, [projectId])
 
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    router.push('/uzasempower/login')
+  }
+
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-RW', { 
       style: 'currency',
       currency: 'RWF',
       minimumFractionDigits: 0 
-    }).format(amount)
+    }).format(amount || 0)
+  }
+
+  const getStatusColor = (status) => {
+    const statusColors = {
+      'pending': 'bg-yellow-100 text-yellow-800',
+      'approved': 'bg-blue-100 text-blue-800',
+      'active': 'bg-green-100 text-green-800',
+      'completed': 'bg-gray-100 text-gray-800',
+      'cancelled': 'bg-red-100 text-red-800',
+      'in_progress': 'bg-blue-100 text-blue-800',
+      'evidence_submitted': 'bg-purple-100 text-purple-800'
+    }
+    return statusColors[status?.toLowerCase()] || 'bg-gray-100 text-gray-800'
   }
 
   return (
@@ -123,7 +143,7 @@ export default function ProjectDetailsPage() {
         <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between h-[80px]">
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.push('/uzasempower/login/donor/dashboard')}
+              onClick={() => router.push('/uzasempower/login/beneficiary/dashboard')}
               className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-green-600 hover:bg-gray-50 transition-colors rounded"
               title="Back to Project List"
             >
@@ -148,11 +168,11 @@ export default function ProjectDetailsPage() {
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : 'D'}
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'B'}
                 </div>
                 <div>
-                  <p className="text-sm text-gray-900">{user?.name || 'Donor User'}</p>
-                  <p className="text-xs text-gray-600">{user?.email || 'donor@example.com'}</p>
+                  <p className="text-sm text-gray-900">{user?.name || 'Beneficiary User'}</p>
+                  <p className="text-xs text-gray-600">{user?.email || 'beneficiary@example.com'}</p>
                 </div>
               </div>
             </div>
@@ -172,7 +192,7 @@ export default function ProjectDetailsPage() {
               <div className="text-center">
                 <p className="text-gray-600 mb-4">Project not found</p>
                 <button
-                  onClick={() => router.push('/uzasempower/login/donor/dashboard')}
+                  onClick={() => router.push('/uzasempower/login/beneficiary/dashboard')}
                   className="px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
                 >
                   Back to Dashboard
@@ -182,13 +202,13 @@ export default function ProjectDetailsPage() {
           ) : (
             <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
               {/* Project Header Card */}
-              <div className="bg-white border border-gray-100 p-6">
+              <div className="bg-white border border-gray-100 p-6 rounded-lg">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl text-gray-900 mb-2">{project.title || 'Project Title'}</h2>
                   <p className="text-sm text-gray-600">{project.description || 'No description available'}</p>
                 </div>
-                <span className={`px-3 py-1 text-sm ${project.status === 'active' ? 'bg-green-100 text-green-800' : project.status === 'completed' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}`}>
+                <span className={`px-3 py-1 text-sm rounded ${getStatusColor(project.status)}`}>
                   {project.status || 'Unknown'}
                 </span>
               </div>
@@ -211,93 +231,135 @@ export default function ProjectDetailsPage() {
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-xs text-gray-500">Requested Amount</p>
-                    <p className="text-sm text-gray-900">{formatCurrency(project.requestedAmount || 0)}</p>
+                    <p className="text-xs text-gray-500">Funding Goal</p>
+                    <p className="text-sm text-gray-900">{formatCurrency(project.fundingGoal || project.requestedAmount || 0)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-5 h-5 text-gray-400" />
                   <div>
-                    <p className="text-xs text-gray-500">Total Disbursed</p>
-                    <p className="text-sm text-gray-900">{formatCurrency(project.totalDisbursed || 0)}</p>
+                    <p className="text-xs text-gray-500">Total Funded</p>
+                    <p className="text-sm text-gray-900">{formatCurrency(project.totalFunded || 0)}</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Beneficiary Information */}
-            {project.beneficiary && (
-              <div className="bg-white border border-gray-100 p-6">
+            {/* Funding Progress */}
+            <div className="bg-white border border-gray-100 p-6 rounded-lg">
+              <h3 className="text-lg text-gray-900 mb-4">Funding Progress</h3>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-gray-700">Funding Progress</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      {project.fundingGoal || project.requestedAmount ? 
+                        Math.round(((project.totalFunded || 0) / (project.fundingGoal || project.requestedAmount)) * 100) : 0}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+                    <div 
+                      className="bg-green-500 h-3 transition-all"
+                      style={{ 
+                        width: `${project.fundingGoal || project.requestedAmount ? 
+                          Math.min(((project.totalFunded || 0) / (project.fundingGoal || project.requestedAmount)) * 100, 100) : 0}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between mt-2 text-xs text-gray-500">
+                    <span>Funded: {formatCurrency(project.totalFunded || 0)}</span>
+                    <span>Goal: {formatCurrency(project.fundingGoal || project.requestedAmount || 0)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Project Milestones */}
+            {milestones.length > 0 && (
+              <div className="bg-white border border-gray-100 p-6 rounded-lg">
                 <h3 className="text-lg text-gray-900 mb-4 flex items-center gap-2">
-                  <Users className="w-5 h-5" />
-                  Beneficiary Information
+                  <Target className="w-5 h-5" />
+                  Project Milestones ({milestones.length})
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-xs text-gray-500">Name</p>
-                    <p className="text-sm text-gray-900">{project.beneficiary.name || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Email</p>
-                    <p className="text-sm text-gray-900">{project.beneficiary.email || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Phone</p>
-                    <p className="text-sm text-gray-900">{project.beneficiary.phone || 'N/A'}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500">Location</p>
-                    <p className="text-sm text-gray-900">{project.beneficiary.location || 'N/A'}</p>
-                  </div>
+                <div className="space-y-4">
+                  {milestones.map((milestone, idx) => (
+                    <div key={milestone._id || milestone.id || idx} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-900">
+                            Milestone {milestone.number || idx + 1}: {milestone.title}
+                          </h4>
+                          {milestone.description && (
+                            <p className="text-sm text-gray-600 mt-1">{milestone.description}</p>
+                          )}
+                        </div>
+                        <span className={`px-2 py-1 text-xs rounded ${getStatusColor(milestone.status)}`}>
+                          {milestone.status || 'pending'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                        {milestone.targetDate && (
+                          <span>Target Date: {new Date(milestone.targetDate).toLocaleDateString()}</span>
+                        )}
+                        {milestone.trancheAmount && (
+                          <span>Tranche: {formatCurrency(milestone.trancheAmount)}</span>
+                        )}
+                        {milestone.evidence && milestone.evidence.length > 0 && (
+                          <span>{milestone.evidence.length} evidence file(s)</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Project Status */}
-            <div className="bg-white border border-gray-100 p-6">
-              <h3 className="text-lg text-gray-900 mb-4">Project Status</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Funding Progress</p>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 bg-gray-200 h-2">
-                      <div 
-                        className="bg-green-500 h-2"
-                        style={{ width: `${project.requestedAmount ? ((project.totalDisbursed || 0) / project.requestedAmount * 100) : 0}%` }}
-                      ></div>
-                    </div>
-                    <span className="text-sm text-gray-900">
-                      {project.requestedAmount ? Math.round(((project.totalDisbursed || 0) / project.requestedAmount) * 100) : 0}%
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Status</p>
-                  <p className="text-sm text-gray-900">{project.status || 'N/A'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Created</p>
-                  <p className="text-sm text-gray-900">
-                    {project.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'N/A'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Project ID Display */}
-            <div className="bg-white border border-gray-100 p-6">
+            {/* Project Information */}
+            <div className="bg-white border border-gray-100 p-6 rounded-lg">
               <h3 className="text-lg text-gray-900 mb-4">Project Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Project ID</p>
-                  <p className="text-sm text-gray-900 font-mono">{projectId}</p>
+                  <p className="text-sm text-gray-900 font-mono">{project._id || project.id || projectId}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Project ID (from data)</p>
-                  <p className="text-sm text-gray-900 font-mono">{project._id || project.id || 'N/A'}</p>
+                  <p className="text-xs text-gray-500 mb-1">Created Date</p>
+                  <p className="text-sm text-gray-900">
+                    {project.createdAt ? new Date(project.createdAt).toLocaleDateString() : 'N/A'}
+                  </p>
                 </div>
+                {project.approvedAt && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Approved Date</p>
+                    <p className="text-sm text-gray-900">
+                      {new Date(project.approvedAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
+                {project.completedAt && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Completed Date</p>
+                    <p className="text-sm text-gray-900">
+                      {new Date(project.completedAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* Missing Documents */}
+            {project.missingDocuments && project.missingDocuments.length > 0 && (
+              <div className="bg-yellow-50 border border-yellow-200 p-6 rounded-lg">
+                <h3 className="text-lg text-gray-900 mb-4">Missing Documents</h3>
+                <div className="space-y-2">
+                  {project.missingDocuments.map((doc, idx) => (
+                    <div key={idx} className="text-sm text-gray-700">
+                      • {doc}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             </div>
           )}
         </div>
@@ -305,3 +367,4 @@ export default function ProjectDetailsPage() {
     </div>
   )
 }
+

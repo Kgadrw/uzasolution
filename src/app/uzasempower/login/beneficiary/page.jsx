@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Users, Mail, Lock, Eye, EyeOff, Sparkles, TrendingUp } from 'lucide-react'
 import dynamic from 'next/dynamic'
-import { login, storeAuthData } from '@/lib/api/auth'
+import { login, storeAuthData, getDashboardRoute } from '@/lib/api/auth'
 
 const Navbar = dynamic(() => import('../../../../components/navbar'))
 const Footer = dynamic(() => import('../../../../components/footer'))
@@ -79,22 +79,15 @@ export default function BeneficiaryLogin() {
         return
       }
 
-      // Verify user is a beneficiary
-      const role = result.data.user.role?.toLowerCase()
-      if (role !== 'beneficiary') {
-        setErrors({ 
-          general: 'This login is for beneficiaries only. Please use the correct login page.' 
-        })
-        setIsLoading(false)
-        return
-      }
-
       // Store authentication data
       const { user, token, refreshToken } = result.data
       storeAuthData(user, token, refreshToken)
 
-      // Redirect to beneficiary dashboard
-      router.push('/uzasempower/login/beneficiary/dashboard')
+      // Get dashboard route based on role
+      const dashboardRoute = getDashboardRoute(user.role)
+      
+      // Navigate to dashboard
+      router.push(dashboardRoute)
     } catch (error) {
       console.error('Login error:', error)
       setErrors({ 

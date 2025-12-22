@@ -190,6 +190,7 @@ export default function DonorDashboard() {
           const formattedMilestones = (milestonesRes.data.milestones || milestonesRes.data || []).map((m, idx) => ({
             id: m._id || idx + 1,
             projectName: m.project?.title || 'Unknown Project',
+            projectId: m.project?._id || m.project?.id || null,
             milestoneName: m.title || 'Untitled Milestone',
             description: m.description || '',
             targetDate: m.targetDate ? new Date(m.targetDate).toISOString().split('T')[0] : '',
@@ -213,7 +214,8 @@ export default function DonorDashboard() {
             description: t.description || '',
             amount: t.amount || 0,
             balance: t.balance || 0,
-            project: t.project?.title || 'N/A'
+            project: t.project?.title || 'N/A',
+            projectId: t.project?._id || t.project?.id || null
           }))
           setTransactions(formattedTransactions)
         }
@@ -227,6 +229,7 @@ export default function DonorDashboard() {
             title: a.title || 'Alert',
             description: a.message || a.description || '',
             project: a.project?.title || 'N/A',
+            projectId: a.project?._id || a.project?.id || null,
             date: a.createdAt ? new Date(a.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
             status: a.read ? 'Read' : 'Active'
           }))
@@ -845,11 +848,12 @@ export default function DonorDashboard() {
                           filteredOverviewProjects.map((project) => (
                         <tr 
                           key={project.id} 
-                          className="hover:bg-gray-50 cursor-pointer"
+                          className="hover:bg-green-50 cursor-pointer transition-colors border-b border-gray-200"
                           onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                          title="Click to view project details"
                         >
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm  text-gray-900">{project.title}</div>
+                              <div className="text-sm text-gray-900 font-medium">{project.title}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-700">{project.beneficiary}</div>
@@ -1018,11 +1022,12 @@ export default function DonorDashboard() {
                         filteredProjects.map((project) => (
                         <tr 
                           key={project.id} 
-                          className="hover:bg-gray-50 cursor-pointer"
+                          className="hover:bg-green-50 cursor-pointer transition-colors border-b border-gray-200"
                           onClick={() => router.push(`/uzasempower/login/donor/projects/${project.id}`)}
+                          title="Click to view project details"
                         >
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm  text-gray-900">{project.title}</div>
+                              <div className="text-sm text-gray-900 font-medium">{project.title}</div>
                           </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-gray-700">{project.beneficiary}</div>
@@ -1185,7 +1190,17 @@ export default function DonorDashboard() {
                           filteredMilestones.map((milestone) => (
                           <tr key={milestone.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm  text-gray-900">{milestone.projectName}</div>
+                              {milestone.projectId ? (
+                                <div 
+                                  className="text-sm text-gray-900 font-medium cursor-pointer hover:text-green-600 transition-colors"
+                                  onClick={() => router.push(`/uzasempower/login/donor/projects/${milestone.projectId}`)}
+                                  title="Click to view project details"
+                                >
+                                  {milestone.projectName}
+                                </div>
+                              ) : (
+                                <div className="text-sm text-gray-900">{milestone.projectName}</div>
+                              )}
                             </td>
                             <td className="px-6 py-4">
                               <div className="text-sm font-medium text-gray-900">{milestone.milestoneName}</div>
@@ -1356,7 +1371,17 @@ export default function DonorDashboard() {
                               <div className="text-sm text-gray-700">{transaction.description}</div>
                         </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{transaction.project}</div>
+                              {transaction.projectId ? (
+                                <div 
+                                  className="text-sm text-gray-700 cursor-pointer hover:text-green-600 transition-colors font-medium"
+                                  onClick={() => router.push(`/uzasempower/login/donor/projects/${transaction.projectId}`)}
+                                  title="Click to view project details"
+                                >
+                                  {transaction.project}
+                                </div>
+                              ) : (
+                                <div className="text-sm text-gray-700">{transaction.project}</div>
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-right">
                               <div className={`text-sm  ${
@@ -1413,7 +1438,17 @@ export default function DonorDashboard() {
                       </div>
                             <p className="text-sm text-gray-700 mb-2">{alert.description}</p>
                             <div className="flex items-center gap-4 text-xs text-gray-500">
-                        <span>{alert.project}</span>
+                        {alert.projectId ? (
+                          <span 
+                            className="cursor-pointer hover:text-green-600 transition-colors font-medium"
+                            onClick={() => router.push(`/uzasempower/login/donor/projects/${alert.projectId}`)}
+                            title="Click to view project details"
+                          >
+                            {alert.project}
+                          </span>
+                        ) : (
+                          <span>{alert.project}</span>
+                        )}
                               <span>{new Date(alert.date).toLocaleDateString()}</span>
                       </div>
                     </div>
