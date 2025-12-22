@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, Eye, EyeOff, LogIn, Home, ArrowLeft } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
 import { login, storeAuthData, getDashboardRoute } from '@/lib/api/auth'
 
 export default function UZAEmpowerLogin() {
@@ -122,17 +122,6 @@ export default function UZAEmpowerLogin() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="bg-white p-6 sm:p-8 border border-gray-200"
         >
-          {/* Back to Home Button */}
-          <div className="mb-6">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#FBAF43] transition-colors font-medium"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </Link>
-          </div>
-
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* General Error */}
             {errors.general && (

@@ -492,29 +492,6 @@ export default function BeneficiaryDashboard() {
     }
   }, [showNotification])
 
-  // Handle document viewing/downloading
-  const handleViewDocument = useCallback((url) => {
-    if (!url) return
-    
-    // Check if the file is a PDF by extension
-    const isPdf = url.toLowerCase().endsWith('.pdf') || url.toLowerCase().includes('.pdf')
-    
-    if (isPdf) {
-      // Open PDF in new tab
-      window.open(url, '_blank', 'noopener,noreferrer')
-    } else {
-      // Download other file types
-      const link = document.createElement('a')
-      link.href = url
-      link.download = url.split('/').pop() || 'document'
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
-  }, [])
-
   // Delete funding request function
   const handleDeleteFundingRequest = useCallback(async (requestId) => {
     setIsSubmitting(true)
@@ -1244,13 +1221,15 @@ export default function BeneficiaryDashboard() {
                                       </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                      <button
-                                        onClick={() => handleViewDocument(ev.url)}
+                                      <a
+                                        href={ev.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
                                         className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors"
                                       >
                                         <Download className="w-4 h-4" />
-                                        {ev.url?.toLowerCase().endsWith('.pdf') || ev.url?.toLowerCase().includes('.pdf') ? 'View PDF' : 'Download'}
-                                      </button>
+                                        View
+                                      </a>
                                     </div>
                           </div>
                         ))}
