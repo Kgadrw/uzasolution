@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Users, TrendingUp, CheckCircle, Star, ArrowRight, Award, Globe, Heart, Building2, DollarSign, ChevronLeft, ChevronRight, Briefcase, Target, UserCheck, GraduationCap, Handshake } from 'lucide-react'
+import { Users, TrendingUp, CheckCircle, Star, ArrowRight, Award, Globe, Heart, Building2, DollarSign, Briefcase, Target, UserCheck, GraduationCap, Handshake } from 'lucide-react'
 import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
@@ -12,7 +12,6 @@ const Footer = dynamic(() => import('../../components/footer'))
 const MagicBento = dynamic(() => import('../../components/MagicBento'))
 
 export default function UZAEmpowerPage() {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [currentIntroSlide, setCurrentIntroSlide] = useState(0)
   
   const introSlides = [
@@ -60,14 +59,7 @@ export default function UZAEmpowerPage() {
   ]
 
 
-  const heroImages = [
-    { src: '/negative.jpg', type: 'challenge', title: 'The Challenge', subtitle: 'Displacement-affected communities face barriers to economic empowerment' },
-    { src: '/negative1.jpg', type: 'challenge', title: 'The Struggle', subtitle: 'Limited access to capital, markets, and opportunities' },
-    { src: '/story1.jpg', type: 'solution', title: 'The Solution', subtitle: 'UZA Empower provides inclusive financing and support' },
-    { src: '/story2.png', type: 'solution', title: 'The Impact', subtitle: 'Connected markets accelerate growth and prosperity' },
-    { src: '/story3.jpg', type: 'solution', title: 'The Change', subtitle: 'Policy advocacy drives shared prosperity' },
-    { src: '/story4.jpg', type: 'solution', title: 'The Future', subtitle: 'Sustainable development through community empowerment' }
-  ]
+  const heroImage = '/story3.jpg'
 
   const stories = [
     {
@@ -102,15 +94,6 @@ export default function UZAEmpowerPage() {
     }
   ]
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === heroImages.length - 1 ? 0 : prevIndex + 1
-      )
-    }, 3000) // Change every 3 seconds
-
-    return () => clearInterval(interval)
-  }, [heroImages.length])
 
 
   return (
@@ -121,25 +104,17 @@ export default function UZAEmpowerPage() {
         <Navbar initialSolid={false} />
 
         {/* -------- Hero Section -------- */}
-        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full md:max-w-[90%] md:mx-auto overflow-hidden group rounded-l-[3rem] rounded-tr-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
+        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full md:max-w-[90%] md:mx-auto overflow-hidden rounded-l-[3rem] rounded-tr-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
           {/* Background Image */}
-          {heroImages.map((imageData, index) => (
-            <motion.div
-              key={index}
-              className="absolute inset-0"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: index === currentImageIndex ? 1 : 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <Image
-                src={imageData.src}
-                alt="UZA Empower - Transforming Lives"
-                fill
-                className="object-cover"
-                priority={index === 0}
-              />
-            </motion.div>
-          ))}
+          <div className="absolute inset-0">
+            <Image
+              src={heroImage}
+              alt="UZA Empower - Transforming Lives"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
 
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent md:bg-gradient-to-r md:from-[#00142B]/95 md:via-[#00142B]/80 md:to-transparent" />
@@ -161,33 +136,6 @@ export default function UZAEmpowerPage() {
                 </Link>
               </div>
             </div>
-          </div>
-
-          {/* -------- Slider Arrows -------- */}
-          <button
-            onClick={() => setCurrentImageIndex((prev) => (prev - 1 + heroImages.length) % heroImages.length)}
-            className="absolute top-1/2 left-2 sm:left-4 md:left-6 transform -translate-y-1/2 text-white rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => setCurrentImageIndex((prev) => (prev + 1) % heroImages.length)}
-            className="absolute top-1/2 right-2 sm:right-4 md:right-6 transform -translate-y-1/2 text-white rounded-full p-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity touch-manipulation"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-
-          {/* -------- Slider Dots -------- */}
-          <div className="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-            {heroImages.map((_, idx) => (
-              <span
-                key={idx}
-                onClick={() => setCurrentImageIndex(idx)}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full cursor-pointer transition-all touch-manipulation ${
-                  idx === currentImageIndex ? 'bg-[#FBAF43]' : 'bg-white/50'
-                }`}
-              />
-            ))}
           </div>
         </div>
       </section>
