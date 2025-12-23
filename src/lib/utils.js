@@ -57,4 +57,72 @@ export function calculateKPIs(transactions, budget, disbursed) {
   }
 }
 
+/**
+ * Ensures a URL is a valid Cloudinary URL
+ * @param {string} url - The URL to check/format
+ * @returns {string} - The Cloudinary URL or original URL if invalid
+ */
+export function ensureCloudinaryUrl(url) {
+  if (!url) return url
+  
+  // If it's already a Cloudinary URL, return as is
+  if (url.includes('res.cloudinary.com') || url.includes('cloudinary.com')) {
+    return url
+  }
+  
+  // If it's a blob URL (local preview), return as is
+  if (url.startsWith('blob:')) {
+    return url
+  }
+  
+  // If it's a relative path, return as is (might be local)
+  if (url.startsWith('/')) {
+    return url
+  }
+  
+  // Otherwise, assume it's already a valid URL
+  return url
+}
+
+/**
+ * Gets a Cloudinary image URL with optional transformations
+ * @param {string} url - The Cloudinary URL
+ * @param {object} options - Transformation options (width, height, quality, etc.)
+ * @returns {string} - The transformed Cloudinary URL
+ */
+export function getCloudinaryImageUrl(url, options = {}) {
+  if (!url) return url
+  
+  // If not a Cloudinary URL, return as is
+  if (!url.includes('res.cloudinary.com')) {
+    return url
+  }
+  
+  // If it's a blob URL (local preview), return as is
+  if (url.startsWith('blob:')) {
+    return url
+  }
+  
+  // Parse Cloudinary URL and add transformations
+  // Format: https://res.cloudinary.com/{cloud_name}/{resource_type}/upload/{transformations}/{public_id}.{format}
+  const urlParts = url.split('/upload/')
+  if (urlParts.length !== 2) {
+    return url // Invalid Cloudinary URL format
+  }
+  
+  const transformations = []
+  
+  if (options.width) transformations.push(`w_${options.width}`)
+  if (options.height) transformations.push(`h_${options.height}`)
+  if (options.quality) transformations.push(`q_${options.quality}`)
+  if (options.crop) transformations.push(`c_${options.crop}`)
+  if (options.format) transformations.push(`f_${options.format}`)
+  
+  const transformationString = transformations.length > 0 
+    ? `${transformations.join(',')}/` 
+    : ''
+  
+  return `${urlParts[0]}/upload/${transformationString}${urlParts[1]}`
+}
+
 

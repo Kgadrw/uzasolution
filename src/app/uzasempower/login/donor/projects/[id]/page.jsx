@@ -14,6 +14,7 @@ export default function ProjectDetailsPage() {
   const params = useParams()
   const projectId = params.id
   const [project, setProject] = useState(null)
+  const [milestones, setMilestones] = useState([])
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [user, setUser] = useState(null)
@@ -53,21 +54,20 @@ export default function ProjectDetailsPage() {
         setLoading(true)
         const response = await api.get(`/donor/projects/${projectId}`)
         if (response.success && response.data) {
-          setProject(response.data.project || response.data)
+          const projectData = response.data.project || response.data
+          setProject(projectData)
+          
+          // Set milestones if they exist in the response
+          if (projectData.milestones) {
+            setMilestones(projectData.milestones)
+          } else if (response.data.milestones) {
+            setMilestones(response.data.milestones)
+          }
         } else {
           console.error('Failed to fetch project:', response)
         }
       } catch (error) {
         console.error('Error fetching project:', error)
-        // Try alternative endpoint if the first one fails
-        try {
-          const altResponse = await api.get(`/projects/${projectId}`)
-          if (altResponse.success && altResponse.data) {
-            setProject(altResponse.data.project || altResponse.data)
-          }
-        } catch (altError) {
-          console.error('Alternative endpoint also failed:', altError)
-        }
       } finally {
         setLoading(false)
       }
@@ -91,12 +91,17 @@ export default function ProjectDetailsPage() {
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-3 min-w-0 w-full">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 transition-colors flex-shrink-0"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            {sidebarOpen && (
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Donor Dashboard</h2>
+            )}
+          </div>
         </div>
         
         <nav className="p-4 space-y-2">
@@ -295,7 +300,68 @@ export default function ProjectDetailsPage() {
               </div>
             </div>
 
-            {/* Project ID Display */}
+            {/* Milestones */}
+            {milestones && milestones.length > 0 && (
+              <div className="bg-white border border-gray-100 p-6">
+                <h3 className="text-lg text-gray-900 mb-4 flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5" />
+                  Milestones
+                </h3>
+                <div className="space-y-4">
+                  {milestones.map((milestone, index) => (
+                    <div key={milestone._id || milestone.id || index} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-900">{milestone.title || `Milestone ${milestone.number || index + 1}`}</h4>
+                          {milestone.description && (
+                            <p className="text-xs text-gray-600 mt-1">{milestone.description}</p>
+                          )}
+                        </div>
+                        <span className={`px-2 py-1 text-xs font-medium ${
+                          milestone.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          milestone.status === 'evidence_submitted' ? 'bg-purple-100 text-purple-800' :
+                          milestone.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {milestone.status === 'approved' ? 'Approved' :
+                           milestone.status === 'evidence_submitted' ? 'Evidence Submitted' :
+                           milestone.status === 'in_progress' ? 'In Progress' :
+                           'Not Started'}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                        {milestone.targetDate && (
+                          <div>
+                            <p className="text-xs text-gray-500">Target Date</p>
+                            <p className="text-sm text-gray-900">
+                              {new Date(milestone.targetDate).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric'
+                              })}
+                            </p>
+                          </div>
+                        )}
+                        {milestone.trancheAmount && (
+                          <div>
+                            <p className="text-xs text-gray-500">Tranche Amount</p>
+                            <p className="text-sm text-gray-900">{formatCurrency(milestone.trancheAmount)}</p>
+                          </div>
+                        )}
+                        {milestone.evidence && milestone.evidence.length > 0 && (
+                          <div>
+                            <p className="text-xs text-gray-500">Evidence</p>
+                            <p className="text-sm text-gray-900">{milestone.evidence.length} item(s)</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Project Information */}
             <div className="bg-white border border-gray-100 p-6">
               <h3 className="text-lg text-gray-900 mb-4">Project Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -303,10 +369,24 @@ export default function ProjectDetailsPage() {
                   <p className="text-xs text-gray-500 mb-1">Project ID</p>
                   <p className="text-sm text-gray-900 font-mono">{projectId}</p>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Project ID (from data)</p>
-                  <p className="text-sm text-gray-900 font-mono">{project._id || project.id || 'N/A'}</p>
-                </div>
+                {project.fundingGoal && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Funding Goal</p>
+                    <p className="text-sm text-gray-900">{formatCurrency(project.fundingGoal)}</p>
+                  </div>
+                )}
+                {project.totalFunded !== undefined && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Total Funded</p>
+                    <p className="text-sm text-gray-900">{formatCurrency(project.totalFunded)}</p>
+                  </div>
+                )}
+                {project.hasPledged !== undefined && (
+                  <div>
+                    <p className="text-xs text-gray-500 mb-1">Your Pledge</p>
+                    <p className="text-sm text-gray-900">{formatCurrency(project.pledgeAmount || 0)}</p>
+                  </div>
+                )}
               </div>
             </div>
             </div>

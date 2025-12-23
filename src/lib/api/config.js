@@ -8,14 +8,23 @@ export const API_BASE_URL = USE_PROXY
 // Get authentication token from localStorage
 export const getAuthToken = () => {
   if (typeof window !== 'undefined') {
+    // First try to get token from user object
     const user = localStorage.getItem('user')
     if (user) {
       try {
         const userData = JSON.parse(user)
-        return userData.token || userData.accessToken
+        if (userData.token || userData.accessToken) {
+          return userData.token || userData.accessToken
+        }
       } catch (e) {
-        return null
+        console.error('Error parsing user data:', e)
       }
+    }
+    
+    // Fallback: try to get token directly from localStorage
+    const token = localStorage.getItem('token')
+    if (token) {
+      return token
     }
   }
   return null
@@ -32,6 +41,9 @@ export const apiFetch = async (endpoint, options = {}) => {
 
   if (token) {
     headers['Authorization'] = `Bearer ${token}`
+    console.log('API Request with token:', endpoint, 'Token:', token.substring(0, 20) + '...')
+  } else {
+    console.warn('API Request without token:', endpoint)
   }
 
   const url = endpoint.startsWith('http') 

@@ -38,15 +38,17 @@ async function handleRequest(request, params, method) {
     const url = `${BACKEND_URL}/${pathString}${queryString ? `?${queryString}` : ''}`
     
     // Get headers
-    const headers = {
-      'Content-Type': 'application/json',
-    }
+    const headers = {}
     
     // Forward authorization header if present
     const authHeader = request.headers.get('authorization')
     if (authHeader) {
       headers['Authorization'] = authHeader
     }
+    
+    // Check if this is FormData (multipart/form-data)
+    const contentType = request.headers.get('content-type') || ''
+    const isFormData = contentType.includes('multipart/form-data')
     
     // Prepare request options
     const options = {
@@ -57,16 +59,42 @@ async function handleRequest(request, params, method) {
     // Add body for POST, PUT, PATCH
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
       try {
-        const body = await request.text()
-        if (body) {
-          options.body = body
-          // Log request details for debugging (only in development)
-          if (process.env.NODE_ENV === 'development') {
-            try {
-              const bodyObj = JSON.parse(body)
-              console.log('Proxy request:', { url, method, body: bodyObj })
-            } catch (e) {
-              console.log('Proxy request:', { url, method, body })
+        if (isFormData) {
+          // For FormData, convert to FormData and forward
+          const formData = await request.formData()
+          // Create a new FormData for forwarding
+          const forwardedFormData = new FormData()
+          
+          // Copy all fields from the original FormData
+          for (const [key, value] of formData.entries()) {
+            if (value instanceof File) {
+              forwardedFormData.append(key, value, value.name)
+            } else {
+              forwardedFormData.append(key, value)
+            }
+          }
+          
+          options.body = forwardedFormData
+          // Don't set Content-Type - fetch will set it with boundary automatically
+        } else {
+          // For JSON or other content types, read as text
+          const body = await request.text()
+          if (body) {
+            options.body = body
+            // Set Content-Type for JSON
+            if (contentType.includes('application/json')) {
+              headers['Content-Type'] = 'application/json'
+            } else if (contentType) {
+              headers['Content-Type'] = contentType
+            }
+            // Log request details for debugging (only in development)
+            if (process.env.NODE_ENV === 'development') {
+              try {
+                const bodyObj = JSON.parse(body)
+                console.log('Proxy request:', { url, method, body: bodyObj })
+              } catch (e) {
+                console.log('Proxy request:', { url, method, body: body.substring(0, 100) })
+              }
             }
           }
         }

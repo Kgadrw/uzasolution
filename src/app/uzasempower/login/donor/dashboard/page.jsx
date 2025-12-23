@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { 
   DollarSign, CheckCircle, AlertCircle, Bell,
   Search, Download, MapPin, Heart, Settings, LogOut, 
-  LayoutDashboard, Menu, Info, Wallet, Activity, Target, X, Inbox
+  LayoutDashboard, Menu, Info, Wallet, Activity, Target, X, Inbox, CreditCard, Plus
 } from 'lucide-react'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -21,6 +21,16 @@ export default function DonorDashboard() {
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
   const [exportDropdowns, setExportDropdowns] = useState({})
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  const [paymentForm, setPaymentForm] = useState({
+    amount: '',
+    projectId: '',
+    cardNumber: '',
+    cardName: '',
+    expiryDate: '',
+    cvv: ''
+  })
 
   // Close sidebar on mobile when clicking outside
   useEffect(() => {
@@ -88,8 +98,7 @@ export default function DonorDashboard() {
   
   // Ledger filters
   const [ledgerSearchQuery, setLedgerSearchQuery] = useState('')
-  const [ledgerDateFrom, setLedgerDateFrom] = useState('')
-  const [ledgerDateTo, setLedgerDateTo] = useState('')
+  const [ledgerDate, setLedgerDate] = useState('')
   const [ledgerTypeFilter, setLedgerTypeFilter] = useState('all')
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
 
@@ -267,11 +276,149 @@ export default function DonorDashboard() {
     }, 3000)
   }
 
+  const handlePaymentInputChange = (e) => {
+    const { name, value } = e.target
+    setPaymentForm(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const formatCardNumber = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    const matches = v.match(/\d{4,16}/g)
+    const match = matches && matches[0] || ''
+    const parts = []
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4))
+    }
+    if (parts.length) {
+      return parts.join(' ')
+    } else {
+      return v
+    }
+  }
+
+  const formatExpiryDate = (value) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4)
+    }
+    return v
+  }
+
+  const handleCardNumberChange = (e) => {
+    const formatted = formatCardNumber(e.target.value)
+    setPaymentForm(prev => ({
+      ...prev,
+      cardNumber: formatted
+    }))
+  }
+
+  const handleExpiryChange = (e) => {
+    const formatted = formatExpiryDate(e.target.value)
+    setPaymentForm(prev => ({
+      ...prev,
+      expiryDate: formatted
+    }))
+  }
+
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault()
+    
+    if (!paymentForm.amount || parseFloat(paymentForm.amount) <= 0) {
+      showNotification('Please enter a valid amount', 'error')
+      return
+    }
+
+    if (!paymentForm.cardNumber || paymentForm.cardNumber.replace(/\s/g, '').length < 16) {
+      showNotification('Please enter a valid card number', 'error')
+      return
+    }
+
+    if (!paymentForm.cardName) {
+      showNotification('Please enter cardholder name', 'error')
+      return
+    }
+
+    if (!paymentForm.expiryDate || paymentForm.expiryDate.length < 5) {
+      showNotification('Please enter a valid expiry date', 'error')
+      return
+    }
+
+    if (!paymentForm.cvv || paymentForm.cvv.length < 3) {
+      showNotification('Please enter a valid CVV', 'error')
+      return
+    }
+
+    try {
+      setIsProcessingPayment(true)
+      
+      // Prepare payment data
+      const paymentData = {
+        amount: parseFloat(paymentForm.amount),
+        projectId: paymentForm.projectId || null,
+        description: `Donation of ${formatCurrency(parseFloat(paymentForm.amount))}`,
+        paymentMethod: 'card',
+        cardDetails: {
+          last4: paymentForm.cardNumber.replace(/\s/g, '').slice(-4),
+          // In production, never send full card details to your backend
+          // Use a payment gateway like Stripe that handles this securely
+        }
+      }
+
+      // Call API to process payment
+      const response = await api.post('/donor/payments', paymentData)
+      
+      if (response.success) {
+        showNotification('Payment processed successfully!', 'success')
+        setPaymentForm({
+          amount: '',
+          projectId: '',
+          cardNumber: '',
+          cardName: '',
+          expiryDate: '',
+          cvv: ''
+        })
+        
+        // Refresh transactions
+        const ledgerRes = await api.get('/donor/ledger')
+        if (ledgerRes.success && ledgerRes.data) {
+          const formattedTransactions = (ledgerRes.data.transactions || ledgerRes.data || []).map((t, idx) => ({
+            id: t._id || idx + 1,
+            date: t.date ? new Date(t.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            type: t.type || 'Transaction',
+            category: t.category || 'Funding',
+            description: t.description || '',
+            amount: t.amount || 0,
+            balance: t.balance || 0,
+            project: t.project?.title || 'N/A',
+            projectId: t.project?._id || t.project?.id
+          }))
+          setTransactions(formattedTransactions)
+        }
+      } else {
+        showNotification(response.message || 'Payment failed. Please try again.', 'error')
+      }
+    } catch (error) {
+      console.error('Payment error:', error)
+      showNotification(error.response?.data?.message || 'Payment failed. Please try again.', 'error')
+    } finally {
+      setIsProcessingPayment(false)
+    }
+  }
+
+
   const handleLogout = () => {
+    setShowLogoutModal(true)
+  }
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false)
     showNotification('Donor User logged out successfully', 'success')
     setTimeout(() => {
-    localStorage.removeItem('user')
-    router.push('/uzasempower/login')
+      localStorage.removeItem('user')
+      router.push('/uzasempower/login')
     }, 1500)
   }
 
@@ -546,8 +693,7 @@ export default function DonorDashboard() {
     
     const matchesType = ledgerTypeFilter === 'all' || transaction.type.toLowerCase() === ledgerTypeFilter.toLowerCase()
     
-    const matchesDate = (!ledgerDateFrom || transaction.date >= ledgerDateFrom) &&
-                       (!ledgerDateTo || transaction.date <= ledgerDateTo)
+    const matchesDate = !ledgerDate || transaction.date === ledgerDate
     
     return matchesSearch && matchesType && matchesDate
   })
@@ -570,12 +716,17 @@ export default function DonorDashboard() {
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-gray-100 transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-3 min-w-0 w-full">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="p-2 hover:bg-gray-100 transition-colors flex-shrink-0"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            {sidebarOpen && (
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Donor Dashboard</h2>
+            )}
+          </div>
         </div>
         
         <nav className="p-4 space-y-2">
@@ -1239,40 +1390,45 @@ export default function DonorDashboard() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-                className="space-y-6"
-              >
-                <div className="bg-white  border border-gray-100">
-                  <div className="p-4 md:p-6 border-b border-gray-200">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0 mb-4">
-                      <h2 className="text-lg md:text-xl  text-gray-900">Transaction History</h2>
-                      <div className="relative export-dropdown-container">
-                        <button 
-                          onClick={() => toggleExportDropdown('ledger')}
-                          className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
-                        >
-                    <Download className="w-4 h-4" />
-                    Export
-                        </button>
-                        {exportDropdowns['ledger'] && (
-                          <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
-                            <button
-                              onClick={() => { exportLedger('csv'); setExportDropdowns({}); showNotification('Data exported as CSV successfully', 'success') }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            >
-                              Export as CSV
-                            </button>
-                            <button
-                              onClick={() => { exportLedger('pdf'); setExportDropdowns({}); showNotification('Data exported as PDF successfully', 'success') }}
-                              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                            >
-                              Export as PDF
-                  </button>
-                          </div>
-                        )}
-                </div>
-              </div>
+              className="space-y-6"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Transaction Table - Takes 2 columns */}
+                <div className="lg:col-span-2">
+                  <div className="bg-white  border border-gray-100">
+                    <div className="p-4 md:p-6 border-b border-gray-200">
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-0 mb-4">
+                        <h2 className="text-lg md:text-xl  text-gray-900">Transaction History</h2>
+                        <div className="relative export-dropdown-container">
+                          <button 
+                            onClick={() => toggleExportDropdown('ledger')}
+                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                          >
+                            <Download className="w-4 h-4" />
+                            Export
+                          </button>
+                          {exportDropdowns['ledger'] && (
+                            <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 shadow-lg z-50">
+                              <button
+                                onClick={() => { exportLedger('csv'); setExportDropdowns({}); showNotification('Data exported as CSV successfully', 'success') }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                Export as CSV
+                              </button>
+                              <button
+                                onClick={() => { exportLedger('pdf'); setExportDropdowns({}); showNotification('Data exported as PDF successfully', 'success') }}
+                                className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                              >
+                                Export as PDF
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
               
-                    {/* Filters */}
+                  {/* Filters */}
+                  <div className="p-4 md:p-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -1293,36 +1449,25 @@ export default function DonorDashboard() {
                         <option value="disbursement">Disbursement</option>
                         <option value="pledge">Pledge</option>
                       </select>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="date"
-                          value={ledgerDateFrom}
-                          onChange={(e) => setLedgerDateFrom(e.target.value)}
-                          className="flex-1 px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="From Date"
-                        />
-                        <span className="text-gray-500">to</span>
-                        <input
-                          type="date"
-                          value={ledgerDateTo}
-                          onChange={(e) => setLedgerDateTo(e.target.value)}
-                          className="flex-1 px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                          placeholder="To Date"
-                        />
-                      </div>
+                      <input
+                        type="date"
+                        value={ledgerDate}
+                        onChange={(e) => setLedgerDate(e.target.value)}
+                        className="px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        placeholder="Date"
+                      />
                       <button
                         onClick={() => {
                           setLedgerSearchQuery('')
                           setLedgerTypeFilter('all')
-                          setLedgerDateFrom('')
-                          setLedgerDateTo('')
+                          setLedgerDate('')
                         }}
                         className="px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
                       >
                         Clear Filters
                       </button>
                     </div>
-              </div>
+                  </div>
               
                   <div className="overflow-x-auto -mx-4 md:mx-0">
                     <div className="min-w-full inline-block align-middle">
@@ -1353,7 +1498,13 @@ export default function DonorDashboard() {
                           filteredTransactions.map((transaction) => (
                           <tr key={transaction.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-700">{new Date(transaction.date).toLocaleDateString()}</div>
+                              <div className="text-sm text-gray-700">
+                                {new Date(transaction.date).toLocaleDateString('en-GB', {
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  year: 'numeric'
+                                })}
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`px-2 py-1 text-xs font-medium ${
@@ -1400,6 +1551,163 @@ export default function DonorDashboard() {
                 </table>
                     </div>
                   </div>
+                </div>
+                </div>
+
+                {/* Payment Form - Takes 1 column */}
+                <div className="lg:col-span-1">
+                  <div className="bg-white border border-gray-100 sticky top-4">
+                    <div className="p-4 md:p-6 border-b border-gray-200">
+                      <h2 className="text-lg md:text-xl text-gray-900">Make Payment</h2>
+                    </div>
+                    
+                    <form onSubmit={handlePaymentSubmit} className="p-4 md:p-6 space-y-4">
+                      {/* Project Selection */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Project <span className="text-red-500">*</span>
+                        </label>
+                        <select
+                          name="projectId"
+                          value={paymentForm.projectId}
+                          onChange={(e) => {
+                            setPaymentForm(prev => ({
+                              ...prev,
+                              projectId: e.target.value
+                            }))
+                          }}
+                          required
+                          disabled={isProcessingPayment}
+                          className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                        >
+                          <option value="">Select a project</option>
+                          {projects.map((project) => (
+                            <option key={project.id} value={project.id}>
+                              {project.title}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Amount */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Amount (RWF) <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="number"
+                          name="amount"
+                          value={paymentForm.amount}
+                          onChange={handlePaymentInputChange}
+                          placeholder="Enter amount"
+                          min="1"
+                          step="0.01"
+                          required
+                          disabled={isProcessingPayment}
+                          className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                        />
+                      </div>
+
+                      {/* Card Details Section */}
+                      <div className="border-t border-gray-200 pt-4">
+                        <h4 className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                          <CreditCard className="w-4 h-4" />
+                          Card Details
+                        </h4>
+
+                        {/* Card Number */}
+                        <div className="mb-3">
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Card Number <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="cardNumber"
+                            value={paymentForm.cardNumber}
+                            onChange={handleCardNumberChange}
+                            placeholder="1234 5678 9012 3456"
+                            maxLength={19}
+                            required
+                            disabled={isProcessingPayment}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                          />
+                        </div>
+
+                        {/* Cardholder Name */}
+                        <div className="mb-3">
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            Cardholder Name <span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            name="cardName"
+                            value={paymentForm.cardName}
+                            onChange={handlePaymentInputChange}
+                            placeholder="John Doe"
+                            required
+                            disabled={isProcessingPayment}
+                            className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                          />
+                        </div>
+
+                        {/* Expiry and CVV */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              Expiry <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="expiryDate"
+                              value={paymentForm.expiryDate}
+                              onChange={handleExpiryChange}
+                              placeholder="MM/YY"
+                              maxLength={5}
+                              required
+                              disabled={isProcessingPayment}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-medium text-gray-700 mb-1">
+                              CVV <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="cvv"
+                              value={paymentForm.cvv}
+                              onChange={handlePaymentInputChange}
+                              placeholder="123"
+                              maxLength={4}
+                              required
+                              disabled={isProcessingPayment}
+                              className="w-full px-3 py-2 text-sm border border-gray-300 focus:ring-2 focus:ring-[#FBAF43] focus:border-transparent"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Submit Button */}
+                      <button
+                        type="submit"
+                        disabled={isProcessingPayment}
+                        className="w-full px-4 py-2 bg-[#FBAF43] text-white hover:bg-[#DDA63A] transition-colors disabled:opacity-50 flex items-center justify-center gap-2 font-medium"
+                      >
+                        {isProcessingPayment ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="w-4 h-4" />
+                            Pay Now
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}
@@ -1586,6 +1894,48 @@ export default function DonorDashboard() {
             </motion.div>
         </div>
           )}
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-md w-full"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Confirm Logout</h3>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-sm text-gray-700 mb-4">
+                Are you sure you want to logout? You will need to login again to access your dashboard.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmLogout}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   )
 }

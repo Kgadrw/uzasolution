@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Mail, Lock, Eye, EyeOff, LogIn } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, LogIn, ArrowLeft } from 'lucide-react'
 import { login, storeAuthData, getDashboardRoute } from '@/lib/api/auth'
 
 export default function UZAEmpowerLogin() {
@@ -115,6 +115,15 @@ export default function UZAEmpowerLogin() {
             transition={{ duration: 0.6 }}
         className="w-full max-w-md relative z-10"
       >
+        {/* Back to Home Button */}
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#FBAF43] mb-4 transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+
         {/* Login Form */}
             <motion.div
           initial={{ opacity: 0, y: 30 }}

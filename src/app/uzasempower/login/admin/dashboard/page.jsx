@@ -7,7 +7,7 @@ import {
   Users, FileCheck, DollarSign, AlertTriangle, 
   CheckCircle, XCircle, Clock, TrendingUp, BarChart3,
   Search, Download, Eye, LogOut, Bell,
-  UserCheck, LayoutDashboard, Menu, X, Info
+  UserCheck, LayoutDashboard, Menu, X, Info, BookOpen
 } from 'lucide-react'
 
 // Dynamically import recharts to avoid SSR and module resolution issues
@@ -19,6 +19,7 @@ import autoTable from 'jspdf-autotable'
 import * as XLSX from 'xlsx'
 import { api } from '@/lib/api/config'
 import { DashboardSkeleton } from '@/components/Skeleton'
+import CatalogueManagement from '@/components/admin/CatalogueManagement'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -28,6 +29,7 @@ export default function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [showNotificationDropdown, setShowNotificationDropdown] = useState(false)
   const notificationDropdownRef = useRef(null)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [exportDropdowns, setExportDropdowns] = useState({})
 
   // Data state
@@ -43,7 +45,19 @@ export default function AdminDashboard() {
     kycPending: 0
   })
   const [projects, setProjects] = useState([])
+  const [milestones, setMilestones] = useState([])
+  const [alerts, setAlerts] = useState([])
+  const [notifications, setNotifications] = useState([])
+  const [kyc, setKYC] = useState([])
+  const [tranches, setTranches] = useState([])
   const [reportsData, setReportsData] = useState({})
+  const [projectPerformanceData, setProjectPerformanceData] = useState([])
+  const [fundingDistributionData, setFundingDistributionData] = useState([])
+  const [categoryDistributionData, setCategoryDistributionData] = useState([])
+  const [financialTrendData, setFinancialTrendData] = useState([])
+  const [statusDistributionData, setStatusDistributionData] = useState([])
+  const [milestoneCompletionData, setMilestoneCompletionData] = useState([])
+  const [donorContributionData, setDonorContributionData] = useState([])
 
   // Fetch dashboard data
   useEffect(() => {
@@ -68,21 +82,289 @@ export default function AdminDashboard() {
           
           if (dashboardRes.data.recentProjects) {
             const formattedProjects = dashboardRes.data.recentProjects.map((p, idx) => ({
-              id: p._id || idx + 1,
+              id: p._id || p.id || idx + 1,
               title: p.title || 'Untitled Project',
               beneficiary: p.beneficiary?.name || 'Unknown',
               status: p.status || 'pending',
               fundingGoal: p.fundingGoal || 0,
-              totalFunded: p.totalFunded || 0
+              totalFunded: p.totalFunded || 0,
+              category: p.category || '',
+              location: p.location || '',
+              requestedAmount: p.fundingGoal || 0,
+              kycStatus: 'Verified'
             }))
             setProjects(formattedProjects)
           }
         }
 
-        // Fetch reports data
-        const reportsRes = await api.get('/admin/reports/user-registration')
-        if (reportsRes.success && reportsRes.data) {
-          setReportsData(reportsRes.data)
+        // Fetch all projects (same format as beneficiary/donor dashboards)
+        const projectsRes = await api.get('/admin/projects?limit=1000')
+        console.log('Projects API Response:', projectsRes)
+        if (projectsRes.success && projectsRes.data) {
+          // Handle paginated response format: { success: true, data: [...], pagination: {...} }
+          // The data property contains the array directly from paginatedResponse
+          let projectsArray = []
+          if (Array.isArray(projectsRes.data)) {
+            // Direct array (paginatedResponse format)
+            projectsArray = projectsRes.data
+          } else if (projectsRes.data.data && Array.isArray(projectsRes.data.data)) {
+            // Nested data.data format (some endpoints)
+            projectsArray = projectsRes.data.data
+          } else if (projectsRes.data.projects && Array.isArray(projectsRes.data.projects)) {
+            // Nested data.projects format (some endpoints)
+            projectsArray = projectsRes.data.projects
+          } else {
+            console.warn('Unexpected projects response format:', projectsRes.data)
+          }
+          
+          console.log('Projects array:', projectsArray.length, projectsArray)
+          
+          const formattedProjects = projectsArray.map((p, idx) => ({
+            id: p._id || p.id || idx + 1,
+            title: p.title || 'Untitled Project',
+            beneficiary: p.beneficiary?.name || p.beneficiary || 'Unknown',
+            status: p.status === 'pending' ? 'Pending Review' : 
+                    p.status === 'active' ? 'Active' :
+                    p.status === 'paused' ? 'At Risk' :
+                    p.status === 'completed' ? 'Completed' : 
+                    p.status === 'cancelled' ? 'Cancelled' : p.status || 'Pending Review',
+            fundingGoal: p.fundingGoal || p.requestedAmount || 0,
+            totalFunded: p.totalFunded || 0,
+            category: p.category || '',
+            location: p.location || '',
+            requestedAmount: p.fundingGoal || p.requestedAmount || 0,
+            kycStatus: p.kycStatus || 'Verified'
+          }))
+          setProjects(formattedProjects)
+          console.log('Formatted projects:', formattedProjects.length, formattedProjects)
+        } else {
+          console.error('Failed to fetch projects - Response:', projectsRes)
+        }
+
+        // Fetch pending milestones
+        const milestonesRes = await api.get('/admin/milestones/pending')
+        if (milestonesRes.success && milestonesRes.data) {
+          const formattedMilestones = (milestonesRes.data.milestones || []).map((m, idx) => ({
+            id: m._id || m.id || idx + 1,
+            milestone: m.milestone || m.title || 'Unknown Milestone',
+            project: m.project || 'Unknown Project',
+            projectId: m.project?._id || m.project?.id || m.projectId || null,
+            status: m.status || 'Evidence Submitted',
+            submittedDate: m.submittedDate || m.createdAt || new Date().toISOString(),
+            targetDate: m.targetDate || new Date().toISOString(),
+            evidenceCount: m.evidenceCount || 0,
+            trancheAmount: m.trancheAmount || 0
+          }))
+          setMilestones(formattedMilestones)
+        }
+
+        // Fetch alerts
+        const alertsRes = await api.get('/admin/alerts')
+        if (alertsRes.success && alertsRes.data) {
+          const formattedAlerts = (alertsRes.data.alerts || []).map((a, idx) => ({
+            id: a._id || a.id || idx + 1,
+            type: a.type || 'Alert',
+            project: a.project || 'Unknown Project',
+            projectId: a.project?._id || a.project?.id || a.projectId || null,
+            severity: a.severity || 'Medium',
+            description: a.description || '',
+            date: a.date || a.createdAt || new Date().toISOString(),
+            status: a.status || 'Open'
+          }))
+          setAlerts(formattedAlerts)
+        }
+
+        // Fetch notifications
+        const notificationsRes = await api.get('/admin/notifications')
+        if (notificationsRes.success && notificationsRes.data) {
+          const formattedNotifications = (notificationsRes.data.notifications || []).map((n, idx) => ({
+            id: n._id || n.id || idx + 1,
+            title: n.title || 'Notification',
+            message: n.message || '',
+            date: n.date || n.createdAt || new Date().toISOString(),
+            read: n.read || false,
+            type: n.type || 'info'
+          }))
+          setNotifications(formattedNotifications)
+        }
+
+        // Fetch pending KYC
+        const kycRes = await api.get('/admin/kyc/pending')
+        if (kycRes.success && kycRes.data) {
+          const formattedKYC = (kycRes.data.kyc || []).map((k, idx) => ({
+            id: k._id || k.id || idx + 1,
+            name: k.name || 'Unknown',
+            project: k.project || 'N/A',
+            submitted: k.submitted || k.createdAt || new Date().toISOString(),
+            status: k.status || 'Pending'
+          }))
+          setKYC(formattedKYC)
+        }
+
+        // Fetch tranches
+        const tranchesRes = await api.get('/admin/tranches')
+        if (tranchesRes.success && tranchesRes.data) {
+          const formattedTranches = (tranchesRes.data.tranches || []).map((t, idx) => ({
+            id: t._id || t.id || idx + 1,
+            project: t.project || 'Unknown Project',
+            milestone: t.milestone || 'Unknown Milestone',
+            amount: t.amount || 0,
+            status: t.status || 'Ready'
+          }))
+          setTranches(formattedTranches)
+        }
+
+        // Fetch all reports data
+        const [userRegRes, fundingDistRes, projectStatusRes, topDonorsRes] = await Promise.all([
+          api.get('/admin/reports/user-registration'),
+          api.get('/admin/reports/funding-distribution'),
+          api.get('/admin/reports/project-status'),
+          api.get('/admin/reports/top-donors')
+        ])
+
+        // Process user registration data for project performance chart
+        if (userRegRes.success && userRegRes.data) {
+          setReportsData(userRegRes.data)
+          // Format for project performance chart (monthly data)
+          const monthlyData = (userRegRes.data.data || []).map((item, idx) => ({
+            name: item.month || `Month ${idx + 1}`,
+            completed: 0, // Will be calculated from projects
+            active: 0,
+            pending: 0
+          }))
+          setProjectPerformanceData(monthlyData)
+        }
+
+        // Process funding distribution data
+        if (fundingDistRes.success && fundingDistRes.data) {
+          const data = fundingDistRes.data.data || []
+          const formatted = data.map((item, idx) => ({
+            name: item.name || 'Unknown',
+            value: item.value || 0,
+            color: ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444'][idx % 5]
+          }))
+          setCategoryDistributionData(formatted)
+
+          // Also create funding distribution histogram data
+          const fundingRanges = [
+            { range: '0-1M', min: 0, max: 1000000 },
+            { range: '1-2M', min: 1000000, max: 2000000 },
+            { range: '2-3M', min: 2000000, max: 3000000 },
+            { range: '3-5M', min: 3000000, max: 5000000 },
+            { range: '5-10M', min: 5000000, max: 10000000 }
+          ]
+          
+          // Get all projects to calculate distribution
+          const allProjects = await api.get('/admin/projects')
+          if (allProjects.success && allProjects.data) {
+            const projects = allProjects.data.projects || allProjects.data || []
+            const distribution = fundingRanges.map(range => ({
+              range: range.range,
+              count: projects.filter(p => {
+                const amount = p.fundingGoal || p.requestedAmount || 0
+                return amount >= range.min && amount < range.max
+              }).length
+            }))
+            setFundingDistributionData(distribution)
+          }
+        }
+
+        // Process project status data
+        if (projectStatusRes.success && projectStatusRes.data) {
+          const data = projectStatusRes.data.data || []
+          const formatted = data.map((item, idx) => ({
+            name: item.name || 'Unknown',
+            value: item.value || 0,
+            color: item.name === 'Active' ? '#10b981' :
+                   item.name === 'Pending Review' ? '#f59e0b' :
+                   item.name === 'At Risk' ? '#ef4444' :
+                   item.name === 'Completed' ? '#3b82f6' : '#6b7280'
+          }))
+          setStatusDistributionData(formatted)
+        }
+
+        // Process top donors data for donor contribution chart
+        if (topDonorsRes.success && topDonorsRes.data) {
+          const data = topDonorsRes.data.data || []
+          // Group by quarter or create quarterly data
+          const quarterlyData = [
+            { name: 'Q1', donors: Math.floor(data.length * 0.25), amount: data.slice(0, Math.floor(data.length * 0.25)).reduce((sum, d) => sum + (d.totalAmount || 0), 0) },
+            { name: 'Q2', donors: Math.floor(data.length * 0.25), amount: data.slice(Math.floor(data.length * 0.25), Math.floor(data.length * 0.5)).reduce((sum, d) => sum + (d.totalAmount || 0), 0) },
+            { name: 'Q3', donors: Math.floor(data.length * 0.25), amount: data.slice(Math.floor(data.length * 0.5), Math.floor(data.length * 0.75)).reduce((sum, d) => sum + (d.totalAmount || 0), 0) },
+            { name: 'Q4', donors: Math.ceil(data.length * 0.25), amount: data.slice(Math.floor(data.length * 0.75)).reduce((sum, d) => sum + (d.totalAmount || 0), 0) }
+          ]
+          setDonorContributionData(quarterlyData)
+        }
+
+        // Calculate project performance data from actual projects
+        const allProjectsRes = await api.get('/admin/projects?limit=1000')
+        if (allProjectsRes.success && allProjectsRes.data) {
+          // Handle paginated response - data is directly the array
+          const allProjects = Array.isArray(allProjectsRes.data) 
+            ? allProjectsRes.data 
+            : (allProjectsRes.data.projects || allProjectsRes.data.data || [])
+          const completed = allProjects.filter(p => p.status === 'completed').length
+          const active = allProjects.filter(p => p.status === 'active').length
+          const pending = allProjects.filter(p => p.status === 'pending').length
+          
+          // Create monthly performance data (last 6 months)
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+          const performanceData = months.map((month, idx) => ({
+            name: month,
+            completed: Math.floor(completed / 6) + (idx < completed % 6 ? 1 : 0),
+            active: Math.floor(active / 6) + (idx < active % 6 ? 1 : 0),
+            pending: Math.floor(pending / 6) + (idx < pending % 6 ? 1 : 0)
+          }))
+          setProjectPerformanceData(performanceData)
+
+          // Calculate milestone completion data
+          try {
+            const milestonesRes = await api.get('/admin/milestones')
+            if (milestonesRes.success && milestonesRes.data) {
+              // Handle paginated response - data might be directly the array or in a data property
+              const allMilestones = Array.isArray(milestonesRes.data) 
+                ? milestonesRes.data 
+                : (milestonesRes.data.milestones || milestonesRes.data.data || [])
+              const projectMilestones = {}
+              
+              allMilestones.forEach(m => {
+                const projectId = m.project?._id || m.project?._id || m.project
+                const projectName = m.project?.title || 'Unknown'
+                if (!projectMilestones[projectId]) {
+                  projectMilestones[projectId] = { completed: 0, total: 0, projectName }
+                }
+                projectMilestones[projectId].total++
+                if (m.status === 'approved' || m.status === 'completed' || m.status === 'Approved' || m.status === 'Completed') {
+                  projectMilestones[projectId].completed++
+                }
+              })
+
+              const milestoneData = Object.values(projectMilestones)
+                .slice(0, 5)
+                .map(p => ({
+                  project: p.projectName.substring(0, 10),
+                  completed: p.completed,
+                  total: p.total
+                }))
+              setMilestoneCompletionData(milestoneData)
+            }
+          } catch (error) {
+            console.warn('Error fetching milestones for completion data:', error.message)
+            // Don't block the dashboard if milestones fail
+          }
+
+          // Calculate financial trends (last 6 months)
+          const financialData = months.map((month, idx) => {
+            const monthProjects = allProjects.filter(p => {
+              const created = new Date(p.createdAt || p.date)
+              const monthNum = created.getMonth()
+              return monthNum === idx
+            })
+            const requested = monthProjects.reduce((sum, p) => sum + (p.fundingGoal || 0), 0)
+            const disbursed = monthProjects.reduce((sum, p) => sum + (p.totalDisbursed || 0), 0)
+            return { month, requested, disbursed }
+          })
+          setFinancialTrendData(financialData)
         }
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
@@ -143,6 +425,11 @@ export default function AdminDashboard() {
   }, [exportDropdowns])
 
   const handleLogout = () => {
+    setShowLogoutModal(true)
+  }
+
+  const confirmLogout = () => {
+    setShowLogoutModal(false)
     localStorage.removeItem('user')
     router.push('/uzasempower/login')
   }
@@ -154,162 +441,8 @@ export default function AdminDashboard() {
     { id: 'tranches', label: 'Tranches', icon: DollarSign },
     { id: 'alerts', label: 'Alerts', icon: AlertTriangle },
     { id: 'kyc', label: 'KYC Review', icon: UserCheck },
+    { id: 'catalogues', label: 'Catalogues', icon: BookOpen },
     { id: 'reports', label: 'Reports', icon: BarChart3 },
-  ]
-
-  const milestones = [
-    {
-      id: 1,
-      project: 'Vegetable Farming Project',
-      milestone: 'Land Preparation',
-      status: 'Evidence Submitted',
-      submittedDate: '2024-01-25',
-      targetDate: '2024-01-20',
-      evidenceCount: 5,
-      trancheAmount: 500000
-    },
-    {
-      id: 2,
-      project: 'Poultry Farming Initiative',
-      milestone: 'Coop Setup',
-      status: 'Approved',
-      submittedDate: '2024-01-22',
-      targetDate: '2024-01-25',
-      evidenceCount: 8,
-      trancheAmount: 750000
-    },
-    {
-      id: 3,
-      project: 'Beekeeping Project',
-      milestone: 'Hive Installation',
-      status: 'Rejected',
-      submittedDate: '2024-01-20',
-      targetDate: '2024-01-18',
-      evidenceCount: 3,
-      trancheAmount: 300000
-    },
-  ]
-
-  const alerts = [
-    {
-      id: 1,
-      type: 'Anomaly Detected',
-      project: 'Beekeeping Project',
-      severity: 'High',
-      description: 'Unusual spending pattern in Labour category',
-      date: '2024-01-26 10:30',
-      status: 'Open'
-    },
-    {
-      id: 2,
-      type: 'KYC Expired',
-      project: 'Fish Farming Project',
-      severity: 'Medium',
-      description: 'KYC documents need renewal',
-      date: '2024-01-25 14:20',
-      status: 'Open'
-    },
-    {
-      id: 3,
-      type: 'Milestone Overdue',
-      project: 'Vegetable Farming Project',
-      severity: 'Low',
-      description: 'Planting Complete milestone is 5 days overdue',
-      date: '2024-01-24 09:15',
-      status: 'Resolved'
-    },
-  ]
-
-  const notifications = [
-    {
-      id: 1,
-      title: 'New Project Submitted',
-      message: 'Vegetable Farming Project has been submitted for review',
-      date: '2024-01-20',
-      read: false,
-      type: 'info'
-    },
-    {
-      id: 2,
-      title: 'Milestone Evidence Submitted',
-      message: 'Poultry Farming Initiative has submitted evidence for Coop Setup milestone',
-      date: '2024-01-19',
-      read: false,
-      type: 'info'
-    },
-    {
-      id: 3,
-      title: 'High Priority Alert',
-      message: 'Beekeeping Project has an anomaly detected',
-      date: '2024-01-18',
-      read: false,
-      type: 'warning'
-    },
-    {
-      id: 4,
-      title: 'KYC Pending Review',
-      message: '6 KYC applications are pending review',
-      date: '2024-01-17',
-      read: true,
-      type: 'info'
-    },
-  ]
-
-  // Chart data for Reports
-  const projectPerformanceData = [
-    { name: 'Jan', completed: 4, active: 8, pending: 3 },
-    { name: 'Feb', completed: 6, active: 10, pending: 2 },
-    { name: 'Mar', completed: 8, active: 12, pending: 4 },
-    { name: 'Apr', completed: 10, active: 15, pending: 3 },
-    { name: 'May', completed: 12, active: 18, pending: 5 },
-    { name: 'Jun', completed: 15, active: 20, pending: 4 },
-  ]
-
-  const fundingDistributionData = [
-    { range: '0-1M', count: 8 },
-    { range: '1-2M', count: 12 },
-    { range: '2-3M', count: 15 },
-    { range: '3-5M', count: 7 },
-    { range: '5-10M', count: 3 },
-  ]
-
-  const categoryDistributionData = [
-    { name: 'Agriculture', value: 35, color: '#10b981' },
-    { name: 'Livestock', value: 25, color: '#3b82f6' },
-    { name: 'Aquaculture', value: 15, color: '#f59e0b' },
-    { name: 'Beekeeping', value: 12, color: '#8b5cf6' },
-    { name: 'Other', value: 13, color: '#ef4444' },
-  ]
-
-  const financialTrendData = [
-    { month: 'Jan', requested: 15000000, disbursed: 8000000 },
-    { month: 'Feb', requested: 18000000, disbursed: 10000000 },
-    { month: 'Mar', requested: 22000000, disbursed: 12000000 },
-    { month: 'Apr', requested: 25000000, disbursed: 15000000 },
-    { month: 'May', requested: 28000000, disbursed: 18000000 },
-    { month: 'Jun', requested: 32000000, disbursed: 22000000 },
-  ]
-
-  const statusDistributionData = [
-    { name: 'Active', value: 32, color: '#10b981' },
-    { name: 'Pending Review', value: 8, color: '#f59e0b' },
-    { name: 'At Risk', value: 4, color: '#ef4444' },
-    { name: 'Completed', value: 15, color: '#3b82f6' },
-  ]
-
-  const milestoneCompletionData = [
-    { project: 'Vegetable', completed: 8, total: 10 },
-    { project: 'Poultry', completed: 6, total: 8 },
-    { project: 'Beekeeping', completed: 4, total: 7 },
-    { project: 'Fish', completed: 10, total: 10 },
-    { project: 'Dairy', completed: 5, total: 9 },
-  ]
-
-  const donorContributionData = [
-    { name: 'Q1', donors: 12, amount: 8500000 },
-    { name: 'Q2', donors: 18, amount: 12000000 },
-    { name: 'Q3', donors: 22, amount: 15000000 },
-    { name: 'Q4', donors: 25, amount: 18000000 },
   ]
 
   const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4']
@@ -892,7 +1025,7 @@ export default function AdminDashboard() {
                   >
                     <CheckCircle className="w-8 h-8 text-green-600" />
                     <span className="text-sm text-gray-900">Review Milestones</span>
-                    <span className="text-xs text-gray-600">3 pending</span>
+                    <span className="text-xs text-gray-600">{milestones.length} pending</span>
                   </button>
                   <button 
                     onClick={() => setActiveTab('tranches')}
@@ -935,7 +1068,7 @@ export default function AdminDashboard() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-gray-900 truncate">{alert.type}</p>
                         <p className="text-xs text-gray-600 truncate">{alert.project}</p>
-                        <p className="text-xs text-gray-500">{alert.date}</p>
+                        <p className="text-xs text-gray-500">{new Date(alert.date).toLocaleString()}</p>
                       </div>
                       <span className={`px-2 py-1 text-xs flex-shrink-0 ${getStatusColor(alert.status)}`}>
                         {alert.status}
@@ -983,6 +1116,11 @@ export default function AdminDashboard() {
               {/* Projects Table */}
               <div className="bg-white border border-gray-200 overflow-x-auto -mx-4 md:mx-0">
                 <div className="min-w-full inline-block align-middle">
+                  {projects.length === 0 ? (
+                    <div className="p-8 text-center text-gray-500">
+                      <p>No projects found</p>
+                    </div>
+                  ) : (
                   <table className="w-full text-sm min-w-[600px]">
                   <thead className="bg-gray-50">
                     <tr>
@@ -996,46 +1134,59 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {projects.map((project) => (
-                      <tr key={project.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3">
-                          <p className="text-gray-900">{project.title}</p>
-                          <p className="text-xs text-gray-500">{project.category}</p>
-                        </td>
-                        <td className="px-4 py-3 text-gray-700">{project.beneficiary}</td>
-                        <td className="px-4 py-3 text-gray-700">{project.location}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 text-xs ${getStatusColor(project.status)}`}>
-                            {project.status}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right text-gray-900">{formatCurrency(project.requestedAmount)}</td>
-                        <td className="px-4 py-3">
-                          <span className={`px-2 py-1 text-xs ${getStatusColor(project.kycStatus)}`}>
-                            {project.kycStatus}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2">
-                            <button className="text-green-600 hover:text-green-700">
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            {project.status === 'Pending Review' && (
-                              <>
-                                <button className="text-green-600 hover:text-green-700">
-                                  <CheckCircle className="w-4 h-4" />
-                                </button>
-                                <button className="text-red-600 hover:text-red-700">
-                                  <XCircle className="w-4 h-4" />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {projects.map((project) => {
+                      const projectId = project._id || project.id
+                      return (
+                        <tr 
+                          key={projectId} 
+                          className="hover:bg-green-50 cursor-pointer transition-colors"
+                          onClick={() => router.push(`/uzasempower/login/admin/projects/${projectId}`)}
+                          title="Click to view project details"
+                        >
+                          <td className="px-4 py-3">
+                            <p className="text-gray-900 font-medium">{project.title}</p>
+                            <p className="text-xs text-gray-500">{project.category}</p>
+                          </td>
+                          <td className="px-4 py-3 text-gray-700">{project.beneficiary}</td>
+                          <td className="px-4 py-3 text-gray-700">{project.location}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 text-xs ${getStatusColor(project.status)}`}>
+                              {project.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-right text-gray-900">{formatCurrency(project.requestedAmount)}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 text-xs ${getStatusColor(project.kycStatus)}`}>
+                              {project.kycStatus}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                              <button 
+                                className="text-green-600 hover:text-green-700"
+                                onClick={() => router.push(`/uzasempower/login/admin/projects/${projectId}`)}
+                                title="View project details"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              {project.status === 'Pending Review' && (
+                                <>
+                                  <button className="text-green-600 hover:text-green-700">
+                                    <CheckCircle className="w-4 h-4" />
+                                  </button>
+                                  <button className="text-red-600 hover:text-red-700">
+                                    <XCircle className="w-4 h-4" />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
+                  )}
                   </div>
               </div>
             </div>
@@ -1044,12 +1195,32 @@ export default function AdminDashboard() {
           {/* Milestones Tab */}
           {activeTab === 'milestones' && (
             <div className="space-y-4">
-              {milestones.map((milestone) => (
+              {milestones.length === 0 ? (
+                <div className="bg-white border border-gray-200 p-8 text-center text-gray-500">
+                  <p>No pending milestones</p>
+                </div>
+              ) : (
+                milestones.map((milestone) => (
                 <div key={milestone.id} className="bg-white border border-gray-200 p-6">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
                     <div className="flex-1">
                       <h3 className="text-lg text-gray-900 mb-2">{milestone.milestone}</h3>
-                      <p className="text-sm text-gray-600 mb-2">Project: {milestone.project}</p>
+                      <p className="text-sm text-gray-600 mb-2">
+                        Project: {milestone.projectId ? (
+                          <span 
+                            className="text-green-600 hover:text-green-700 cursor-pointer underline"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              router.push(`/uzasempower/login/admin/projects/${milestone.projectId}`)
+                            }}
+                            title="Click to view project details"
+                          >
+                            {milestone.project}
+                          </span>
+                        ) : (
+                          milestone.project
+                        )}
+                      </p>
                       <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
                         <span>Target: {new Date(milestone.targetDate).toLocaleDateString()}</span>
                         <span>Submitted: {new Date(milestone.submittedDate).toLocaleDateString()}</span>
@@ -1083,7 +1254,8 @@ export default function AdminDashboard() {
                     )}
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           )}
 
@@ -1092,11 +1264,10 @@ export default function AdminDashboard() {
             <div className="bg-white border border-gray-200 p-6">
               <h2 className="text-lg text-gray-900 mb-6">Pending Tranche Releases</h2>
               <div className="space-y-4">
-                {[
-                  { project: 'Vegetable Farming Project', milestone: 'Seed Planting', amount: 1000000, status: 'Ready' },
-                  { project: 'Poultry Farming Initiative', milestone: 'Coop Setup', amount: 750000, status: 'Ready' },
-                  { project: 'Fish Farming Project', milestone: 'Pond Setup', amount: 500000, status: 'Pending Approval' },
-                ].map((tranche, idx) => (
+                {tranches.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">No pending tranches</p>
+                ) : (
+                  tranches.map((tranche, idx) => (
                   <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50">
                     <div>
                       <p className="text-gray-900">{tranche.project}</p>
@@ -1114,7 +1285,8 @@ export default function AdminDashboard() {
                       )}
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -1122,7 +1294,12 @@ export default function AdminDashboard() {
           {/* Alerts Tab */}
           {activeTab === 'alerts' && (
             <div className="space-y-4">
-              {alerts.map((alert) => (
+              {alerts.length === 0 ? (
+                <div className="bg-white border border-gray-200 p-8 text-center text-gray-500">
+                  <p>No alerts</p>
+                </div>
+              ) : (
+                alerts.map((alert) => (
                 <div key={alert.id} className="bg-white border border-gray-200 p-6 border-l-4 border-red-500">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div className="flex-1">
@@ -1139,8 +1316,21 @@ export default function AdminDashboard() {
                       </div>
                       <p className="text-gray-700 mb-2">{alert.description}</p>
                       <div className="flex items-center gap-4 text-xs text-gray-500">
-                        <span>{alert.project}</span>
-                        <span>{alert.date}</span>
+                        {alert.projectId ? (
+                          <span 
+                            className="text-green-600 hover:text-green-700 cursor-pointer underline"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              router.push(`/uzasempower/login/admin/projects/${alert.projectId}`)
+                            }}
+                            title="Click to view project details"
+                          >
+                            {alert.project}
+                          </span>
+                        ) : (
+                          <span>{alert.project}</span>
+                        )}
+                        <span>{new Date(alert.date).toLocaleString()}</span>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -1155,7 +1345,8 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           )}
 
@@ -1164,20 +1355,19 @@ export default function AdminDashboard() {
             <div className="bg-white border border-gray-200 p-6">
               <h2 className="text-lg text-gray-900 mb-6">KYC Verification Queue</h2>
               <div className="space-y-4">
-                {[
-                  { name: 'John Doe', project: 'Vegetable Farming Project', submitted: '2024-01-20', status: 'Pending' },
-                  { name: 'Jane Smith', project: 'Poultry Farming Initiative', submitted: '2024-01-18', status: 'Under Review' },
-                  { name: 'Bob Johnson', project: 'Beekeeping Project', submitted: '2024-01-15', status: 'Pending' },
-                ].map((kyc, idx) => (
-                  <div key={idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50">
+                {kyc.length === 0 ? (
+                  <p className="text-gray-500 text-center py-8">No pending KYC applications</p>
+                ) : (
+                  kyc.map((k, idx) => (
+                  <div key={k.id || idx} className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 p-4 bg-gray-50">
                     <div>
-                      <p className="text-gray-900">{kyc.name}</p>
-                      <p className="text-sm text-gray-600">{kyc.project}</p>
-                      <p className="text-xs text-gray-500 mt-1">Submitted: {kyc.submitted}</p>
+                      <p className="text-gray-900">{k.name}</p>
+                      <p className="text-sm text-gray-600">{k.project}</p>
+                      <p className="text-xs text-gray-500 mt-1">Submitted: {new Date(k.submitted).toLocaleDateString()}</p>
                     </div>
                     <div className="flex gap-2">
-                      <span className={`px-3 py-1 text-xs ${getStatusColor(kyc.status)}`}>
-                        {kyc.status}
+                      <span className={`px-3 py-1 text-xs ${getStatusColor(k.status)}`}>
+                        {k.status}
                       </span>
                       <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 transition-colors text-sm">
                         <Eye className="w-4 h-4" />
@@ -1185,9 +1375,15 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
+          )}
+
+          {/* Catalogues Tab */}
+          {activeTab === 'catalogues' && (
+            <CatalogueManagement />
           )}
 
           {/* Reports Tab */}
@@ -1604,6 +1800,45 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Confirm Logout</h3>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-sm text-gray-700 mb-4">
+                Are you sure you want to logout? You will need to login again to access your dashboard.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmLogout}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

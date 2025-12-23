@@ -21,6 +21,7 @@ export default function BeneficiaryDashboard() {
   const [showUploadEvidenceModal, setShowUploadEvidenceModal] = useState(false)
   const [deleteConfirmModal, setDeleteConfirmModal] = useState({ show: false, projectId: null, projectTitle: '' })
   const [deleteFundingRequestModal, setDeleteFundingRequestModal] = useState({ show: false, requestId: null, requestTitle: '', requestAmount: 0 })
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
   const [notification, setNotification] = useState({ show: false, message: '', type: 'success' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isEditingProfile, setIsEditingProfile] = useState(false)
@@ -435,6 +436,11 @@ export default function BeneficiaryDashboard() {
   }, [])
 
   const handleLogout = useCallback(() => {
+    setShowLogoutModal(true)
+  }, [])
+
+  const confirmLogout = useCallback(() => {
+    setShowLogoutModal(false)
     showNotification('Beneficiary User logged out successfully', 'success')
     setTimeout(() => {
       localStorage.removeItem('user')
@@ -669,12 +675,17 @@ export default function BeneficiaryDashboard() {
       {/* Sidebar */}
       <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
-          <button
-            onClick={toggleSidebar}
-            className="p-2 hover:bg-gray-100 transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-3 min-w-0 w-full">
+            <button
+              onClick={toggleSidebar}
+              className="p-2 hover:bg-gray-100 transition-colors flex-shrink-0"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            {sidebarOpen && (
+              <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Beneficiary Dashboard</h2>
+            )}
+          </div>
         </div>
         
         <nav className="p-4 space-y-2">
@@ -2959,6 +2970,49 @@ export default function BeneficiaryDashboard() {
                   className="flex-1 px-4 py-2 bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
                   {isSubmitting ? 'Deleting...' : 'Delete Request'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white max-w-md w-full"
+          >
+            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+              <h3 className="text-xl text-gray-900">Confirm Logout</h3>
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-sm text-gray-700 mb-4">
+                Are you sure you want to logout? You will need to login again to access your dashboard.
+              </p>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setShowLogoutModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmLogout}
+                  className="flex-1 px-4 py-2 bg-green-600 text-white hover:bg-green-700 transition-colors"
+                >
+                  Logout
                 </button>
               </div>
             </div>
