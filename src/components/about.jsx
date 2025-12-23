@@ -3,8 +3,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { motion } from 'framer-motion'
-import Noise from './Noise'
 
 export default function AboutUs() {
   return (
@@ -26,12 +24,11 @@ export default function AboutUs() {
               { title: 'UZA Mall', desc: 'Curated B2B catalog with transparent pricing.', href: '/comingsoon', img: '/3.jpg' },
               { title: 'UZA Logistics', desc: 'Ocean, air, and last-mile with live tracking.', href: '/comingsoon', img: '/2.jpg' },
             ].map((item) => (
-              <motion.a
+              <a
                 key={item.title}
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ y: -8, scale: 1.02 }}
                 className="group relative rounded-2xl overflow-hidden border border-white/20 block transition-all duration-300"
               >
                 <div className="relative h-64">
@@ -48,7 +45,7 @@ export default function AboutUs() {
                     </span>
                   </div>
                 </div>
-              </motion.a>
+              </a>
             ))}
           </div>
         </div>
@@ -82,30 +79,10 @@ export default function AboutUs() {
         {/* Carded Solutions Grid (Homepage) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,_1fr)]">
           {/* Feature card */}
-            <motion.div
-            whileHover={{ y: -4 }}
-            className="relative text-white rounded-2xl p-8 overflow-hidden md:col-span-2 md:row-span-2 border border-white/10"
+            <div
+            className="relative text-white rounded-2xl p-8 overflow-hidden md:col-span-2 md:row-span-2 border border-white/10 bg-gradient-to-b from-[#0E2A44] via-[#0E2A44] to-[#1B3A54]"
+            style={{ willChange: 'transform', transform: 'translateZ(0)' }}
           >
-            {/* Background Image */}
-            <div className="absolute inset-0">
-              <Image 
-                src="/ai.jpg" 
-                alt="AI Technology Background" 
-                fill 
-                className="object-cover opacity-30"
-              />
-              {/* Dark overlay for text readability - solid overlay without right gradient */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0E2A44]/95 via-[#0E2A44]/95 to-[#1B3A54]/95"></div>
-              {/* Noise effect */}
-              <Noise
-                patternSize={250}
-                patternScaleX={1}
-                patternScaleY={1}
-                patternRefreshInterval={2}
-                patternAlpha={15}
-              />
-            </div>
-            
             {/* Content */}
             <div className="relative z-10">
             <span className="inline-block text-[10px] uppercase tracking-widest bg-white/10 border border-white/20 rounded-full px-3 py-1 mb-4">
@@ -121,29 +98,11 @@ export default function AboutUs() {
               Start now <ArrowRight className="w-4 h-4" />
             </Link>
             </div>
-          </motion.div>
+          </div>
 
           {/* Secure workspace */}
-          <motion.div whileHover={{ y: -4 }} className="relative rounded-2xl p-6 border border-gray-200/50 overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0">
-              <Image 
-                src="/7.jpg" 
-                alt="Secure Workspace Background" 
-                fill 
-                className="object-cover opacity-20"
-              />
-              {/* Light overlay for text readability */}
-              <div className="absolute inset-0 bg-white/90"></div>
-              {/* Noise effect */}
-              <Noise
-                patternSize={250}
-                patternScaleX={1}
-                patternScaleY={1}
-                patternRefreshInterval={2}
-                patternAlpha={15}
-              />
-            </div>
+          <div className="relative rounded-2xl p-6 border border-gray-200/50 overflow-hidden bg-white/90" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+            {/* Background Image - Removed for performance */}
             
             {/* Content */}
             <div className="relative z-10">
@@ -154,29 +113,11 @@ export default function AboutUs() {
               Work safely without sacrificing productivity
             </h4>
             </div>
-          </motion.div>
+          </div>
 
           {/* Adoption */}
-          <motion.div whileHover={{ y: -4 }} className="relative text-white rounded-2xl p-6 border border-white/10 overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0">
-              <Image 
-                src="/art.jpg" 
-                alt="Successful Adoption Background" 
-                fill 
-                className="object-cover opacity-30"
-              />
-              {/* Dark overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#0E1A28]/95 via-[#0E1A28]/90 to-[#0E1A28]/95"></div>
-              {/* Noise effect */}
-              <Noise
-                patternSize={250}
-                patternScaleX={1}
-                patternScaleY={1}
-                patternRefreshInterval={2}
-                patternAlpha={15}
-              />
-            </div>
+          <div className="relative text-white rounded-2xl p-6 border border-white/10 overflow-hidden bg-gradient-to-b from-[#0E1A28] via-[#0E1A28] to-[#0E1A28]" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+            {/* Background Image - Removed for performance */}
             
             {/* Content */}
             <div className="relative z-10">
@@ -187,7 +128,7 @@ export default function AboutUs() {
               Success lies in how teams use software effectively
             </h4>
             </div>
-                </motion.div>
+                </div>
               </div>
 
       </div>

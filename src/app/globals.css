@@ -50,6 +50,8 @@ html, body {
 
 html {
   overflow: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -57,6 +59,10 @@ body {
   overflow-y: scroll;
   padding-right: 0;
   margin-right: 0;
+  /* GPU acceleration for smooth scrolling */
+  transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Define custom font families for easy use */

@@ -12,7 +12,10 @@ const Footer = dynamic(() => import('../components/footer'))
 
 const Page = () => {
   return (
-    <div>
+    <div style={{ 
+      contentVisibility: 'auto',
+      containIntrinsicSize: 'auto 500px'
+    }}>
       <Hero />
       <AboutUs />
       <Projects />

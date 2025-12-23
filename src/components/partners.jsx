@@ -1,7 +1,6 @@
 'use client'
 
 import Image from 'next/image'
-import { motion } from 'framer-motion'
 
 export default function Partners() {
   const partners = [
@@ -40,39 +39,22 @@ export default function Partners() {
           </div>
         </div>
 
-        {/* Partners Sliding Animation */}
-        <div className="overflow-hidden pb-4">
-          <motion.div 
-            className="flex gap-4"
-            animate={{ 
-              x: [0, -((192 + 16) * partners.length)]
-            }}
-            transition={{ 
-              x: {
-                repeat: Infinity,
-                repeatType: "loop",
-                duration: 40,
-                ease: "linear"
-              }
-            }}
-          >
-            {/* Duplicate partners for seamless loop */}
-            {[...partners, ...partners].map((partner, index) => (
-              <div key={`${partner.name}-${index}`} className="flex-shrink-0 w-48 group cursor-pointer">
-                <div className="rounded-2xl overflow-hidden transition-all duration-300">
-                  <div className="relative w-full h-48 flex items-center justify-center p-6">
-                    <Image
-                      src={partner.logo}
-                      alt={`${partner.name} logo`}
-                      width={120}
-                      height={120}
-                      className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                    />
-                  </div>
-                </div>
+        {/* Partners Grid - Static */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {partners.map((partner, index) => (
+            <div key={partner.name} className="flex items-center justify-center group cursor-pointer">
+              <div className="relative w-full h-32 flex items-center justify-center p-6">
+                <Image
+                  src={partner.logo}
+                  alt={`${partner.name} logo`}
+                  width={120}
+                  height={120}
+                  className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+                  loading="lazy"
+                />
               </div>
-            ))}
-          </motion.div>
+            </div>
+          ))}
         </div>
 
         {/* Additional Info */}

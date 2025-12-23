@@ -23,15 +23,21 @@ export default function Portfolio() {
   const [currentVideo, setCurrentVideo] = useState(0);
 
   return (
-    <section className="w-full bg-white text-gray-900 pt-24">
+    <section className="w-full bg-[#F8FAFC] text-gray-900 pt-16">
       {/* Recent Work */}
-      <div className="relative py-16 px-8 md:px-16 lg:px-24 bg-white">
+      <div className="relative py-16 px-8 md:px-16 lg:px-24 bg-[#F8FAFC]">
         {/* Decorative Vertical Lines */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute left-1/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300/30 to-transparent"></div>
           <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-300/30 to-transparent"></div>
         </div>
         <div className="max-w-6xl mx-auto relative z-10">
+        {/* Portfolio Title */}
+        <div className="text-left mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent">
+            Our Portfolio
+          </h1>
+        </div>
         {/* Portfolio Description */}
         <div className="mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">

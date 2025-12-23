@@ -42,7 +42,7 @@ export default function AboutPage() {
           
           {/* CEO Image - Top on mobile, right on desktop */}
           <motion.div
-            className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-80 md:h-80 mx-auto order-1 md:order-2 rounded-xl overflow-hidden border-4 border-gray-300"
+            className="relative w-full h-80 sm:h-96 md:w-80 md:h-[28rem] mx-auto order-1 md:order-2 rounded-xl overflow-hidden border-4 border-gray-300"
             initial={{ opacity: 0, scale: 0.85 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1 }}
@@ -104,17 +104,17 @@ export default function AboutPage() {
         </div>
 
         {/* Team Members Grid */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10 lg:gap-12 relative z-10">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4 lg:gap-4 relative z-10">
           {teamMembers.map((member, idx) => (
             <motion.div
               key={idx}
-              className="flex flex-col items-center sm:items-start text-center sm:text-left w-full max-w-xs mx-auto sm:mx-0"
+              className="flex flex-col items-center text-center w-full max-w-xs mx-auto"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: idx * 0.2 }}
             >
               {/* Profile Image */}
-              <div className="relative w-full h-56 sm:h-64 mb-4 rounded-lg overflow-hidden">
+              <div className="relative w-full h-80 sm:h-96 mb-4 rounded-lg overflow-hidden">
                 <Image
                   src={member.image}
                   alt={member.name}
@@ -129,7 +129,7 @@ export default function AboutPage() {
               <p className="text-[#0f172a] text-sm sm:text-base mb-3 sm:mb-4">{member.role}</p>
 
               {/* Social Icons */}
-              <div className="flex justify-center sm:justify-start space-x-4">
+              <div className="flex justify-center space-x-4">
                 <a href={member.linkedin} target="_blank" rel="noreferrer" className="hover:scale-110 transition-transform">
                   <Linkedin className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 hover:text-blue-700 transition" />
                 </a>

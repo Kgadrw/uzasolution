@@ -33,7 +33,7 @@ export default function GlobalImpactHero() {
           {/* Stat Badges */}
           <div className="flex flex-col gap-4 mb-6">
             {/* Stat 1 */}
-            <div className="flex items-center gap-3 bg-white/70 backdrop-blur rounded-xl p-3 border border-gray-200/50 w-max">
+            <div className="flex items-center gap-3 p-3 w-max">
               <span className="relative flex items-center justify-center w-12 h-12">
                 {/* SVG Arc 40% */}
                 <svg className="absolute top-0 left-0 w-12 h-12" viewBox="0 0 40 40">
@@ -56,7 +56,7 @@ export default function GlobalImpactHero() {
             </div>
 
             {/* Stat 2 */}
-            <div className="flex items-center gap-3 bg-white/70 backdrop-blur rounded-xl p-3 border border-gray-200/50 w-max">
+            <div className="flex items-center gap-3 p-3 w-max">
               <span className="relative flex items-center justify-center w-12 h-12">
                 {/* SVG Arc 60% */}
                 <svg className="absolute top-0 left-0 w-12 h-12" viewBox="0 0 40 40">

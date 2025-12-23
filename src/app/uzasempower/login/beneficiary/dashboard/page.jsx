@@ -676,12 +676,12 @@ export default function BeneficiaryDashboard() {
       <div className={`${sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full md:translate-x-0'} ${sidebarOpen ? 'md:w-64' : 'md:w-20'} bg-white border-r border-gray-200 transition-all duration-300 flex-shrink-0 fixed h-screen z-30`}>
         <div className="px-4 md:px-6 py-4 border-b border-gray-200 flex items-center justify-between h-[80px]">
           <div className="flex items-center gap-3 min-w-0 w-full">
-            <button
-              onClick={toggleSidebar}
+          <button
+            onClick={toggleSidebar}
               className="p-2 hover:bg-gray-100 transition-colors flex-shrink-0"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+          >
+            <Menu className="w-5 h-5" />
+          </button>
             {sidebarOpen && (
               <h2 className="text-lg font-semibold text-gray-900 whitespace-nowrap">Beneficiary Dashboard</h2>
             )}

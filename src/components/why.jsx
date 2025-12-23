@@ -35,12 +35,13 @@ export default function WhyChooseUZA() {
         {/* Left: YouTube Video */}
         <div className="w-full flex justify-center items-stretch">
           <div
-            className="relative w-full max-w-2xl min-h-[450px] rounded-2xl overflow-hidden shadow-lg cursor-pointer bg-white/40 backdrop-blur border border-white/30"
+            className="relative w-full max-w-2xl min-h-[450px] overflow-hidden shadow-lg cursor-pointer bg-white/40 border border-white/30"
+            style={{ willChange: 'transform', transform: 'translateZ(0)' }}
             onClick={handlePlay}
           >
             <iframe
-            className="w-full h-full rounded-xl shadow-lg"
-            src="https://www.youtube.com/embed/xVJa3Lypjww"
+            className="w-full h-full shadow-lg"
+            src="https://www.youtube.com/embed/xVJa3Lypjww?modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&controls=1&fs=0&playsinline=1"
             title="UZA Solutions Video"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

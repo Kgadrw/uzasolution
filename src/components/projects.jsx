@@ -3,14 +3,13 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Play } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 
 export default function WhoAreWe() {
   const images = [
-    { id: 1, src: '/21.jpg', alt: 'Businessman with a laptop', className: 'col-span-1 row-span-1' },
-    { id: 2, src: '/22.jpg', alt: 'Two professionals discussing', className: 'col-span-1 row-span-1' },
-    { id: 3, src: '/23.jpg', alt: 'Person behind transparent interface', className: 'col-span-1 row-span-1 relative', hasVideo: true, videoSrc: '/24.mp4' },
-    { id: 4, src: '/23.jpg', alt: 'Pharmacist or warehouse worker smiling', className: 'col-span-1 row-span-1' }
+    { id: 1, src: '/21.jpg', alt: 'Businessman with a laptop' },
+    { id: 2, src: '/22.jpg', alt: 'Two professionals discussing' },
+    { id: 3, src: '/23.jpg', alt: 'Pharmacist or warehouse worker smiling' }
   ]
 
   return (
@@ -54,54 +53,25 @@ export default function WhoAreWe() {
           </div>
 
           {/* Right Side - Image Grid */}
-          <div className="relative">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-5">
-              <div className="grid grid-cols-10 gap-2 h-full">
-                {Array.from({ length: 64 }).map((_, i) => (
-                  <div key={i} className="w-2 h-2 bg-[#FBAF43] rounded-full"></div>
-                ))}
-              </div>
-            </div>
+          <div className="relative" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+            {/* Background Pattern - Removed for performance */}
 
             {/* Image Grid */}
-            <div className="grid grid-cols-2 grid-rows-2 gap-3 h-80 md:h-[420px] relative z-10">
+            <div className="grid grid-cols-3 gap-0 h-80 md:h-[420px] relative z-10 overflow-hidden" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className={`group relative overflow-hidden rounded-2xl bg-white/40 backdrop-blur border border-white/40 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] cursor-pointer ${image.className}`}
+                  className="relative overflow-hidden bg-white/40"
+                  style={{ willChange: 'transform', transform: 'translateZ(0)' }}
                 >
-                  {image.hasVideo ? (
-                    <video
-                      src={image.videoSrc}
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
-                  ) : (
-                    <Image
-                      src={image.src}
-                      alt={image.alt}
-                      fill
-                      loading="lazy"
-                      className="object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                    />
-                  )}
-
-                  {/* Video Play Button Overlay */}
-                  {image.hasVideo && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="bg-[#00142B]/30 backdrop-blur rounded-full p-3 border border-[#FBAF43]/60 group-hover:scale-110 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-                        <Play className="w-5 h-5 text-[#FBAF43] ml-0.5" />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Hover Effect - Increase Brightness */}
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    loading="lazy"
+                    className="object-cover"
+                    style={{ willChange: 'transform' }}
+                  />
                 </div>
               ))}
             </div>
