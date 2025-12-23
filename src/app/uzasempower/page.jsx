@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Users, TrendingUp, CheckCircle, Star, ArrowRight, Award, Globe, Heart, Building2, DollarSign, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Users, TrendingUp, CheckCircle, Star, ArrowRight, Award, Globe, Heart, Building2, DollarSign, ChevronLeft, ChevronRight, Briefcase, Target, UserCheck, GraduationCap, Handshake } from 'lucide-react'
 import { motion } from 'framer-motion'
 import dynamic from 'next/dynamic'
 
@@ -36,10 +36,10 @@ export default function UZAEmpowerPage() {
       image: "/story2.png",
       bgColor: "bg-[#E5243B]",
       stats: [
-        { number: "312+", label: "Livelihoods Started", color: "bg-[#E5243B]" },
-        { number: "68%", label: "Average Income Growth in Six Months", color: "bg-[#DDA63A]" },
-        { number: "97%", label: "On-Time Repayment Rate", color: "bg-[#4C9F38]" },
-        { number: "2.3", label: "Jobs Created per Enterprise", color: "bg-[#FF3A21]" }
+        { number: "312+", label: "Livelihoods Started", icon: Building2 },
+        { number: "68%", label: "Average Income Growth in Six Months", icon: TrendingUp },
+        { number: "97%", label: "On-Time Repayment Rate", icon: CheckCircle },
+        { number: "2.3", label: "Jobs Created per Enterprise", icon: Briefcase }
       ]
     },
     {
@@ -52,24 +52,13 @@ export default function UZAEmpowerPage() {
       image: "/story3.jpg",
       bgColor: "bg-[#00689D]",
       steps: [
-        { number: "1", title: "Identification & Enrollment", description: "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources", color: "bg-[#E5243B]" },
-        { number: "2", title: "Training & Capacity Building", description: "Each participant receives practical training in entrepreneurship, financial literacy, and small business management", color: "bg-[#DDA63A]" },
-        { number: "3", title: "Lease-to-Own Financing", description: "We provide equipment and materials through a flexible, affordable lease-to-own model where participants repay in small installments based on their income", color: "bg-[#00689D]" }
+        { title: "Identification & Enrollment", description: "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources", color: "bg-[#E5243B]", icon: UserCheck },
+        { title: "Training & Capacity Building", description: "Each participant receives practical training in entrepreneurship, financial literacy, and small business management", color: "bg-[#DDA63A]", icon: GraduationCap },
+        { title: "Lease-to-Own Financing", description: "We provide equipment and materials through a flexible, affordable lease-to-own model where participants repay in small installments based on their income", color: "bg-[#00689D]", icon: Handshake }
       ]
     }
   ]
 
-  const nextIntroSlide = () => {
-    setCurrentIntroSlide((prevIndex) => 
-      prevIndex === introSlides.length - 1 ? 0 : prevIndex + 1
-    )
-  }
-
-  const prevIntroSlide = () => {
-    setCurrentIntroSlide((prevIndex) => 
-      prevIndex === 0 ? introSlides.length - 1 : prevIndex - 1
-    )
-  }
 
   const heroImages = [
     { src: '/negative.jpg', type: 'challenge', title: 'The Challenge', subtitle: 'Displacement-affected communities face barriers to economic empowerment' },
@@ -123,54 +112,9 @@ export default function UZAEmpowerPage() {
     return () => clearInterval(interval)
   }, [heroImages.length])
 
-  // Swipe functionality for mobile
-  const [touchStart, setTouchStart] = useState(null)
-  const [touchEnd, setTouchEnd] = useState(null)
-
-  const minSwipeDistance = 50
-
-  const onTouchStart = (e) => {
-    setTouchEnd(null)
-    setTouchStart(e.targetTouches[0].clientX)
-  }
-
-  const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
-    const distance = touchStart - touchEnd
-    const isLeftSwipe = distance > minSwipeDistance
-    const isRightSwipe = distance < -minSwipeDistance
-
-    if (isLeftSwipe) {
-      nextIntroSlide()
-    }
-    if (isRightSwipe) {
-      prevIntroSlide()
-    }
-  }
-
-  // Auto-slide intro slides on mobile
-  useEffect(() => {
-    const checkMobile = () => {
-      return window.innerWidth < 768
-    }
-    
-    if (!checkMobile()) return
-
-    const interval = setInterval(() => {
-      setCurrentIntroSlide((prevIndex) => 
-        prevIndex === introSlides.length - 1 ? 0 : prevIndex + 1
-      )
-    }, 5000) // Change every 5 seconds on mobile
-
-    return () => clearInterval(interval)
-  }, [introSlides.length])
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Hero Section - Matching Homepage Hero Structure */}
       <section className="relative w-full font-sans px-4 md:px-16 lg:px-24 bg-[#F8FAFC]">
         {/* Navbar Component */}
@@ -248,162 +192,124 @@ export default function UZAEmpowerPage() {
         </div>
       </section>
 
-      {/* Program Introduction Slider */}
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50 relative">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8">
-          <div className="max-w-6xl mx-auto relative">
-            <motion.div 
-              className={`bg-white rounded-xl sm:rounded-2xl border-t-2 sm:border-t-4 p-4 sm:p-6 md:p-8 lg:p-12 ${
-                introSlides[currentIntroSlide].id === 1 ? 'border-[#FBAF43]' :
-                introSlides[currentIntroSlide].id === 2 ? 'border-[#19486A]' :
-                'border-[#4C9F38]'
-              }`}
-              key={currentIntroSlide}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              onTouchStart={onTouchStart}
-              onTouchMove={onTouchMove}
-              onTouchEnd={onTouchEnd}
-            >
-              <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 items-center">
-                {/* Left Column - Text Content */}
+      {/* Program Introduction Sections - Static with Alternating Layout */}
+      {introSlides.map((slide, slideIndex) => (
+        <section key={slide.id} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F8FAFC] relative">
+          <div className="container mx-auto px-4 sm:px-6 md:px-8">
+            <div className="max-w-6xl mx-auto">
+              <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 items-center ${
+                slideIndex % 2 === 0 ? '' : 'lg:grid-flow-dense'
+              }`}>
+                {/* Content Column - Alternates left/right */}
                 <motion.div
-                  initial={{ opacity: 0, x: -30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className={slideIndex % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}
+                  initial={{ opacity: 0, x: slideIndex % 2 === 0 ? -30 : 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
                 >
-                  <motion.h2 
-                    className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                  >
-                    {introSlides[currentIntroSlide].title}
-                  </motion.h2>
+                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6">
+                    {slide.title}
+                  </h2>
                   
                   {/* Content based on slide type */}
-                  {introSlides[currentIntroSlide].id === 1 && (
+                  {slide.id === 1 && (
                     <>
                       <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
-                        {introSlides[currentIntroSlide].content[0]}
+                        {slide.content[0]}
                       </p>
                       <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">
-                        {introSlides[currentIntroSlide].content[1]}
+                        {slide.content[1]}
                       </p>
                     </>
                   )}
 
-                  {introSlides[currentIntroSlide].id === 2 && (
+                  {slide.id === 2 && (
                     <>
                       <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
-                        {introSlides[currentIntroSlide].content[0]}
+                        {slide.content[0]}
                       </p>
                       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
-                        {introSlides[currentIntroSlide].stats.map((stat, index) => (
-                          <div key={index} className="text-center">
-                            <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 ${stat.color} rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-2`}>
-                              <span className="text-white font-bold text-xs sm:text-sm md:text-base">{stat.number}</span>
-                  </div>
-                            <p className="text-[10px] sm:text-xs md:text-xs text-gray-600 font-medium leading-tight px-1">{stat.label}</p>
-                </div>
-                        ))}
-              </div>
+                        {slide.stats.map((stat, index) => {
+                          const Icon = stat.icon || Target
+                          return (
+                            <div key={index} className="text-center">
+                              <div className="flex flex-col items-center gap-2 sm:gap-3">
+                                <div className="flex items-center justify-center mx-auto">
+                                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 text-[#E5243B]" />
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{stat.number}</div>
+                                  <p className="text-[10px] sm:text-xs md:text-xs text-gray-600 font-medium leading-tight px-1">{stat.label}</p>
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </>
                   )}
 
-                  {introSlides[currentIntroSlide].id === 3 && (
+                  {slide.id === 3 && (
                     <>
                       <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
-                        {introSlides[currentIntroSlide].content[0]}
+                        {slide.content[0]}
                       </p>
                       <div className="space-y-3 sm:space-y-4">
-                        {introSlides[currentIntroSlide].steps.map((step, index) => (
-                          <div key={index} className="flex items-start space-x-2 sm:space-x-3 md:space-x-4">
-                            <div className={`w-8 h-8 sm:w-9 sm:h-9 md:w-10 md:h-10 ${step.color} rounded-full flex items-center justify-center flex-shrink-0`}>
-                              <span className="text-white font-bold text-xs sm:text-sm">{step.number}</span>
-                  </div>
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-[#00142B] mb-1 text-sm sm:text-base">{step.title}</h4>
-                              <p className="text-xs sm:text-sm text-gray-600 leading-tight">{step.description}</p>
-                  </div>
-                </div>
-                        ))}
-              </div>
+                        {slide.steps.map((step, index) => {
+                          const StepIcon = step.icon || Target
+                          return (
+                            <div key={index} className="flex items-start space-x-2 sm:space-x-3 md:space-x-4">
+                              <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 ${step.color} rounded-full flex items-center justify-center flex-shrink-0 shadow-md`}>
+                                <StepIcon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-[#00142B] mb-1 text-sm sm:text-base">{step.title}</h4>
+                                <p className="text-xs sm:text-sm text-gray-600 leading-tight">{step.description}</p>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
                     </>
                   )}
-                  </motion.div>
-                  
-                {/* Right Column - Image */}
+                </motion.div>
+                
+                {/* Image Column - Alternates right/left */}
                 <motion.div 
-                  className="relative block md:block"
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
+                  className={`relative ${slideIndex % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`}
+                  initial={{ opacity: 0, x: slideIndex % 2 === 0 ? 30 : -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
                 >
-                  <motion.div 
-                    className="relative h-48 sm:h-64 md:h-80 lg:h-96 rounded-xl sm:rounded-2xl overflow-hidden mt-6 lg:mt-0"
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                  >
+                  <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 overflow-hidden mt-6 lg:mt-0">
                     <Image
-                      src={introSlides[currentIntroSlide].image}
-                      alt={introSlides[currentIntroSlide].title}
+                      src={slide.image}
+                      alt={slide.title}
                       fill
                       className="object-cover"
+                      loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                  </motion.div>
+                  </div>
                 </motion.div>
               </div>
-            </motion.div>
-
-            {/* Navigation Arrows - Hidden on mobile, visible on desktop */}
-            <button 
-              onClick={prevIntroSlide}
-              className="hidden md:block absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-8 lg:-translate-x-12 xl:-translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-4 border-[#19486A] p-3 shadow-lg transition-all duration-300 group z-10"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-6 h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
-            </button>
-            
-            <button 
-              onClick={nextIntroSlide}
-              className="hidden md:block absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-8 lg:translate-x-12 xl:translate-x-20 bg-white/90 hover:bg-white backdrop-blur-sm rounded-lg border-t-4 border-[#19486A] p-3 shadow-lg transition-all duration-300 group z-10"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-6 h-6 text-[#19486A] group-hover:scale-110 transition-transform" />
-            </button>
-
-            {/* Slide Indicators */}
-            <div className="flex justify-center mt-4 sm:mt-6 space-x-2">
-              {introSlides.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIntroSlide(index)}
-                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-300 touch-manipulation ${
-                    index === currentIntroSlide 
-                      ? 'bg-[#FBAF43] scale-125' 
-                      : 'bg-gray-400 hover:bg-gray-300'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ))}
 
       {/* Core Solutions - Inkomoko Inspired */}
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-white relative">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-[#F8FAFC] relative">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Section Header */}
-            <div className="text-center mb-8 sm:mb-12 md:mb-16 lg:mb-20">
-              <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 lg:mb-8 px-2">
+            <div className="text-left mb-8 sm:mb-12 md:mb-16 lg:mb-20">
+              <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 lg:mb-8">
                 Join the Movement
               </h2>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl leading-relaxed">
                 For Organizations: Partner with us to reach more communities, fund new projects, and create lasting livelihoods. Together, we can transform small beginnings into large-scale impact.
               </p>
             </div>
@@ -471,7 +377,7 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Our Approach - Illustration */}
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gray-50">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F8FAFC]">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Title - Left aligned */}
@@ -526,114 +432,6 @@ export default function UZAEmpowerPage() {
           </div>
         </div>
       </section>
-
-      {/* Real Voices - Client Success Stories */}
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Section Header */}
-            <motion.div 
-              className="text-center mb-8 sm:mb-10 md:mb-12 lg:mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <motion.h2 
-                className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 px-4" 
-                style={{ fontFamily: 'Comfortaa, sans-serif' }}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                viewport={{ once: true }}
-              >
-                Real Stories. Real Change.
-              </motion.h2>
-              <motion.p 
-                className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4"
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-              >
-                Every person we work with carries a story of strength. UZA Empower doesn't just create businesses — it rebuilds lives, restores confidence, and brings hope back home.
-              </motion.p>
-            </motion.div>
-
-            {/* Testimonials Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {stories.map((story, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white rounded-xl sm:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100"
-                >
-                  {/* Image Section */}
-                  <div className="relative h-48 sm:h-56 overflow-hidden">
-                    <Image
-                      src={story.image}
-                      alt={story.name}
-                      fill
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    
-                    {/* Category Badge */}
-                    <div className="absolute top-3 left-3">
-                      <span className={`bg-white text-[#00142B] px-2 sm:px-3 py-1 rounded-full text-xs font-bold ${story.borderColor} border-t-2`}>
-                        {story.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Content Section */}
-                  <div className="p-5 sm:p-6">
-                    {/* Quote */}
-                    <div className="mb-4">
-                      <svg className="w-8 h-8 text-[#FBAF43] mb-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.996 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.984zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-                      </svg>
-                      <p className="text-sm sm:text-base text-gray-700 leading-relaxed italic">
-                        "{story.quote}"
-                      </p>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="h-px bg-gray-200 mb-4"></div>
-
-                    {/* Author Info */}
-                    <div className="flex items-start gap-3">
-                      <div className="relative w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-full overflow-hidden border-2 border-[#FBAF43]">
-                        <Image
-                          src={story.image}
-                          alt={story.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-base sm:text-lg font-bold text-[#00142B] mb-1">
-                          {story.name}
-                        </h3>
-                        <p className="text-sm text-[#FBAF43] font-semibold mb-1">
-                          {story.business}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {story.location}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
 
       <Footer />
             </div>
