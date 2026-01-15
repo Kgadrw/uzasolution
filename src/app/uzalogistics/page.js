@@ -1,8 +1,22 @@
-import ComingSoon from '@components/ComingSoon'
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import ComingSoonModal from '@components/ComingSoonModal'
 
 export default function UZALogisticsPage() {
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(true)
+
+  const handleClose = () => {
+    setIsOpen(false)
+    router.push('/')
+  }
+
   return (
-    <ComingSoon
+    <ComingSoonModal
+      isOpen={isOpen}
+      onClose={handleClose}
       title="UZA Logistics"
       description="Revolutionizing supply chain management across Africa. End-to-end logistics solutions with real-time tracking, optimization, and seamless integration for businesses of all sizes."
       features={[

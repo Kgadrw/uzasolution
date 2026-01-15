@@ -13,6 +13,7 @@ const MagicBento = dynamic(() => import('../../components/MagicBento'))
 
 export default function UZAEmpowerPage() {
   const [currentIntroSlide, setCurrentIntroSlide] = useState(0)
+  const [activeTab, setActiveTab] = useState(0)
   
   const introSlides = [
     {
@@ -98,13 +99,13 @@ export default function UZAEmpowerPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Hero Section - Matching Homepage Hero Structure */}
-      <section className="relative w-full font-sans px-4 md:px-16 lg:px-24 bg-[#F8FAFC]">
+      {/* Hero Section */}
+      <section className="relative w-full font-sans bg-[#F8FAFC]">
         {/* Navbar Component */}
         <Navbar initialSolid={false} />
 
-        {/* -------- Hero Section -------- */}
-        <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full md:max-w-[90%] md:mx-auto overflow-hidden rounded-l-[3rem] rounded-tr-[3rem] rounded-br-[3rem] border-l-4 border-[#19486A]">
+        {/* Hero Section */}
+        <div className="relative h-[350px] sm:h-[450px] md:h-[500px] w-full overflow-hidden">
           {/* Background Image */}
           <div className="absolute inset-0">
             <Image
@@ -117,20 +118,20 @@ export default function UZAEmpowerPage() {
           </div>
 
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/95 via-[#00142B]/80 to-transparent md:bg-gradient-to-r md:from-[#00142B]/95 md:via-[#00142B]/80 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#00142B]/90 via-[#00142B]/70 to-transparent" />
 
-          {/* Hero Content Left-Aligned with responsive padding */}
-          <div className="relative z-10 flex h-full items-center px-3 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-32 lg:py-32">
-            <div className="max-w-xs sm:max-w-md md:max-w-xl text-left">
-              <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold leading-tight text-white">
+          {/* Hero Content */}
+          <div className="relative z-10 flex h-full items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
+            <div className="max-w-2xl text-left">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight text-white">
                 Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
               </h1>
-              <p className="mt-2 sm:mt-4 md:mt-6 text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-200 leading-relaxed">
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed">
                 Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
               </p>
-              <div className="mt-3 sm:mt-6 md:mt-8">
+              <div className="mt-6 sm:mt-8">
                 <Link href="/uzasempower/login">
-                  <button className="inline-flex items-center gap-2 bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 rounded-full transition-all duration-300 group shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base touch-manipulation">
+                  <button className="bg-[#FBAF43] hover:bg-[#e59e3b] text-gray-900 font-semibold px-6 py-3 md:px-8 md:py-4 rounded-full transition-colors duration-200 shadow-md hover:shadow-lg text-sm md:text-base">
                     Get Started
                   </button>
                 </Link>
@@ -140,186 +141,272 @@ export default function UZAEmpowerPage() {
         </div>
       </section>
 
-      {/* Program Introduction Sections - Static with Alternating Layout */}
-      {introSlides.map((slide, slideIndex) => (
-        <section key={slide.id} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F8FAFC] relative">
-          <div className="container mx-auto px-4 sm:px-6 md:px-8">
-            <div className="max-w-6xl mx-auto">
-              <div className={`grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 items-center ${
-                slideIndex % 2 === 0 ? '' : 'lg:grid-flow-dense'
-              }`}>
-                {/* Content Column - Alternates left/right */}
+      {/* Success Stories Section */}
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
+              {/* Left Side - Heading */}
+              <div className="lg:col-span-1">
+                <h2 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-2">
+                  What is
+                </h2>
+                <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
+                  UZA Empower?
+                </h3>
+              </div>
+
+              {/* Right Side - Content Cards */}
+              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <motion.div
-                  className={slideIndex % 2 === 0 ? 'lg:order-1' : 'lg:order-2'}
-                  initial={{ opacity: 0, x: slideIndex % 2 === 0 ? -30 : 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
+                  className="bg-gray-50 p-6"
                 >
-                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6">
-                    {slide.title}
-                  </h2>
-                  
-                  {/* Content based on slide type */}
-                  {slide.id === 1 && (
-                    <>
-                      <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
-                        {slide.content[0]}
-                      </p>
-                      <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">
-                        {slide.content[1]}
-                      </p>
-                    </>
-                  )}
-
-                  {slide.id === 2 && (
-                    <>
-                      <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
-                        {slide.content[0]}
-                      </p>
-                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-4">
-                        {slide.stats.map((stat, index) => {
-                          const Icon = stat.icon || Target
-                          return (
-                            <div key={index} className="text-center">
-                              <div className="flex flex-col items-center gap-2 sm:gap-3">
-                                <div className="flex items-center justify-center mx-auto">
-                                  <Icon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-9 lg:h-9 text-[#E5243B]" />
-                                </div>
-                                <div className="space-y-1">
-                                  <div className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{stat.number}</div>
-                                  <p className="text-[10px] sm:text-xs md:text-xs text-gray-600 font-medium leading-tight px-1">{stat.label}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </>
-                  )}
-
-                  {slide.id === 3 && (
-                    <>
-                      <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
-                        {slide.content[0]}
-                      </p>
-                      <div className="space-y-3 sm:space-y-4">
-                        {slide.steps.map((step, index) => {
-                          const StepIcon = step.icon || Target
-                          return (
-                            <div key={index} className="flex items-start space-x-2 sm:space-x-3 md:space-x-4">
-                              <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 ${step.color} rounded-full flex items-center justify-center flex-shrink-0 shadow-md`}>
-                                <StepIcon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="font-semibold text-[#00142B] mb-1 text-sm sm:text-base">{step.title}</h4>
-                                <p className="text-xs sm:text-sm text-gray-600 leading-tight">{step.description}</p>
-                              </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </>
-                  )}
+                  <div className="mb-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black">
+                      ABOUT
+                    </span>
+                  </div>
+                  <p className="text-sm text-black mb-4">
+                    UZA Empower is a program by UZA Solutions that gives hardworking people a real chance to build their own future.
+                  </p>
                 </motion.div>
-                
-                {/* Image Column - Alternates right/left */}
-                <motion.div 
-                  className={`relative ${slideIndex % 2 === 0 ? 'lg:order-2' : 'lg:order-1'}`}
-                  initial={{ opacity: 0, x: slideIndex % 2 === 0 ? 30 : -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.2 }}
+                  className="bg-gray-50 p-6"
                 >
-                  <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 overflow-hidden mt-6 lg:mt-0">
-                    <Image
-                      src={slide.image}
-                      alt={slide.title}
-                      fill
-                      className="object-cover"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                  <div className="mb-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black">
+                      MISSION
+                    </span>
                   </div>
+                  <p className="text-sm text-black mb-4">
+                    Many Africans live on less than five dollars a day, not because they lack ambition, but because they lack access. We step in where opportunity is missing, bringing together training, mentorship, and financial support so that people can start sustainable small businesses and regain control over their lives.
+                  </p>
                 </motion.div>
               </div>
             </div>
           </div>
-        </section>
-      ))}
+        </div>
+      </section>
 
-      {/* Core Solutions - Inkomoko Inspired */}
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 xl:py-24 bg-[#F8FAFC] relative">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8">
+      {/* Impact You Can Feel - Card Layout */}
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
           <div className="max-w-7xl mx-auto">
-            {/* Section Header */}
-            <div className="text-left mb-8 sm:mb-12 md:mb-16 lg:mb-20">
-              <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-3 sm:mb-4 md:mb-6 lg:mb-8">
-                Join the Movement
-              </h2>
-              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-600 max-w-3xl leading-relaxed">
-                For Organizations: Partner with us to reach more communities, fund new projects, and create lasting livelihoods. Together, we can transform small beginnings into large-scale impact.
-              </p>
-            </div>
+            <div>
+              {/* Content Cards */}
+              <div>
+                {/* Description Card */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="bg-gray-50 p-6 mb-6"
+                >
+                  <div className="mb-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black">
+                      IMPACT
+                    </span>
+                  </div>
+                  <p className="text-sm text-black mb-4">
+                    Behind every number is a life transformed. Through UZA Empower, ordinary people are becoming entrepreneurs, families are gaining stability, and communities are creating their own opportunities.
+                  </p>
+                </motion.div>
 
-            {/* Solutions Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-8 sm:mb-12 md:mb-16 lg:mb-20">
-              {[
-                {
-                  title: "Identification & Enrollment",
-                  description: "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources.",
-                  icon: DollarSign,
-                  color: "from-[#E5243B] to-[#C5192D]",
-                  stats: "97% Repayment Rate",
-                  details: "Low-interest financing, flexible payment terms, comprehensive support"
-                },
-                {
-                  title: "Training & Capacity Building", 
-                  description: "Each participant receives practical training in entrepreneurship, financial literacy, and small business management. They learn how to turn ideas into real, working enterprises.",
-                    icon: Globe,
-                  color: "from-[#19486A] to-[#00689D]",
-                  stats: "68% Income Growth",
-                  details: "Supply chain integration, customer acquisition, market intelligence"
-                },
-                {
-                  title: "Lease-to-Own Financing",
-                  description: "Once their business begins, we provide equipment and materials through a flexible, affordable lease-to-own model. Participants repay in small installments based on their income, and every repayment supports another new entrepreneur.",
-                  icon: Users,
-                  color: "from-[#00689D] to-[#19486A]",
-                  stats: "312+ Livelihoods",
-                  details: "Policy influence, community organizing, stakeholder engagement"
-                }
-              ].map((solution, index) => {
-                const Icon = solution.icon
-                  return (
-                  <div key={index} className={`group relative`}>
-                <div className="rounded-lg sm:rounded-xl md:rounded-2xl p-4 sm:p-5 md:p-6 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 overflow-hidden relative h-full" 
-                     style={{
-                       backgroundImage: `url(${index === 0 ? '/negative.jpg' : index === 1 ? '/negative1.jpg' : '/negative.jpg'})`,
-                       backgroundSize: 'cover',
-                       backgroundPosition: 'center',
-                       backgroundRepeat: 'no-repeat'
-                     }}>
-                      <div className="absolute inset-0 bg-white/90"></div>
-                      <div className={`absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${solution.color} rounded-t-lg sm:rounded-t-xl`}></div>
-                  
-                      <div className="relative z-10 h-full flex flex-col">
-                        <div className={`w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gradient-to-br ${solution.color} rounded-lg sm:rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                          <Icon className="w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />
+                {/* Stats Cards Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {introSlides.find(s => s.id === 2)?.stats.map((stat, index) => {
+                    const Icon = stat.icon || Target
+                    return (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6, delay: 0.1 * index }}
+                        className="bg-gray-50 p-6"
+                      >
+                        <div className="mb-3">
+                          <Icon className="w-6 h-6 text-[#E5243B] mb-2" />
                         </div>
-                        
-                        <h3 className="text-base sm:text-lg md:text-xl font-bold mb-2 sm:mb-3 text-[#00689D]">{solution.title}</h3>
-                        <p className="text-[#19486A] leading-relaxed text-xs sm:text-sm md:text-sm flex-grow">
-                          {solution.description}
+                        <div className="text-xl md:text-2xl font-bold text-black mb-1">
+                          {stat.number}
+                        </div>
+                        <p className="text-xs text-black">
+                          {stat.label}
                         </p>
-                        
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Program Introduction Sections - Static with Alternating Layout */}
+      {introSlides.filter(slide => slide.id !== 2 && slide.id !== 3).map((slide, slideIndex) => {
+        return (
+          <section key={slide.id} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F8FAFC] relative">
+            <div className="container mx-auto px-4 sm:px-6 md:px-8">
+              <div className="max-w-6xl mx-auto">
+                <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 items-center">
+                  {/* Content Column */}
+                  <motion.div
+                    className="lg:order-1"
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-4 sm:mb-6">
+                      {slide.title}
+                    </h2>
+                    
+                    {slide.id === 1 && (
+                      <>
+                        <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed mb-4 sm:mb-6 md:mb-8">
+                          {slide.content[0]}
+                        </p>
+                        <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">
+                          {slide.content[1]}
+                        </p>
+                      </>
+                    )}
+                  </motion.div>
+                  
+                  {/* Image Column */}
+                  <motion.div 
+                    className="relative lg:order-2"
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: 0.2 }}
+                  >
+                    <div className="relative h-48 sm:h-64 md:h-80 lg:h-96 overflow-hidden mt-6 lg:mt-0">
+                      <Image
+                        src={slide.image}
+                        alt={slide.title}
+                        fill
+                        className="object-cover"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )
+      })}
+
+      {/* Why It Matters - Merged with Join the Movement - UNDP Style */}
+      <section className="py-12 sm:py-16 md:py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
+              {/* Left Column - Why It Matters */}
+              <div className="flex flex-col justify-between">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-8 leading-tight">
+                    Why It Matters
+                  </h2>
+                  <p className="text-sm md:text-base text-black leading-relaxed mb-8">
+                    Poverty isn't born from laziness; it's born from lack of access. UZA Empower exists to close that gap, giving people the training, tools, and financial support to create their own path.
+                  </p>
+                  <p className="text-sm md:text-base text-black leading-relaxed mb-10">
+                    For Organizations: Partner with us to reach more communities, fund new projects, and create lasting livelihoods. Together, we can transform small beginnings into large-scale impact.
+                  </p>
+                </div>
+                <Link 
+                  href="#contact"
+                  className="inline-flex items-center font-bold text-black hover:text-[#E5243B] transition-colors text-sm"
+                >
+                  LEARN MORE <span className="ml-1 text-[#E5243B]">{'>'}</span>
+                </Link>
+              </div>
+
+              {/* Right Column - Image, Tabs, and Content */}
+              <div>
+                {/* Image */}
+                <div className="relative h-64 md:h-80 mb-8 overflow-hidden">
+                  <Image
+                    src="/story3.jpg"
+                    alt="UZA Empower Impact"
+                    fill
+                    className="object-cover"
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Tabs */}
+                <div className="flex items-center border-b border-gray-200 mb-8">
+                  {[
+                    { id: 0, label: "IDENTIFICATION & ENROLLMENT" },
+                    { id: 1, label: "TRAINING & CAPACITY BUILDING" },
+                    { id: 2, label: "LEASE-TO-OWN FINANCING" }
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black border-b-2 transition-colors ${
+                        activeTab === tab.id
+                          ? 'border-[#E5243B]'
+                          : 'border-transparent hover:border-gray-300'
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                  <div className="ml-auto text-xs text-gray-500">1/1</div>
+                </div>
+
+                {/* Content */}
+                <div className="mb-8">
+                  <h3 className="text-lg md:text-xl font-bold text-black mb-6">
+                    {[
+                      "Identification & Enrollment",
+                      "Training & Capacity Building",
+                      "Lease-to-Own Financing"
+                    ][activeTab]}
+                  </h3>
+                  <p className="text-sm text-black leading-relaxed">
+                    {activeTab === 0 && "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources."}
+                    {activeTab === 1 && "Each participant receives practical training in entrepreneurship, financial literacy, and small business management. They learn how to turn ideas into real, working enterprises."}
+                    {activeTab === 2 && "Once their business begins, we provide equipment and materials through a flexible, affordable lease-to-own model. Participants repay in small installments based on their income, and every repayment supports another new entrepreneur."}
+                  </p>
+                </div>
+
+                {/* Navigation Arrows */}
+                <div className="flex items-center justify-end gap-2">
+                  <button
+                    onClick={() => setActiveTab((prev) => (prev === 0 ? 2 : prev - 1))}
+                    className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition-colors"
+                    aria-label="Previous"
+                  >
+                    <ArrowRight className="w-5 h-5 text-gray-600 rotate-180" />
+                  </button>
+                  <button
+                    onClick={() => setActiveTab((prev) => (prev === 2 ? 0 : prev + 1))}
+                    className="w-10 h-10 rounded-full bg-gray-300 hover:bg-gray-400 flex items-center justify-center transition-colors"
+                    aria-label="Next"
+                  >
+                    <ArrowRight className="w-5 h-5 text-gray-700" />
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

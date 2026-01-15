@@ -1,14 +1,8 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import "../app/globals.css";
-import Snow from '../components/Snow';
 
 export default function RootLayout({ children }) {
-  const pathname = usePathname();
-  // Hide snow on dashboard pages
-  const isDashboard = pathname?.includes('/dashboard') || pathname?.includes('/admin/') || pathname?.includes('/beneficiary/') || pathname?.includes('/donor/');
-  
   return (
     <html lang="en">
       <head>
@@ -128,7 +122,6 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="bg-gray-100 relative custom-scrollbar">
-        {!isDashboard && <Snow />}
         <div className="min-h-screen bg-white text-gray-800 relative">
           {children}
         </div>

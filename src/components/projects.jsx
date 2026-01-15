@@ -57,11 +57,11 @@ export default function WhoAreWe() {
             {/* Background Pattern - Removed for performance */}
 
             {/* Image Grid */}
-            <div className="grid grid-cols-3 gap-0 h-80 md:h-[420px] relative z-10 overflow-hidden" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
+            <div className="grid grid-cols-3 gap-2 h-80 md:h-[420px] relative z-10" style={{ willChange: 'transform', transform: 'translateZ(0)' }}>
               {images.map((image) => (
                 <div
                   key={image.id}
-                  className="relative overflow-hidden bg-white/40"
+                  className="relative overflow-hidden bg-white/40 rounded-lg"
                   style={{ willChange: 'transform', transform: 'translateZ(0)' }}
                 >
                   <Image

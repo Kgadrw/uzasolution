@@ -35,7 +35,7 @@ export default function WhyChooseUZA() {
         {/* Left: YouTube Video */}
         <div className="w-full flex justify-center items-stretch">
           <div
-            className="relative w-full max-w-2xl min-h-[450px] overflow-hidden shadow-lg cursor-pointer bg-white/40 border border-white/30"
+            className="relative w-full max-w-2xl min-h-[450px] overflow-hidden shadow-lg cursor-pointer bg-white/40 border border-white/30 rounded-lg"
             style={{ willChange: 'transform', transform: 'translateZ(0)' }}
             onClick={handlePlay}
           >

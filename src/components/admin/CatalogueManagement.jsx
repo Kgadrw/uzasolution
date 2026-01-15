@@ -71,7 +71,7 @@ export default function CatalogueManagement() {
           <h2 className="text-lg text-gray-900">Catalogue Management</h2>
           <button
             onClick={openAddModal}
-            className="flex items-center gap-2 bg-[#FBAF43] text-white px-4 py-2 text-sm font-medium cursor-pointer hover:bg-[#DDA63A] transition-colors"
+            className="flex items-center gap-2 bg-[#FBAF43] text-white px-4 py-2 text-sm font-medium cursor-pointer hover:bg-[#DDA63A] transition-colors rounded-full"
           >
             <Plus className="w-4 h-4" />
             Add Catalogue

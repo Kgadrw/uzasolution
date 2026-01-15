@@ -21,8 +21,8 @@ export default function AboutUs() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               { title: 'UZA Bulk', desc: 'Direct-from-factory sourcing for scale and reliability.', href: 'https://www.uzabulk.com/', img: '/1.jpg' },
-              { title: 'UZA Mall', desc: 'Curated B2B catalog with transparent pricing.', href: '/comingsoon', img: '/3.jpg' },
-              { title: 'UZA Logistics', desc: 'Ocean, air, and last-mile with live tracking.', href: '/comingsoon', img: '/2.jpg' },
+              { title: 'UZA Mall', desc: 'Curated B2B catalog with transparent pricing.', href: '/uzamall', img: '/3.jpg' },
+              { title: 'UZA Logistics', desc: 'Ocean, air, and last-mile with live tracking.', href: '/uzalogistics', img: '/2.jpg' },
             ].map((item) => (
               <a
                 key={item.title}

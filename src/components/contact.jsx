@@ -229,7 +229,7 @@ export default function Contact() {
                 <button 
                   type="submit" 
                   disabled={isLoading || submitStatus === 'success'}
-                  className={`w-full md:w-auto inline-flex justify-center items-center gap-2 font-semibold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 ${
+                  className={`w-full md:w-auto inline-flex justify-center items-center gap-2 font-semibold px-6 py-3 rounded-full shadow-lg transition-all duration-300 ${
                     submitStatus === 'success' 
                       ? 'bg-green-500 hover:bg-green-600 text-white' 
                       : isLoading 

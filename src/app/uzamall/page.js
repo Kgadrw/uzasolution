@@ -1,8 +1,22 @@
-import ComingSoon from '@components/ComingSoon'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import ComingSoonModal from '@components/ComingSoonModal'
 
 export default function UZAMallPage() {
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(true)
+
+  const handleClose = () => {
+    setIsOpen(false)
+    router.push('/')
+  }
+
   return (
-    <ComingSoon
+    <ComingSoonModal
+      isOpen={isOpen}
+      onClose={handleClose}
       title="UZA Mall"
       description="The future of e-commerce in Africa. A comprehensive marketplace platform connecting buyers and sellers across the continent with seamless transactions and reliable logistics."
       features={[

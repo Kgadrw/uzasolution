@@ -1,8 +1,22 @@
-import ComingSoon from '@components/ComingSoon'
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import ComingSoonModal from '@components/ComingSoonModal'
 
 export default function UZACloudPage() {
+  const router = useRouter()
+  const [isOpen, setIsOpen] = useState(true)
+
+  const handleClose = () => {
+    setIsOpen(false)
+    router.push('/')
+  }
+
   return (
-    <ComingSoon
+    <ComingSoonModal
+      isOpen={isOpen}
+      onClose={handleClose}
       title="UZA Cloud"
       description="Cloud infrastructure and services designed specifically for African businesses. Scalable, secure, and cost-effective cloud solutions with local data centers and compliance."
       features={[
