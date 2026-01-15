@@ -10,16 +10,7 @@ This repository hosts the UZA Solution marketing site together with the UZA Empo
 
 ### Environment
 
-Copy `.env.example` to `.env.local` and update the values:
 
-```
-EMAIL_USER=...
-EMAIL_PASS=...
-MONGODB_URI=mongodb+srv://kalisagad05_db_user:MPj6cOyqJPEH8jdS@cluster0.uamtdm9.mongodb.net/?appName=Cluster0
-JWT_SECRET=replace-with-a-strong-secret
-```
-
-> Use the provided Atlas connection string or supply your own. `JWT_SECRET` must be a long random string.
 
 ### Install & Run
 
