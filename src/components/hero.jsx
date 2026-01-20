@@ -13,12 +13,12 @@ export default function HeroSection() {
   }
 
   return (
-    <section className="relative w-full font-sans bg-[#F8FAFC]">
+    <section className="relative w-full font-sans bg-transparent">
       {/* Navbar Component */}
-      <Navbar initialSolid={false} />
+      <Navbar initialSolid={false} overlay />
 
       {/* Hero Section */}
-      <div className="relative h-[350px] sm:h-[450px] md:h-[500px] w-full overflow-hidden">
+      <div className="relative h-[480px] sm:h-[600px] md:h-[680px] w-full overflow-hidden">
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image src="/hero2.jpg" alt="Hero" fill className="object-cover" priority />

@@ -8,7 +8,7 @@ import { FaFacebookF, FaXTwitter, FaLinkedinIn, FaInstagram } from 'react-icons/
 
 export default function Footer() {
   return (
-    <footer className="bg-[#00142B] text-white relative overflow-hidden">
+    <footer className="bg-[#00142B] text-white relative overflow-hidden rounded-t-[3rem]">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-0 left-0 w-full h-full" style={{

@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Menu, X, LogIn } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
-export default function Navbar({ initialSolid = false }) {
+export default function Navbar({ initialSolid = false, overlay = false }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(initialSolid)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
@@ -55,9 +55,13 @@ export default function Navbar({ initialSolid = false }) {
   const linkNames = ['Home', 'About', 'UZA Empower', 'News']
 
   return (
-    <nav className="relative z-30 w-full">
+    <nav
+      className={`${
+        overlay ? 'absolute top-2 sm:top-4 left-0 right-0' : 'relative'
+      } z-30 w-full`}
+    >
       <div
-        className={`flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 transition-all duration-300 ${
+        className={`mx-auto w-[96%] sm:w-[95%] lg:w-[92%] xl:w-[90%] flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 transition-all duration-300 rounded-full overflow-hidden border border-gray-200 ${
           scrolled
             ? 'bg-white shadow-sm text-[#00142B]'
             : 'bg-white text-[#00142B]'

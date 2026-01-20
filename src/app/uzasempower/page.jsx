@@ -100,12 +100,12 @@ export default function UZAEmpowerPage() {
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Hero Section */}
-      <section className="relative w-full font-sans bg-[#F8FAFC]">
+      <section className="relative w-full font-sans bg-transparent">
         {/* Navbar Component */}
-        <Navbar initialSolid={false} />
+        <Navbar initialSolid={false} overlay />
 
         {/* Hero Section */}
-        <div className="relative h-[350px] sm:h-[450px] md:h-[500px] w-full overflow-hidden">
+        <div className="relative h-[480px] sm:h-[600px] md:h-[680px] w-full overflow-hidden">
           {/* Background Image */}
           <div className="absolute inset-0">
             <Image
@@ -127,7 +127,7 @@ export default function UZAEmpowerPage() {
                 Turning <span className="text-[#FBAF43]">Ambition</span> into Ownership
               </h1>
               <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-200 leading-relaxed">
-                Across Africa, millions of people wake up each morning ready to work, but opportunities are limited. UZA Empower exists to change that. We discover potential in overlooked communities, train and support individuals to build small businesses, and help them grow into lasting independence.
+                Across Africa, millions are ready to work, but opportunity is limited. UZA Empower unlocks potential through training, support, and financing—helping people build businesses and lasting independence.
               </p>
               <div className="mt-6 sm:mt-8">
                 <Link href="/uzasempower/login">
@@ -141,37 +141,37 @@ export default function UZAEmpowerPage() {
         </div>
       </section>
 
-      {/* Success Stories Section */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
+      {/* Impact You Can Feel - Card Layout */}
+      <section className="relative z-20 -mt-10 sm:-mt-14 bg-transparent">
+        <div className="bg-white rounded-t-[3rem] overflow-hidden py-12 sm:py-16 md:py-20">
+          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
           <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12 items-start">
-              {/* Left Side - Heading */}
+            {/* What is UZA Empower? (ABOUT + MISSION) */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10 items-start mb-10">
               <div className="lg:col-span-1">
-                <h2 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight mb-2">
+                <h2 className="text-xl md:text-2xl font-bold text-[#00142B] leading-tight mb-2">
                   What is
                 </h2>
-                <h3 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent leading-tight">
+                <h3 className="text-xl md:text-2xl font-bold text-[#00142B] leading-tight">
                   UZA Empower?
                 </h3>
               </div>
 
-              {/* Right Side - Content Cards */}
-              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className="bg-gray-50 p-6"
+                  className="bg-[#FBAF43] p-5"
                 >
-                  <div className="mb-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black">
+                  <div className="mb-1">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00142B]">
                       ABOUT
                     </span>
                   </div>
-                  <p className="text-sm text-black mb-4">
-                    UZA Empower is a program by UZA Solutions that gives hardworking people a real chance to build their own future.
+                  <p className="text-base text-white">
+                    {introSlides.find((s) => s.id === 1)?.content?.[0]}
                   </p>
                 </motion.div>
 
@@ -179,28 +179,21 @@ export default function UZAEmpowerPage() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="bg-gray-50 p-6"
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="bg-[#FBAF43] p-5"
                 >
-                  <div className="mb-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black">
+                  <div className="mb-1">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00142B]">
                       MISSION
                     </span>
                   </div>
-                  <p className="text-sm text-black mb-4">
-                    Many Africans live on less than five dollars a day, not because they lack ambition, but because they lack access. We step in where opportunity is missing, bringing together training, mentorship, and financial support so that people can start sustainable small businesses and regain control over their lives.
+                  <p className="text-base text-white">
+                    {introSlides.find((s) => s.id === 1)?.content?.[1]}
                   </p>
                 </motion.div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Impact You Can Feel - Card Layout */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
-          <div className="max-w-7xl mx-auto">
             <div>
               {/* Content Cards */}
               <div>
@@ -210,14 +203,14 @@ export default function UZAEmpowerPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className="bg-gray-50 p-6 mb-6"
+                  className="bg-[#FBAF43] p-5 mb-4"
                 >
-                  <div className="mb-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-black">
+                  <div className="mb-1">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00142B]">
                       IMPACT
                     </span>
                   </div>
-                  <p className="text-sm text-black mb-4">
+                  <p className="text-base text-white">
                     Behind every number is a life transformed. Through UZA Empower, ordinary people are becoming entrepreneurs, families are gaining stability, and communities are creating their own opportunities.
                   </p>
                 </motion.div>
@@ -233,15 +226,15 @@ export default function UZAEmpowerPage() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.1 * index }}
-                        className="bg-gray-50 p-6"
+                        className="bg-[#FBAF43] p-6"
                       >
                         <div className="mb-3">
-                          <Icon className="w-6 h-6 text-[#E5243B] mb-2" />
+                          <Icon className="w-6 h-6 text-[#00142B] mb-2" />
                         </div>
-                        <div className="text-xl md:text-2xl font-bold text-black mb-1">
+                        <div className="text-2xl md:text-3xl font-bold text-white mb-1">
                           {stat.number}
                         </div>
-                        <p className="text-xs text-black">
+                        <p className="text-sm text-white">
                           {stat.label}
                         </p>
                       </motion.div>
@@ -252,10 +245,11 @@ export default function UZAEmpowerPage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* Program Introduction Sections - Static with Alternating Layout */}
-      {introSlides.filter(slide => slide.id !== 2 && slide.id !== 3).map((slide, slideIndex) => {
+      {introSlides.filter(slide => slide.id !== 1 && slide.id !== 2 && slide.id !== 3).map((slide, slideIndex) => {
         return (
           <section key={slide.id} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F8FAFC] relative">
             <div className="container mx-auto px-4 sm:px-6 md:px-8">
@@ -312,28 +306,28 @@ export default function UZAEmpowerPage() {
       })}
 
       {/* Why It Matters - Merged with Join the Movement - UNDP Style */}
-      <section className="py-12 sm:py-16 md:py-20 bg-white">
+      <section className="py-12 sm:py-16 md:py-20 bg-[#00142B]">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
               {/* Left Column - Why It Matters */}
               <div className="flex flex-col justify-between">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-8 leading-tight">
+                  <h2 className="text-2xl md:text-3xl font-bold text-white mb-8 leading-tight">
                     Why It Matters
                   </h2>
-                  <p className="text-sm md:text-base text-black leading-relaxed mb-8">
+                  <p className="text-sm md:text-base text-white leading-relaxed mb-8">
                     Poverty isn't born from laziness; it's born from lack of access. UZA Empower exists to close that gap, giving people the training, tools, and financial support to create their own path.
                   </p>
-                  <p className="text-sm md:text-base text-black leading-relaxed mb-10">
+                  <p className="text-sm md:text-base text-white leading-relaxed mb-10">
                     For Organizations: Partner with us to reach more communities, fund new projects, and create lasting livelihoods. Together, we can transform small beginnings into large-scale impact.
                   </p>
                 </div>
                 <Link 
                   href="#contact"
-                  className="inline-flex items-center font-bold text-black hover:text-[#E5243B] transition-colors text-sm"
+                  className="inline-flex items-center font-bold text-white hover:text-[#FBAF43] transition-colors text-sm"
                 >
-                  LEARN MORE <span className="ml-1 text-[#E5243B]">{'>'}</span>
+                  LEARN MORE <span className="ml-1 text-[#FBAF43]">{'>'}</span>
                 </Link>
               </div>
 
@@ -351,7 +345,7 @@ export default function UZAEmpowerPage() {
                 </div>
 
                 {/* Tabs */}
-                <div className="flex items-center border-b border-gray-200 mb-8">
+                <div className="flex items-center mb-8">
                   {[
                     { id: 0, label: "IDENTIFICATION & ENROLLMENT" },
                     { id: 1, label: "TRAINING & CAPACITY BUILDING" },
@@ -360,28 +354,28 @@ export default function UZAEmpowerPage() {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider text-black border-b-2 transition-colors ${
+                      className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white border-b-2 transition-colors ${
                         activeTab === tab.id
-                          ? 'border-[#E5243B]'
-                          : 'border-transparent hover:border-gray-300'
+                          ? 'border-[#FBAF43]'
+                          : 'border-transparent'
                       }`}
                     >
                       {tab.label}
                     </button>
                   ))}
-                  <div className="ml-auto text-xs text-gray-500">1/1</div>
+                  <div className="ml-auto text-xs text-gray-300">1/1</div>
                 </div>
 
                 {/* Content */}
                 <div className="mb-8">
-                  <h3 className="text-lg md:text-xl font-bold text-black mb-6">
+                  <h3 className="text-lg md:text-xl font-bold text-white mb-6">
                     {[
                       "Identification & Enrollment",
                       "Training & Capacity Building",
                       "Lease-to-Own Financing"
                     ][activeTab]}
                   </h3>
-                  <p className="text-sm text-black leading-relaxed">
+                  <p className="text-sm text-white leading-relaxed">
                     {activeTab === 0 && "We work hand in hand with local authorities, cooperatives, and community groups to find individuals with the drive to succeed but without access to resources."}
                     {activeTab === 1 && "Each participant receives practical training in entrepreneurship, financial literacy, and small business management. They learn how to turn ideas into real, working enterprises."}
                     {activeTab === 2 && "Once their business begins, we provide equipment and materials through a flexible, affordable lease-to-own model. Participants repay in small installments based on their income, and every repayment supports another new entrepreneur."}
@@ -412,7 +406,7 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Our Approach - Illustration */}
-      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-[#F8FAFC]">
+      <section className="py-8 sm:py-12 md:py-16 lg:py-20 bg-white">
         <div className="container mx-auto px-4 sm:px-6 md:px-8">
           <div className="max-w-7xl mx-auto">
             {/* Title - Left aligned */}
