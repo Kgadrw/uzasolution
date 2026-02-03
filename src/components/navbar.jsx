@@ -58,7 +58,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
     <nav
       className={`${
         overlay ? 'absolute top-2 sm:top-4 left-0 right-0' : 'relative'
-      } z-30 w-full`}
+      } ${pathname === '/about' ? 'bg-[#F8FAFC]' : ''} z-30 w-full`}
     >
       <div
         className={`mx-auto w-[96%] sm:w-[95%] lg:w-[92%] xl:w-[90%] flex justify-between items-center px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32 py-2 transition-all duration-300 rounded-full overflow-hidden border border-gray-200 ${
@@ -68,7 +68,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center -ml-2 sm:-ml-3 md:-ml-4">
           <Image 
             src="/X-logo.png" 
             alt="UZA Solutions Logo" 
@@ -99,10 +99,10 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
         <div className="hidden lg:block">
           <Link
             href="/uzasempower/login"
-            className="px-3 py-1.5 rounded-full font-medium text-sm transition-colors duration-200 bg-[#FBAF43] hover:bg-[#e59e3b] text-white flex items-center space-x-2"
+            className="px-3 py-1.5 rounded-full font-medium text-sm transition-all duration-300 bg-[#FBAF43] hover:bg-[#e59e3b] text-white flex items-center space-x-2 hover:scale-105 hover:shadow-lg animate-pulse hover:animate-none group"
           >
             <span>Login</span>
-            <LogIn className="w-4 h-4" />
+            <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
         </div>
 
@@ -148,10 +148,10 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
             <Link
               href="/uzasempower/login"
               onClick={() => setShowMobileMenu(false)}
-              className="mt-2 px-4 py-3 font-medium text-sm transition-colors bg-[#FBAF43] hover:bg-[#e59e3b] text-white flex items-center justify-center space-x-2 rounded-full"
+              className="mt-2 px-4 py-3 font-medium text-sm transition-all duration-300 bg-[#FBAF43] hover:bg-[#e59e3b] text-white flex items-center justify-center space-x-2 rounded-full hover:scale-105 hover:shadow-lg group"
             >
               <span>Login</span>
-              <LogIn className="w-4 h-4" />
+              <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
             </Link>
           </div>
         </div>

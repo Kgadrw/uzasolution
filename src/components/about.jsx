@@ -11,7 +11,7 @@ export default function AboutUs() {
       className="relative z-20 -mt-10 sm:-mt-14 bg-transparent font-sans"
     >
       <div className="bg-[#F8FAFC] rounded-t-[3rem] overflow-hidden py-20 px-4 md:px-16 lg:px-24">
-        <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* UZA Platforms Section - Moved to Top */}
         <div className="mb-20">
           <div className="mb-12 w-full flex flex-col gap-4 sm:flex-row sm:items-center">

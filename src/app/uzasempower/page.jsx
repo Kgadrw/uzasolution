@@ -98,9 +98,21 @@ export default function UZAEmpowerPage() {
 
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[#F8FAFC] relative overflow-hidden">
+      {/* Background Pattern Decoration */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300142B' fill-opacity='1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+        }}></div>
+      </div>
+      
+      {/* Decorative Gradient Shapes */}
+      <div className="absolute top-1/4 right-0 w-96 h-96 bg-[#FBAF43]/5 rounded-full blur-3xl pointer-events-none z-0"></div>
+      <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-[#00689D]/5 rounded-full blur-3xl pointer-events-none z-0"></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#E5243B]/3 rounded-full blur-3xl pointer-events-none z-0"></div>
+      
       {/* Hero Section */}
-      <section className="relative w-full font-sans bg-transparent">
+      <section className="relative w-full font-sans bg-transparent z-10">
         {/* Navbar Component */}
         <Navbar initialSolid={false} overlay />
 
@@ -144,7 +156,7 @@ export default function UZAEmpowerPage() {
       {/* Impact You Can Feel - Card Layout */}
       <section className="relative z-20 -mt-10 sm:-mt-14 bg-transparent">
         <div className="bg-white rounded-t-[3rem] overflow-hidden py-12 sm:py-16 md:py-20">
-          <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
           <div className="max-w-7xl mx-auto">
             {/* What is UZA Empower? (ABOUT + MISSION) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10 items-start mb-10">
@@ -157,20 +169,21 @@ export default function UZAEmpowerPage() {
                 </h3>
               </div>
 
-              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className="bg-[#FBAF43] p-5"
+                  whileHover={{ y: -2 }}
+                  className="bg-white p-6 rounded-lg transition-all duration-300"
                 >
-                  <div className="mb-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00142B]">
+                  <div className="mb-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-black">
                       ABOUT
                     </span>
                   </div>
-                  <p className="text-base text-white">
+                  <p className="text-base text-black leading-relaxed">
                     {introSlides.find((s) => s.id === 1)?.content?.[0]}
                   </p>
                 </motion.div>
@@ -180,14 +193,15 @@ export default function UZAEmpowerPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.1 }}
-                  className="bg-[#FBAF43] p-5"
+                  whileHover={{ y: -2 }}
+                  className="bg-white p-6 rounded-lg transition-all duration-300"
                 >
-                  <div className="mb-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00142B]">
+                  <div className="mb-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-black">
                       MISSION
                     </span>
                   </div>
-                  <p className="text-base text-white">
+                  <p className="text-base text-black leading-relaxed">
                     {introSlides.find((s) => s.id === 1)?.content?.[1]}
                   </p>
                 </motion.div>
@@ -203,14 +217,15 @@ export default function UZAEmpowerPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
-                  className="bg-[#FBAF43] p-5 mb-4"
+                  whileHover={{ y: -2 }}
+                  className="bg-white p-6 mb-6 rounded-lg transition-all duration-300"
                 >
-                  <div className="mb-1">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#00142B]">
+                  <div className="mb-4">
+                    <span className="text-xs font-bold uppercase tracking-wider text-black">
                       IMPACT
                     </span>
                   </div>
-                  <p className="text-base text-white">
+                  <p className="text-base text-black leading-relaxed">
                     Behind every number is a life transformed. Through UZA Empower, ordinary people are becoming entrepreneurs, families are gaining stability, and communities are creating their own opportunities.
                   </p>
                 </motion.div>
@@ -226,25 +241,26 @@ export default function UZAEmpowerPage() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.1 * index }}
-                        className="bg-[#FBAF43] p-6"
+                        whileHover={{ y: -2 }}
+                        className="bg-white p-6 rounded-lg transition-all duration-300"
                       >
-                        <div className="mb-3">
-                          <Icon className="w-6 h-6 text-[#00142B] mb-2" />
+                        <div className="mb-4">
+                          <Icon className="w-6 h-6 text-[#00142B] mb-2 font-normal" />
                         </div>
-                        <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                        <div className="text-2xl md:text-3xl font-normal text-[#00142B] mb-2">
                           {stat.number}
                         </div>
-                        <p className="text-sm text-white">
+                        <p className="text-sm text-black leading-relaxed">
                           {stat.label}
                         </p>
                       </motion.div>
                     )
                   })}
                 </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
         </div>
       </section>
 
@@ -411,7 +427,7 @@ export default function UZAEmpowerPage() {
           <div className="max-w-7xl mx-auto">
             {/* Title - Left aligned */}
             <motion.h2 
-              className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#E5243B] via-[#19486A] to-[#00689D] bg-clip-text text-transparent mb-8 sm:mb-10 md:mb-12 text-left"
+              className="text-xl md:text-2xl font-bold text-[#00142B] mb-8 sm:mb-10 md:mb-12 text-left"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -428,7 +444,6 @@ export default function UZAEmpowerPage() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
                 viewport={{ once: true }}
-                whileHover={{ scale: 1.02 }}
               >
                 <Image
                   src="/illustration.png"
@@ -448,7 +463,7 @@ export default function UZAEmpowerPage() {
                 viewport={{ once: true }}
               >
                 <motion.p 
-                  className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed"
+                  className="text-sm sm:text-base md:text-base text-gray-600 leading-relaxed"
                   initial={{ opacity: 0, y: 15 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
