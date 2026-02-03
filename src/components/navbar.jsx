@@ -68,7 +68,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center -ml-2 sm:-ml-3 md:-ml-4">
+        <Link href="/" className="flex items-center -ml-2 sm:-ml-3 md:-ml-4 lg:-ml-6 xl:-ml-8">
           <Image 
             src="/X-logo.png" 
             alt="UZA Solutions Logo" 

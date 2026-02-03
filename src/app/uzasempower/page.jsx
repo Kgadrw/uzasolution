@@ -160,7 +160,7 @@ export default function UZAEmpowerPage() {
           <div className="max-w-7xl mx-auto">
             {/* What is UZA Empower? (ABOUT + MISSION) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10 items-start mb-10">
-              <div className="lg:col-span-1">
+              <div className="lg:col-span-1 text-center lg:text-left">
                 <h2 className="text-xl md:text-2xl font-bold text-[#00142B] leading-tight mb-2">
                   What is
                 </h2>
@@ -176,7 +176,7 @@ export default function UZAEmpowerPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                   whileHover={{ y: -2 }}
-                  className="bg-white p-6 rounded-lg transition-all duration-300"
+                  className="bg-gray-50 p-6 rounded-lg transition-all duration-300"
                 >
                   <div className="mb-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-black">
@@ -194,7 +194,7 @@ export default function UZAEmpowerPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: 0.1 }}
                   whileHover={{ y: -2 }}
-                  className="bg-white p-6 rounded-lg transition-all duration-300"
+                  className="bg-gray-50 p-6 rounded-lg transition-all duration-300"
                 >
                   <div className="mb-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-black">
@@ -218,7 +218,7 @@ export default function UZAEmpowerPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                   whileHover={{ y: -2 }}
-                  className="bg-white p-6 mb-6 rounded-lg transition-all duration-300"
+                  className="bg-gray-50 p-6 mb-6 rounded-lg transition-all duration-300"
                 >
                   <div className="mb-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-black">
@@ -242,7 +242,7 @@ export default function UZAEmpowerPage() {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.1 * index }}
                         whileHover={{ y: -2 }}
-                        className="bg-white p-6 rounded-lg transition-all duration-300"
+                        className="bg-gray-50 p-6 rounded-lg transition-all duration-300"
                       >
                         <div className="mb-4">
                           <Icon className="w-6 h-6 text-[#00142B] mb-2 font-normal" />
