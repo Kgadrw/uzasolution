@@ -97,13 +97,15 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
 
         {/* CTA Button - Desktop */}
         <div className="hidden lg:block">
-          <Link
-            href="/uzasempower/login"
+          <a
+            href="https://logistics.uzasolutions.com/client/login"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-3 py-1.5 rounded-full font-medium text-sm transition-all duration-300 bg-[#FBAF43] hover:bg-[#e59e3b] text-white flex items-center space-x-2 hover:scale-105 hover:shadow-lg animate-pulse hover:animate-none group"
           >
             <span>Login</span>
             <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-          </Link>
+          </a>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -145,14 +147,16 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
             ))}
             
             {/* Login Button in Mobile Menu */}
-            <Link
-              href="/uzasempower/login"
+            <a
+              href="https://logistics.uzasolutions.com/client/login"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setShowMobileMenu(false)}
               className="mt-2 px-4 py-3 font-medium text-sm transition-all duration-300 bg-[#FBAF43] hover:bg-[#e59e3b] text-white flex items-center justify-center space-x-2 rounded-full hover:scale-105 hover:shadow-lg group"
             >
               <span>Login</span>
               <LogIn className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-            </Link>
+            </a>
           </div>
         </div>
       )}
