@@ -57,7 +57,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
   return (
     <nav
       className={`${
-        overlay ? 'absolute top-2 sm:top-4 left-0 right-0' : 'relative'
+        overlay ? 'absolute top-2 sm:top-4 left-0 right-0' : 'relative mt-2 sm:mt-4'
       } ${pathname === '/about' ? 'bg-[#F8FAFC]' : ''} z-30 w-full`}
     >
       <div
