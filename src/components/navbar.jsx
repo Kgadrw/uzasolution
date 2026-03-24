@@ -84,7 +84,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
             <Link
               key={i}
               href={href}
-              className={`font-medium text-sm transition-colors duration-200 ${
+              className={`font-medium text-sm uppercase transition-colors duration-200 ${
                 isActive(href) 
                   ? 'text-[#FBAF43]' 
                   : 'text-[#00142B] hover:text-[#FBAF43]'
@@ -136,7 +136,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
                 key={i}
                 href={href}
                 onClick={() => setShowMobileMenu(false)}
-                className={`block px-4 py-3 font-medium text-sm transition-colors ${
+                className={`block px-4 py-3 font-medium text-sm uppercase transition-colors ${
                   isActive(href) 
                     ? 'text-[#FBAF43]' 
                     : 'text-[#00142B] hover:text-[#FBAF43] hover:bg-gray-50'
