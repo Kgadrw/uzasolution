@@ -83,11 +83,11 @@ export default function HeroSection() {
           onClick={() => setShowLogisticsModal(false)}
         >
           <div
-            className="w-full max-w-2xl rounded-2xl bg-white p-5 sm:p-6 shadow-2xl"
+            className="w-full max-w-md rounded-2xl bg-white p-5 sm:p-6 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-4">
-              <h2 className="text-lg sm:text-xl font-semibold text-[#00142B]">Join UZA Logistics</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-[#00142B]">UZA Logistics</h2>
               <button
                 type="button"
                 aria-label="Close modal"
@@ -98,35 +98,21 @@ export default function HeroSection() {
               </button>
             </div>
 
-            <p className="mt-3 text-sm leading-6 text-gray-700">
-              Choose your role to continue. UZA Logistics is a shipment communication platform where clients
-              create and track shipment requests, while warehouse teams receive requests, process operations,
-              and update delivery stages in real time.
-            </p>
+            <p className="mt-3 text-sm leading-6 text-gray-700">Choose role</p>
 
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            <div className="mt-5 grid gap-3">
               <a
                 href="https://logistics.uzasolutions.com/client"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl border border-gray-200 p-4 text-left transition-all hover:border-[#FBAF43] hover:bg-[#fff8ed]"
+                className="rounded-xl border border-gray-200 p-4 text-center font-semibold uppercase text-[#00142B] transition-all hover:border-[#FBAF43] hover:bg-[#fff8ed]"
               >
-                <p className="text-sm font-semibold uppercase text-[#00142B]">Client</p>
-                <p className="mt-1 text-xs text-gray-600">
-                  Create shipment requests, follow progress, and receive updates.
-                </p>
+                Client
               </a>
 
               <a
                 href="https://logistics.uzasolutions.com/warehouse/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl border border-gray-200 p-4 text-left transition-all hover:border-[#FBAF43] hover:bg-[#fff8ed]"
+                className="rounded-xl border border-gray-200 p-4 text-center font-semibold uppercase text-[#00142B] transition-all hover:border-[#FBAF43] hover:bg-[#fff8ed]"
               >
-                <p className="text-sm font-semibold uppercase text-[#00142B]">Warehouse</p>
-                <p className="mt-1 text-xs text-gray-600">
-                  Manage inbound requests, process shipments, and update delivery stages.
-                </p>
+                Warehouse
               </a>
             </div>
           </div>
