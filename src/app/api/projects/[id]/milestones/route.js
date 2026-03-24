@@ -55,9 +55,8 @@ async function POST(req, { params, user }) {
     return errorResponse('Failed to create milestone', 500)
   }
 }
-
-export const GET_handler = GET
-export const POST_handler = authMiddleware(POST)
+const GET_handler = GET
+const POST_handler = authMiddleware(POST)
 
 export { GET_handler as GET, POST_handler as POST }
 

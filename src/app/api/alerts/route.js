@@ -25,8 +25,7 @@ async function GET(req, { user }) {
     return errorResponse('Failed to fetch alerts', 500)
   }
 }
-
-export const GET_handler = authMiddleware(GET, { requireAdmin: true })
+const GET_handler = authMiddleware(GET, { requireAdmin: true })
 
 export { GET_handler as GET }
 

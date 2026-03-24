@@ -26,8 +26,7 @@ async function PUT(req, { params, user }) {
     return errorResponse('Failed to mark notification as read', 500)
   }
 }
-
-export const PUT_handler = authMiddleware(PUT)
+const PUT_handler = authMiddleware(PUT)
 
 export { PUT_handler as PUT }
 

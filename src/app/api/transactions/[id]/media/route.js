@@ -51,8 +51,7 @@ async function POST(req, { params, user }) {
     return errorResponse('Failed to upload media', 500)
   }
 }
-
-export const POST_handler = authMiddleware(POST)
+const POST_handler = authMiddleware(POST)
 
 export { POST_handler as POST }
 

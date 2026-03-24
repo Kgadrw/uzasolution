@@ -62,7 +62,6 @@ export default function Footer() {
         <div>
               <h3 className="text-base sm:text-lg font-bold text-white mb-4 sm:mb-6">Resources</h3>
               <ul className="space-y-2 sm:space-y-3">
-                <li><Link href="/news" className="text-gray-300 hover:text-[#FBAF43] transition-colors duration-300 text-xs sm:text-sm">News & Updates</Link></li>
                 <li><Link href="/contact" className="text-gray-300 hover:text-[#FBAF43] transition-colors duration-300 text-xs sm:text-sm">Contact Us</Link></li>
                 <li><Link href="/contact" className="text-gray-300 hover:text-[#FBAF43] transition-colors duration-300 text-xs sm:text-sm">Partner with Us</Link></li>
                 <li><Link href="/uzacloud" className="text-gray-300 hover:text-[#FBAF43] transition-colors duration-300 text-xs sm:text-sm">UZA Cloud</Link></li>

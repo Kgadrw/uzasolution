@@ -29,7 +29,7 @@ async function GET(req, { user }) {
   }
 }
 
-export const GET_handler = authMiddleware(GET, { requireAdmin: true })
+const GET_handler = authMiddleware(GET, { requireAdmin: true })
 
 export { GET_handler as GET }
 

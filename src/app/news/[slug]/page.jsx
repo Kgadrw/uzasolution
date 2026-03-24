@@ -33,6 +33,7 @@ export default function NewsArticlePage({ params }) {
     year: 'numeric',
   })
   const readTime = estimateReadTime(article)
+  const categoryLabel = article.category || 'Article'
 
   // Other articles for sidebar / related
   const related = newsItems.filter((n) => n.slug !== article.slug)
@@ -56,12 +57,18 @@ export default function NewsArticlePage({ params }) {
           <div className="relative z-10 h-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 flex flex-col justify-end pb-10">
             {/* Breadcrumb */}
             <nav className="flex items-center gap-1.5 text-xs text-white/60 mb-4">
-              <Link href="/news" className="hover:text-white transition">
-                News
+              <Link href="/" className="hover:text-white transition">
+                Home
               </Link>
               <ChevronRight size={12} />
               <span className="text-white/80 truncate">{article.title}</span>
             </nav>
+
+            <div className="mb-3">
+              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white/85 text-xs font-semibold backdrop-blur">
+                {categoryLabel}
+              </span>
+            </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight max-w-3xl">
               {article.title}
@@ -152,11 +159,11 @@ export default function NewsArticlePage({ params }) {
             {/* Tags / CTA */}
             <div className="mt-12 pt-8 border-t border-gray-200">
               <Link
-                href="/news"
+                href="/"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#213348] text-white text-sm font-medium hover:bg-[#19486A] transition shadow-sm"
               >
                 <ArrowLeft size={16} />
-                Back to all articles
+                Back to Home
               </Link>
             </div>
           </article>

@@ -24,8 +24,7 @@ async function GET(req, { user }) {
     return errorResponse('Failed to fetch KYC status', 500)
   }
 }
-
-export const GET_handler = authMiddleware(GET)
+const GET_handler = authMiddleware(GET)
 
 export { GET_handler as GET }
 

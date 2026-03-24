@@ -1,6 +1,7 @@
 export const newsItems = [
   {
     slug: 'uza-short-quick-insights-on-africas-trade',
+    category: 'Blog',
     type: 'video',
     videoId: 'Prs33Sr-HKs',
     title: 'UZA Short: Quick Insights on Africa’s Trade',
@@ -32,6 +33,7 @@ export const newsItems = [
   },
   {
     slug: 'partnerships-with-global-giants-the-uza-approach',
+    category: 'News',
     type: 'image',
     image: '/news2.jpg',
     title: 'Partnerships with Global Giants: The UZA Approach',
@@ -63,6 +65,7 @@ export const newsItems = [
   },
   {
     slug: 'logistics-innovation-speeding-up-africas-supply-chains',
+    category: 'News',
     type: 'image',
     image: '/news3.jpg',
     title: 'Logistics Innovation: Speeding Up Africa’s Supply Chains',

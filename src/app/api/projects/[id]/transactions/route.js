@@ -83,9 +83,8 @@ async function POST(req, { params, user }) {
     return errorResponse('Failed to create transaction', 500)
   }
 }
-
-export const GET_handler = authMiddleware(GET)
-export const POST_handler = authMiddleware(POST)
+const GET_handler = authMiddleware(GET)
+const POST_handler = authMiddleware(POST)
 
 export { GET_handler as GET, POST_handler as POST }
 

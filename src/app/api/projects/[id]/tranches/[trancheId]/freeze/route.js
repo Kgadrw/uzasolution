@@ -26,8 +26,7 @@ async function POST(req, { params, user }) {
     return errorResponse('Failed to freeze tranche', 500)
   }
 }
-
-export const POST_handler = authMiddleware(POST, { requireAdmin: true })
+const POST_handler = authMiddleware(POST, { requireAdmin: true })
 
 export { POST_handler as POST }
 

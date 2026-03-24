@@ -27,8 +27,7 @@ async function PUT(req, { params, user }) {
     return errorResponse('Failed to reject top-up', 500)
   }
 }
-
-export const PUT_handler = authMiddleware(PUT, { requireAdmin: true })
+const PUT_handler = authMiddleware(PUT, { requireAdmin: true })
 
 export { PUT_handler as PUT }
 

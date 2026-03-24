@@ -47,9 +47,8 @@ async function PUT(req, { params, user }) {
     return errorResponse('Failed to update budget', 500)
   }
 }
-
-export const GET_handler = GET
-export const PUT_handler = authMiddleware(PUT)
+const GET_handler = GET
+const PUT_handler = authMiddleware(PUT)
 
 export { GET_handler as GET, PUT_handler as PUT }
 

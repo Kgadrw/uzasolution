@@ -41,8 +41,7 @@ async function POST(req, { user }) {
     return errorResponse('Failed to create pledge', 500)
   }
 }
-
-export const POST_handler = authMiddleware(POST)
+const POST_handler = authMiddleware(POST)
 
 export { POST_handler as POST }
 

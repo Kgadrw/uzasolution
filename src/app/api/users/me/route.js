@@ -49,9 +49,8 @@ async function PUT(req, { user }) {
     return errorResponse('Failed to update user', 500)
   }
 }
-
-export const GET_handler = authMiddleware(GET)
-export const PUT_handler = authMiddleware(PUT)
+const GET_handler = authMiddleware(GET)
+const PUT_handler = authMiddleware(PUT)
 
 export { GET_handler as GET, PUT_handler as PUT }
 

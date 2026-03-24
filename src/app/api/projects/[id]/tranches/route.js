@@ -18,8 +18,7 @@ async function GET(req, { params, user }) {
     return errorResponse('Failed to fetch tranches', 500)
   }
 }
-
-export const GET_handler = authMiddleware(GET)
+const GET_handler = authMiddleware(GET)
 
 export { GET_handler as GET }
 
