@@ -181,9 +181,9 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
     <nav
       className={`${
         overlay ? 'absolute top-2 sm:top-4 left-0 right-0' : 'relative mt-2 sm:mt-4'
-      } ${pathname === '/about' ? 'bg-[#F8FAFC]' : ''} z-30 w-full`}
+      } z-30 w-full`}
     >
-      <div className="mx-auto w-[96%] sm:w-[95%] lg:w-[92%] xl:w-[90%] shadow-sm">
+      <div className="mx-auto w-[96%] sm:w-[95%] lg:w-[92%] xl:w-[90%] rounded-2xl shadow-sm">
         <nav
           ref={navRef}
           className={`card-nav ${isExpanded ? 'open' : ''}`}
@@ -217,7 +217,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
               href="https://logistics.uzasolutions.com/client/login"
               target="_blank"
               rel="noopener noreferrer"
-              className="card-nav-cta-button hidden md:inline-flex items-center gap-2"
+              className="card-nav-cta-button inline-flex items-center gap-2"
             >
               <span>Login</span>
               <LogIn className="w-4 h-4" />
@@ -429,18 +429,39 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
 
         @media (max-width: 768px) {
           .card-nav-top {
-            padding: 0.5rem 1rem;
+            padding: 0.35rem 0.65rem;
             justify-content: space-between;
           }
 
           .hamburger-menu {
-            order: 2;
+            order: 0;
+          }
+
+          .hamburger-line {
+            width: 24px;
           }
 
           .logo-container {
-            position: static;
-            transform: none;
-            order: 1;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            order: 0;
+          }
+
+          .logo {
+            height: 22px;
+          }
+
+          .card-nav-cta-button {
+            height: 44px;
+            padding: 0 0.75rem;
+            font-size: 14px;
+          }
+
+          .card-nav-cta-button :global(svg) {
+            width: 16px;
+            height: 16px;
           }
 
           .card-nav-content {
