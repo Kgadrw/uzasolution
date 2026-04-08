@@ -39,26 +39,59 @@ export default function Partners() {
           </div>
         </div>
 
-        {/* Partners Grid - Static */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {partners.map((partner, index) => (
-            <div key={partner.name} className="flex items-center justify-center group cursor-pointer">
-              <div className="relative w-full h-32 flex items-center justify-center p-6">
-                <Image
-                  src={partner.logo}
-                  alt={`${partner.name} logo`}
-                  width={120}
-                  height={120}
-                  className="object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-                  loading="lazy"
-                />
+        {/* Partners Logos - Sliding (Right to Left) */}
+        <div className="relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent" />
+
+          <div className="partners-marquee flex w-max min-w-full gap-10 md:gap-14 py-2">
+            {[...partners, ...partners].map((partner, idx) => (
+              <div
+                key={`${partner.name}-${idx}`}
+                className="flex items-center justify-center"
+              >
+                <div className="relative h-20 w-40 sm:h-24 sm:w-44 md:h-28 md:w-48 flex items-center justify-center px-4">
+                  <Image
+                    src={partner.logo}
+                    alt={`${partner.name} logo`}
+                    width={180}
+                    height={120}
+                    className="object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                    loading="lazy"
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Additional Info */}
       </div>
+
+      <style jsx>{`
+        .partners-marquee {
+          animation: partners-scroll 18s linear infinite;
+          will-change: transform;
+        }
+
+        @keyframes partners-scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .partners-marquee {
+            animation: none;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+          }
+        }
+      `}</style>
     </section>
   )
 }
