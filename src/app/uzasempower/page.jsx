@@ -176,7 +176,7 @@ export default function UZAEmpowerPage() {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 }}
                   whileHover={{ y: -2 }}
-                  className="bg-[#FBAF43] p-6 rounded-lg transition-all duration-300"
+                  className="bg-[#FBAF43] border-t border-bg-black p-6 rounded-lg transition-all duration-300"
                 >
                   <div className="mb-4">
                     <span className="text-xs font-bold uppercase tracking-wider text-black">
