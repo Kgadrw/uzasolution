@@ -23,7 +23,7 @@ export default function UZAEmpowerPage() {
         "UZA Empower is a program by UZA Solutions that gives hardworking people a real chance to build their own future.",
         "Many Africans live on less than five dollars a day, not because they lack ambition, but because they lack access. We step in where opportunity is missing, bringing together training, mentorship, and financial support so that people can start sustainable small businesses and regain control over their lives."
       ],
-      image: "/story1.jpg",
+      image: "/storybg.jpg",
       bgColor: "bg-[#FBAF43]"
     },
     {
