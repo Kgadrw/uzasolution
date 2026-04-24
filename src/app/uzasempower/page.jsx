@@ -60,7 +60,7 @@ export default function UZAEmpowerPage() {
   ]
 
 
-  const heroImage = '/story3.jpg'
+  const heroImage = '/storybg.jpg'
 
   const stories = [
     {
