@@ -91,7 +91,7 @@ export default function UZAEmpowerPage() {
       image: "/story3.jpg",
       story: "Small trader turned commercial maize processor",
       category: "Impact Story",
-      borderColor: "border-t-[#4C9F38]"
+      borderColor: "border-t-[]"
     }
   ]
 
@@ -154,115 +154,135 @@ export default function UZAEmpowerPage() {
       </section>
 
       {/* Impact You Can Feel - Card Layout */}
-      <section className="relative z-20 -mt-10 sm:-mt-14 bg-transparent">
-        <div className="bg-white rounded-t-[3rem] overflow-hidden py-12 sm:py-16 md:py-20">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
-          <div className="max-w-7xl mx-auto">
-            {/* What is UZA Empower? (ABOUT + MISSION) */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-10 items-start mb-10">
-              <div className="lg:col-span-1 text-center lg:text-left">
-                <h2 className="text-xl md:text-2xl font-bold text-[#00142B] leading-tight mb-2">
-                  What is
-                </h2>
-                <h3 className="text-xl md:text-2xl font-bold text-[#00142B] leading-tight">
-                  UZA Empower?
-                </h3>
-              </div>
-
-              <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  whileHover={{ y: -2 }}
-                  className="bg-[#FBAF43] border-t-2 border-black p-6 rounded-lg transition-all duration-300"
-                >
-                  <div className="mb-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-black">
-                      ABOUT
-                    </span>
-                  </div>
-                  <p className="text-base text-black leading-relaxed">
-                    {introSlides.find((s) => s.id === 1)?.content?.[0]}
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  whileHover={{ y: -2 }}
-                  className="bg-[#FBAF43] border-t-2 border-black p-6 rounded-lg transition-all duration-300"
-                >
-                  <div className="mb-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-black">
-                      MISSION
-                    </span>
-                  </div>
-                  <p className="text-base text-black leading-relaxed">
-                    {introSlides.find((s) => s.id === 1)?.content?.[1]}
-                  </p>
-                </motion.div>
-              </div>
-            </div>
-
-            <div>
-              {/* Content Cards */}
-              <div>
-                {/* Description Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
-                  whileHover={{ y: -2 }}
-                  className="bg-[#FBAF43] border-t-2 border-black p-6 mb-6 rounded-lg transition-all duration-300"
-                >
-                  <div className="mb-4">
-                    <span className="text-xs font-bold uppercase tracking-wider text-black">
-                      IMPACT
-                    </span>
-                  </div>
-                  <p className="text-base text-black leading-relaxed">
-                    Behind every number is a life transformed. Through UZA Empower, ordinary people are becoming entrepreneurs, families are gaining stability, and communities are creating their own opportunities.
-                  </p>
-                </motion.div>
-
-                {/* Stats Cards Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {introSlides.find(s => s.id === 2)?.stats.map((stat, index) => {
-                    const Icon = stat.icon || Target
-                    return (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.1 * index }}
-                        whileHover={{ y: -2 }}
-                        className="bg-[#FBAF43] border-t-2 border-black p-6 rounded-lg transition-all duration-300"
-                      >
-                        <div className="mb-4">
-                          <Icon className="w-6 h-6 text-[#00142B] mb-2 font-normal" />
-                        </div>
-                        <div className="text-2xl md:text-3xl font-normal text-[#00142B] mb-2">
-                          {stat.number}
-                        </div>
-                        <p className="text-sm text-black leading-relaxed">
-                          {stat.label}
-                        </p>
-                      </motion.div>
-                    )
-                  })}
-                </div>
-                </div>
-              </div>
-            </div>
+      {/* Impact & Stats Section */}
+<section className="relative z-20 -mt-10 sm:-mt-14">
+  <div className="bg-white rounded-t-[3rem] overflow-hidden py-12 sm:py-16 md:py-20">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-16 xl:px-32">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Header Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-end mb-12">
+          <div className="lg:col-span-1">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#00142B] tracking-tight">
+              What is <br />
+              <span className="text-[#00689D]">UZA Empower?</span>
+            </h2>
+          </div>
+          <div className="lg:col-span-2">
+            <p className="text-gray-600 text-lg leading-relaxed border-l-4 border-[#FBAF43] pl-6">
+              We step in where opportunity is missing, bringing together training, mentorship, and financial support so that people can start sustainable small businesses.
+            </p>
           </div>
         </div>
-      </section>
+
+        {/* The Bento Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[180px]">
+          
+          {/* Main Mission Card - Large */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-2 md:row-span-2 bg-[#00142B] text-white p-8 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden"
+          >
+            <div className="z-10">
+              <span className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">Our Mission</span>
+              <h3 className="text-2xl font-semibold mt-4">Turning potential into progress, and progress into pride.</h3>
+            </div>
+            <p className="text-gray-300 z-10">
+              UZA Empower is a program by UZA Solutions that gives hardworking people a real chance to build their own future through ownership, not handouts.
+            </p>
+            {/* Abstract background shape */}
+            <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#E5243B] rounded-full blur-[80px] opacity-20"></div>
+          </motion.div>
+
+          {/* Stats Card 1 - Emerald (Green) */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-1 md:row-span-1 bg-[#10B981] text-white p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
+          >
+            <Users className="w-8 h-8 mb-2 opacity-80" />
+            <div className="text-3xl font-bold">312+</div>
+            <p className="text-xs font-medium uppercase tracking-tighter">Livelihoods Started</p>
+          </motion.div>
+
+          {/* Stats Card 2 - Blue */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-1 md:row-span-1 bg-[#00689D] text-white p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
+          >
+            <TrendingUp className="w-8 h-8 mb-2 opacity-80" />
+            <div className="text-3xl font-bold">68%</div>
+            <p className="text-xs font-medium uppercase tracking-tighter">Income Growth</p>
+          </motion.div>
+
+          {/* Stats Card 3 - Amber (Orange/Yellow) */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-1 md:row-span-1 bg-[#FBAF43] text-gray-900 p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
+          >
+            <CheckCircle className="w-8 h-8 mb-2 opacity-80" />
+            <div className="text-3xl font-bold">97%</div>
+            <p className="text-xs font-medium uppercase tracking-tighter">Repayment Rate</p>
+          </motion.div>
+
+          {/* Stats Card 4 - Crimson (Red) */}
+          <motion.div
+            whileHover={{ y: -5 }}
+            className="md:col-span-1 md:row-span-1 bg-[#E5243B] text-white p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
+          >
+            <Briefcase className="w-8 h-8 mb-2 opacity-80" />
+            <div className="text-3xl font-bold">2.3</div>
+            <p className="text-xs font-medium uppercase tracking-tighter">Jobs per Enterprise</p>
+          </motion.div>
+
+          {/* Long Impact Card - Bottom */}
+          <motion.div
+  whileHover={{ y: -5, scale: 1.01 }}
+  initial={{ opacity: 0, x: -20 }}
+  whileInView={{ opacity: 1, x: 0 }}
+  viewport={{ once: true }}
+  className="md:col-span-4 md:row-span-1 relative group cursor-pointer"
+>  
+  {/* The Main Content Card */}
+  <div className="relative flex flex-row items-center justify-between bg-white/80  p-6 md:p-8 rounded-[2rem] overflow-hidden">
+    
+    {/* Left Side: Icon & Title Grouping */}
+    <div className="flex items-center gap-6 flex-1">
+      <div className="hidden sm:flex w-14 h-14 bg-gradient-to-br from-[#00142B] to-[#19486A] rounded-2xl items-center justify-center ">
+        <Heart className="w-7 h-7 text-white" />
+      </div>
+      
+      <div className="flex flex-col">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#E5243B] animate-pulse" />
+          <h4 className="text-[#00142B] font-extrabold text-xl md:text-2xl tracking-tight">
+            Impact You Can Feel
+          </h4>
+        </div>
+        <p className="text-gray-500 text-sm md:text-base mt-1 max-w-xl font-medium">
+          Every number represents a family gaining stability and a community creating opportunity. 
+          <span className="text-[#00689D] hidden lg:inline"> Join us in rewriting the narrative of African entrepreneurship.</span>
+        </p>
+      </div>
+    </div>
+
+    {/* Right Side: Action Button */}
+    <div className="flex items-center gap-4">
+     
+      <div className="w-14 h-14 bg-[#00142B] text-white rounded-full flex items-center justify-center ">
+        <ArrowRight className="w-6 h-6 transform" />
+      </div>
+    </div>
+
+    {/* Decorative abstract background circle */}
+    <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#FBAF43]/10 rounded-full blur-3xl" />
+  </div>
+</motion.div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Program Introduction Sections - Static with Alternating Layout */}
       {introSlides.filter(slide => slide.id !== 1 && slide.id !== 2 && slide.id !== 3).map((slide, slideIndex) => {
