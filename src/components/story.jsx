@@ -69,7 +69,7 @@ export default function AboutPage() {
               transition={{ duration: 0.6, delay: idx * 0.2 }}
             >
               {/* Profile Image */}
-              <div className="relative w-full h-80 sm:h-96 mb-4 overflow-hidden">
+              <div className="relative w-full h-80 sm:h-96 mb-4 overflow-hidden rounded-t-2xl">
                 <Image
                   src={member.image}
                   alt={member.name}
@@ -88,9 +88,13 @@ export default function AboutPage() {
                 </a>
               </div>
 
-              {/* Name & Role */}
-              <h3 className="font-medium text-base sm:text-lg text-[#0f172a] mb-1 sm:mb-2">{member.name}</h3>
-              <p className="text-[#0f172a] text-xs sm:text-sm">{member.role}</p>
+              {/* Name strip attached to image (square edges) */}
+              <div className="w-full bg-[#FBAF43] px-3 py-2">
+                <h3 className="font-medium text-base sm:text-lg text-[#0f172a]">{member.name}</h3>
+              </div>
+              <p className="w-full text-white text-xs sm:text-sm mt-2 px-3 py-2 bg-gradient-to-r from-[#00142B] to-white">
+                {member.role}
+              </p>
             </motion.div>
           ))}
         </div>

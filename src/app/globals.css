@@ -225,20 +225,18 @@ body {
 
 /* Global scrollbar styling for body only */
 body::-webkit-scrollbar {
-  width: 14px;
+  width: 5px;
   display: block !important;
 }
 
 body::-webkit-scrollbar-track {
   background: #f3f4f6;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
 }
 
 body::-webkit-scrollbar-thumb {
   background: #9ca3af;
-  border-radius: 10px;
-  border: 2px solid #f3f4f6;
+  border-radius: 9999px;
   min-height: 50px;
 }
 
@@ -252,26 +250,24 @@ body::-webkit-scrollbar-thumb:active {
 
 /* Firefox scrollbar for body */
 body {
-  scrollbar-width: auto;
+  scrollbar-width: thin;
   scrollbar-color: #9ca3af #f3f4f6;
 }
 
 /* Custom scrollbar styling for specific elements */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 12px;
+  width: 3px;
   display: block;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
   background: #e5e7eb;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
+  border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #6b7280;
-  border-radius: 10px;
-  border: 2px solid #e5e7eb;
+  border-radius: 9999px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
@@ -284,6 +280,6 @@ body {
 
 /* Firefox scrollbar */
 .custom-scrollbar {
-  scrollbar-width: auto;
+  scrollbar-width: thin;
   scrollbar-color: #6b7280 #e5e7eb;
 }
