@@ -68,7 +68,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
         }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center -ml-3 sm:-ml-4 md:-ml-5 lg:-ml-7 xl:-ml-10">
+        <Link href="/" className="flex items-center ml-0 sm:-ml-4 md:-ml-5 lg:-ml-7 xl:-ml-10">
           <Image 
             src="/uza.png" 
             alt="UZA Solutions Logo" 
@@ -114,12 +114,16 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
           onClick={() => setShowMobileMenu(!showMobileMenu)}
           aria-label="Toggle Menu"
           aria-expanded={showMobileMenu}
-          className="lg:hidden p-2 hover:bg-gray-100 transition-colors"
+          className={`lg:hidden relative p-2.5 rounded-full border transition-all duration-300 ${
+            showMobileMenu
+              ? 'bg-[#00142B] border-[#00142B] shadow-md shadow-[#00142B]/30'
+              : 'bg-white/90 backdrop-blur border-gray-200 hover:border-[#FBAF43] hover:shadow-md hover:shadow-[#FBAF43]/25'
+          }`}
         >
           {showMobileMenu ? (
-            <X className="w-6 h-6 text-[#00142B]" />
+            <X className="w-5 h-5 text-white" />
           ) : (
-            <Menu className="w-6 h-6 text-[#00142B]" />
+            <Menu className="w-5 h-5 text-[#00142B]" />
           )}
         </button>
       </div>
@@ -128,7 +132,7 @@ export default function Navbar({ initialSolid = false, overlay = false }) {
       {showMobileMenu && (
         <div
           ref={mobileMenuRef}
-          className="lg:hidden absolute top-full left-0 right-0 mt-2 bg-white shadow-lg border-t"
+          className="lg:hidden absolute top-full right-0 mt-2 w-1/2 min-w-[220px] bg-white shadow-xl border border-gray-200 rounded-l-2xl overflow-hidden"
         >
           <div className="px-4 py-4 flex flex-col space-y-2">
             {links.map((href, i) => (
