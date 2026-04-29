@@ -149,7 +149,7 @@ export default function UZAEmpowerPage() {
                 </Link>
               </div>
             </div>
-          </div>
+        </div>
         </div>
       </section>
 
@@ -176,13 +176,10 @@ export default function UZAEmpowerPage() {
         </div>
 
         {/* The Bento Grid Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 auto-rows-[180px]">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-0 auto-rows-[180px] border border-[#D9E2EC] rounded-2xl overflow-hidden bg-white">
           
           {/* Main Mission Card - Large */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-2 md:row-span-2 bg-[#00142B] text-white p-8 rounded-3xl flex flex-col justify-between shadow-xl relative overflow-hidden"
-          >
+          <div className="md:col-span-2 md:row-span-2 bg-[#00142B] text-white p-8 flex flex-col justify-between relative overflow-hidden border-r border-b border-white/10">
             <div className="z-10">
               <span className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold tracking-widest uppercase mb-4 inline-block">Our Mission</span>
               <h3 className="text-2xl font-semibold mt-4">Turning potential into progress, and progress into pride.</h3>
@@ -192,91 +189,35 @@ export default function UZAEmpowerPage() {
             </p>
             {/* Abstract background shape */}
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#E5243B] rounded-full blur-[80px] opacity-20"></div>
-          </motion.div>
+          </div>
 
           {/* Stats Card 1 - Emerald (Green) */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-1 md:row-span-1 bg-[#10B981] text-white p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
-          >
+          <div className="md:col-span-1 md:row-span-1 bg-[#10B981] text-white p-6 flex flex-col justify-center items-center text-center border-r border-b border-white/20">
             <Users className="w-8 h-8 mb-2 opacity-80" />
             <div className="text-3xl font-bold">312+</div>
             <p className="text-xs font-medium uppercase tracking-tighter">Livelihoods Started</p>
-          </motion.div>
+          </div>
 
           {/* Stats Card 2 - Blue */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-1 md:row-span-1 bg-[#00689D] text-white p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
-          >
+          <div className="md:col-span-1 md:row-span-1 bg-[#00689D] text-white p-6 flex flex-col justify-center items-center text-center border-b border-white/20">
             <TrendingUp className="w-8 h-8 mb-2 opacity-80" />
             <div className="text-3xl font-bold">68%</div>
             <p className="text-xs font-medium uppercase tracking-tighter">Income Growth</p>
-          </motion.div>
+          </div>
 
           {/* Stats Card 3 - Amber (Orange/Yellow) */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-1 md:row-span-1 bg-[#FBAF43] text-gray-900 p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
-          >
+          <div className="md:col-span-1 md:row-span-1 bg-[#FBAF43] text-gray-900 p-6 flex flex-col justify-center items-center text-center border-r border-white/30">
             <CheckCircle className="w-8 h-8 mb-2 opacity-80" />
             <div className="text-3xl font-bold">97%</div>
             <p className="text-xs font-medium uppercase tracking-tighter">Repayment Rate</p>
-          </motion.div>
+          </div>
 
           {/* Stats Card 4 - Crimson (Red) */}
-          <motion.div
-            whileHover={{ y: -5 }}
-            className="md:col-span-1 md:row-span-1 bg-[#E5243B] text-white p-6 rounded-3xl flex flex-col justify-center items-center text-center shadow-lg"
-          >
+          <div className="md:col-span-1 md:row-span-1 bg-[#E5243B] text-white p-6 flex flex-col justify-center items-center text-center">
             <Briefcase className="w-8 h-8 mb-2 opacity-80" />
             <div className="text-3xl font-bold">2.3</div>
             <p className="text-xs font-medium uppercase tracking-tighter">Jobs per Enterprise</p>
-          </motion.div>
-
-          {/* Long Impact Card - Bottom */}
-          <motion.div
-  whileHover={{ y: -5, scale: 1.01 }}
-  initial={{ opacity: 0, x: -20 }}
-  whileInView={{ opacity: 1, x: 0 }}
-  viewport={{ once: true }}
-  className="md:col-span-4 md:row-span-1 relative group cursor-pointer"
->  
-  {/* The Main Content Card */}
-  <div className="relative flex flex-row items-center justify-between bg-white/80  p-6 md:p-8 rounded-[2rem] overflow-hidden">
-    
-    {/* Left Side: Icon & Title Grouping */}
-    <div className="flex items-center gap-6 flex-1">
-      <div className="hidden sm:flex w-14 h-14 bg-gradient-to-br from-[#00142B] to-[#19486A] rounded-2xl items-center justify-center ">
-        <Heart className="w-7 h-7 text-white" />
-      </div>
-      
-      <div className="flex flex-col">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#E5243B] animate-pulse" />
-          <h4 className="text-[#00142B] font-extrabold text-xl md:text-2xl tracking-tight">
-            Impact You Can Feel
-          </h4>
-        </div>
-        <p className="text-gray-500 text-sm md:text-base mt-1 max-w-xl font-medium">
-          Every number represents a family gaining stability and a community creating opportunity. 
-          <span className="text-[#00689D] hidden lg:inline"> Join us in rewriting the narrative of African entrepreneurship.</span>
-        </p>
-      </div>
-    </div>
-
-    {/* Right Side: Action Button */}
-    <div className="flex items-center gap-4">
-     
-      <div className="w-14 h-14 bg-[#00142B] text-white rounded-full flex items-center justify-center ">
-        <ArrowRight className="w-6 h-6 transform" />
-      </div>
-    </div>
-
-    {/* Decorative abstract background circle */}
-    <div className="absolute -right-10 -bottom-10 w-32 h-32 bg-[#FBAF43]/10 rounded-full blur-3xl" />
-  </div>
-</motion.div>
+          </div>
 
         </div>
       </div>
@@ -342,7 +283,7 @@ export default function UZAEmpowerPage() {
       })}
 
       {/* Why It Matters - Merged with Join the Movement - UNDP Style */}
-      <section className="py-12 sm:py-16 md:py-20 bg-[#00142B]">
+      <section className="py-12 sm:py-16 md:py-20 bg-[#00142B] border-white border rounded-3xl">
         <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-16 xl:px-32">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
