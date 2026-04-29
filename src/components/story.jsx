@@ -47,7 +47,7 @@ export default function AboutPage() {
           <div className="absolute left-2/3 top-0 h-full w-px bg-gradient-to-b from-transparent via-gray-200/10 to-transparent"></div>
         </div>
 
-        <div className="max-w-7xl mx-auto text-left mb-8 sm:mb-12 relative z-10">
+        <div className="max-w-7xl mx-auto text-center mb-8 sm:mb-12 relative z-10">
           <motion.h2
             className="text-2xl md:text-3xl text-[#FBAF43] font-extrabold mb-2 sm:mb-3"
             initial={{ opacity: 0, y: -20 }}
